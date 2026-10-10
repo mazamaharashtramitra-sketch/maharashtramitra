@@ -2,7 +2,7 @@
   "site": {
     "name": "माझा मित्र",
     "tagline": "तुमच्या दिवसातला छोटा विराम",
-    "domain": "mazamitra.pages.dev",
+    "domain": "maharashtramitra.pages.dev",
     "language": "mr"
   },
 
@@ -20,31 +20,32 @@
 
   "pages": [
     { "page": 1,  "type": "cover" },
-    { "page": 2,  "type": "contents" },
-    { "page": 3,  "type": "article", "category": "featured" },
-    { "page": 4,  "type": "article", "category": "sanskruti" },
-    { "page": 5,  "type": "article", "category": "bhatkanti" },
-    { "page": 6,  "type": "article", "category": "arogya" },
-    { "page": 7,  "type": "article", "category": "shiksha" },
-    { "page": 8,  "type": "article", "category": "vyavsay" },
-    { "page": 9,  "type": "article", "category": "sahitya" },
-    { "page": 10, "type": "article", "category": "katha" },
-    { "page": 11, "type": "article", "category": "manoranjan" },
-    { "page": 12, "type": "back-cover" }
+    { "page": 2,  "type": "edition-info" },
+    { "page": 3,  "type": "contents" },
+    { "page": 4,  "type": "article", "category": "featured" },
+    { "page": 5,  "type": "article", "category": "sanskruti" },
+    { "page": 6,  "type": "article", "category": "bhatkanti" },
+    { "page": 7,  "type": "article", "category": "arogya" },
+    { "page": 8,  "type": "article", "category": "shiksha" },
+    { "page": 9,  "type": "article", "category": "vyavsay" },
+    { "page": 10, "type": "article", "category": "sahitya" },
+    { "page": 11, "type": "article", "category": "katha" },
+    { "page": 12, "type": "article", "category": "manoranjan" },
+    { "page": 13, "type": "back-cover" }
   ],
 
   "ads": {
     "enabled": true,
     "slots": {
-      "page3":  ["premium"],
-      "page4":  ["shahar"],
-      "page5":  ["galli"],
-      "page6":  ["shahar"],
-      "page7":  ["galli"],
-      "page8":  ["shahar"],
-      "page9":  ["galli"],
+      "page4":  ["premium"],
+      "page5":  ["shahar"],
+      "page6":  ["galli"],
+      "page7":  ["shahar"],
+      "page8":  ["galli"],
+      "page9":  ["shahar"],
       "page10": ["galli"],
-      "page11": ["galli"]
+      "page11": ["galli"],
+      "page12": ["galli"]
     }
   },
 
@@ -55,9 +56,8 @@
         "links": [
           { "label": "आमची ओळख", "href": "/about/" },
           { "label": "संपर्क", "href": "/contact/" },
-          { "label": "जाहिरात", "href": "/advertise/" }
-              { "label": "पेमेंट", "href": "/payment/" }
-
+          { "label": "जाहिरात", "href": "/advertise/" },
+          { "label": "पेमेंट", "href": "/payment/" }
         ]
       },
       {
