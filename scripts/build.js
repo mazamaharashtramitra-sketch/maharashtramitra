@@ -18,8 +18,8 @@ const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'
 
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
+/* ─── Load articles (edition-specific first, then shared) ─── */
 function loadArticles(cat, editionSlug) {
-  // Try edition-specific folder first
   if (editionSlug) {
     const localDir = path.join(ROOT, 'data/articles', editionSlug, cat);
     if (fs.existsSync(localDir)) {
@@ -29,13 +29,41 @@ function loadArticles(cat, editionSlug) {
       }
     }
   }
-  // Fall back to shared folder
   const dir = path.join(ROOT, 'data/articles', cat);
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter(f => f.endsWith('.json'))
     .map(f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
 }
 
+/* ─── Load override file for a given date ─── */
+function loadOverrides(date) {
+  const file = path.join(ROOT, 'data/overrides', `${date}.json`);
+  if (!fs.existsSync(file)) return {};
+  try {
+    const raw = fs.readFileSync(file, 'utf8');
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn(`⚠ Invalid override JSON: ${date}.json`);
+    return {};
+  }
+}
+
+/* ─── Pick one article: override > seeded random ─── */
+function pickArticle(category, editionSlug, date, overrides) {
+  const pool = loadArticles(category, editionSlug);
+  const overrideSlug = overrides[category];
+
+  if (overrideSlug) {
+    const found = pool.find(a => a.slug === overrideSlug);
+    if (found) return found;
+    console.warn(`⚠ Override not found: "${overrideSlug}" in category "${category}" — using fallback`);
+  }
+
+  const [a] = seededPick(pool, date + category, 1);
+  return a || { title: 'शीघ्र', category, body: '', image: '', quote: '' };
+}
+
+/* ─── Load ads with tier merging ─── */
 function loadAds(edition) {
   const files = [
     'data/ads/default.json',
@@ -57,6 +85,7 @@ function loadAds(edition) {
   return merged;
 }
 
+/* ─── Deterministic shuffle by date ─── */
 function seededPick(arr, seed, count) {
   if (!arr.length) return [];
   const a = [...arr];
@@ -73,14 +102,13 @@ function seededPick(arr, seed, count) {
   return out.slice(0, count);
 }
 
+/* ─── Split long article into pages ─── */
 function splitArticle(body) {
   const paras = String(body || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   if (!paras.length) return [''];
-
   const pages = [];
   let current = [];
   let count = 0;
-
   for (const p of paras) {
     const w = p.split(/\s+/).length;
     if (count + w > WORDS_PER_PAGE && current.length > 0) {
@@ -93,7 +121,6 @@ function splitArticle(body) {
     }
   }
   if (current.length) pages.push(current.join('\n\n'));
-
   return pages.length ? pages : [body];
 }
 
@@ -104,6 +131,7 @@ function footerColumns() {
     </div>`).join('');
 }
 
+/* ─── Render one ad ─── */
 function renderAd(ad) {
   if (!ad) return '';
   const tier = ad.tier || 'galli';
@@ -216,11 +244,11 @@ function renderBack(edition, date, totalPages) {
 
 function buildNewsletter(edition, date) {
   const ads = loadAds(edition);
+  const overrides = loadOverrides(date);
   const articlePages = config.pages.filter(p => p.type === 'article');
 
   const articles = articlePages.map(p => {
-const [a] = seededPick(loadArticles(p.category, edition.slug), date + p.category, 1);
-    const art = a || { title: 'शीघ्र', category: p.category, body: '', image: '', quote: '' };
+    const art = pickArticle(p.category, edition.slug, date, overrides);
     return {
       title: art.title,
       category: art.category,
