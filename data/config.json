@@ -5,24 +5,46 @@
     "domain": "mazamitra.pages.dev",
     "language": "mr"
   },
-  "newsletter": { "totalPages": 10, "theme": "classic" },
+
+  "newsletter": {
+    "totalPages": 10,
+    "wordsPerPage": 450,
+    "theme": "classic"
+  },
+
   "cover": {
     "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=88",
     "label": "आजचा विशेष अंक",
     "highlights": ["संस्कृती", "प्रेरणा", "जीवनशैली", "कौशल्ये", "वाचन"]
   },
+
   "pages": [
-    { "page": 1,  "type": "cover" },
-    { "page": 2,  "type": "contents" },
-    { "page": 3,  "type": "article", "category": "featured" },
-    { "page": 4,  "type": "article", "category": "sanskruti" },
-    { "page": 5,  "type": "article", "category": "bhatkanti" },
-    { "page": 6,  "type": "article", "category": "arogya" },
-    { "page": 7,  "type": "article", "category": "shiksha" },
-    { "page": 8,  "type": "article", "category": "vyavsay" },
-    { "page": 9,  "type": "article", "category": "sahitya" },
+    { "page": 1, "type": "cover" },
+    { "page": 2, "type": "contents" },
+    { "page": 3, "type": "article", "category": "featured" },
+    { "page": 4, "type": "article", "category": "sanskruti" },
+    { "page": 5, "type": "article", "category": "bhatkanti" },
+    { "page": 6, "type": "article", "category": "arogya" },
+    { "page": 7, "type": "article", "category": "shiksha" },
+    { "page": 8, "type": "article", "category": "vyavsay" },
+    { "page": 9, "type": "article", "category": "sahitya" },
     { "page": 10, "type": "back-cover" }
   ],
+
+  "ads": {
+    "enabled": true,
+    "slots": {
+      "page3":  ["premium"],
+      "page4":  ["shahar"],
+      "page5":  ["galli"],
+      "page6":  ["shahar"],
+      "page7":  ["galli"],
+      "page8":  ["shahar"],
+      "page9":  ["galli"],
+      "page10": ["galli"]
+    }
+  },
+
   "footer": {
     "columns": [
       {
