@@ -35,17 +35,33 @@ function loadArticles(cat, editionSlug) {
     .map(f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
 }
 
-/* ─── Load override file for a given date ─── */
-function loadOverrides(date) {
-  const file = path.join(ROOT, 'data/overrides', `${date}.json`);
-  if (!fs.existsSync(file)) return {};
-  try {
-    const raw = fs.readFileSync(file, 'utf8');
-    return JSON.parse(raw);
-  } catch (e) {
-    console.warn(`⚠ Invalid override JSON: ${date}.json`);
-    return {};
+/* ─── Load overrides (edition-specific first, then global) ─── */
+function loadOverrides(date, editionSlug) {
+  const tryLoad = (filePath) => {
+    if (!fs.existsSync(filePath)) return null;
+    try {
+      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch (e) {
+      console.warn(`⚠ Invalid override JSON: ${filePath}`);
+      return null;
+    }
+  };
+
+  // 1. Edition-specific: data/overrides/<edition-slug>/<date>.json
+  if (editionSlug) {
+    const local = tryLoad(path.join(ROOT, 'data/overrides', editionSlug, `${date}.json`));
+    if (local) return local;
   }
+
+  // 2. Global: data/overrides/<date>.json
+  const global = tryLoad(path.join(ROOT, 'data/overrides', `${date}.json`));
+  if (global) return global;
+
+  // 3. Legacy: data/overrides/_global/<date>.json
+  const legacy = tryLoad(path.join(ROOT, 'data/overrides', '_global', `${date}.json`));
+  if (legacy) return legacy;
+
+  return {};
 }
 
 /* ─── Pick one article: override > seeded random ─── */
@@ -213,6 +229,23 @@ function renderContents(articles, date, totalPages) {
 function renderArticle(a, n, part, totalParts, totalPages, ads) {
   const isFirst = part === 1;
   const adBlock = renderAdBlock(ads, `page${n}`);
+
+  let videoBlock = '';
+  if (isFirst && a.youtube && a.youtube.id) {
+    const start = a.youtube.start ? `?start=${a.youtube.start}` : '';
+    videoBlock = `
+      <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px;margin:20px 0;background:#000">
+        <iframe
+          src="https://www.youtube.com/embed/${esc(a.youtube.id)}${start}"
+          title="${esc(a.youtube.title || a.title)}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          style="position:absolute;top:0;left:0;width:100%;height:100%">
+        </iframe>
+      </div>`;
+  }
+
   return `<article class="news-page" id="page-${n}">
   <div class="page-topline">
     <span>${esc(a.category)}${!isFirst ? ' · क्रमशः' : ''}</span>
@@ -222,6 +255,7 @@ function renderArticle(a, n, part, totalParts, totalPages, ads) {
   ${isFirst
     ? `<h2 class="page-title">${esc(a.title)}</h2>
        <div class="lead-photo"><img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy"></div>
+       ${videoBlock}
        <div class="page-copy" style="margin-top:20px"><p class="dropcap">${esc(a.parts[part-1])}</p></div>`
     : `<h2 class="page-title" style="font-size:26px">${esc(a.title)}<span style="font-size:14px;color:#747b72;font-weight:400"> · भाग ${toMr(part)} / ${toMr(totalParts)}</span></h2>
        <div class="page-copy" style="margin-top:20px"><p>${esc(a.parts[part-1])}</p></div>`}
@@ -244,7 +278,7 @@ function renderBack(edition, date, totalPages) {
 
 function buildNewsletter(edition, date) {
   const ads = loadAds(edition);
-  const overrides = loadOverrides(date);
+  const overrides = loadOverrides(date, edition.slug);
   const articlePages = config.pages.filter(p => p.type === 'article');
 
   const articles = articlePages.map(p => {
@@ -255,6 +289,7 @@ function buildNewsletter(edition, date) {
       body: art.body,
       image: art.image,
       quote: art.quote,
+      youtube: art.youtube || null,
       parts: splitArticle(art.body),
       totalParts: 1,
       startPage: 0
@@ -302,8 +337,8 @@ function buildLegalPage(page) {
   const sections = (page.sections || []).map(s => `
     <section style="margin-bottom:32px">
       <h2 style="font:700 20px/1.5 var(--serif);margin:0 0 10px;color:var(--ink)">${esc(s.heading)}</h2>
-<p style="margin:0;color:var(--ink-soft);font-size:14px;line-height:1.95;white-space:pre-line;text-align:justify">${esc(s.body)}</p>
-</section>`).join('');
+      <p style="margin:0;color:var(--ink-soft);font-size:14px;line-height:1.95;white-space:pre-line;text-align:justify">${esc(s.body)}</p>
+    </section>`).join('');
 
   return tpl
     .replace(/{{EDITION_NAME}}/g, esc(defaultEdition.name))
