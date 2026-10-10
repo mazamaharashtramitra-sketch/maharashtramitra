@@ -16,12 +16,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const esc = (s='') => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'[+d]);
 
-const DEFAULT_AD_SLOTS = {
-  page3:  ['shahar'],
-  page5:  ['galli'],
-  page7:  ['shahar'],
-  page10: ['galli']
-};
+const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
 function loadArticles(cat) {
   const dir = path.join(ROOT, 'data/articles', cat);
@@ -31,18 +26,24 @@ function loadArticles(cat) {
 }
 
 function loadAds(edition) {
-  const candidates = [
-    `data/ads/neighborhood/${edition.slug}.json`,
+  const files = [
+    'data/ads/default.json',
+    'data/ads/state/maharashtra.json',
+    edition.city ? `data/ads/city/${edition.city.toLowerCase().replace(/\s+/g,'-')}.json` : null,
     `data/ads/city/${edition.slug}.json`,
-    'data/ads/default.json'
-  ];
-  for (const c of candidates) {
-    const full = path.join(ROOT, c);
-    if (fs.existsSync(full)) {
-      return JSON.parse(fs.readFileSync(full, 'utf8'));
+    `data/ads/neighborhood/${edition.slug}.json`
+  ].filter(Boolean);
+
+  const merged = { slots: {} };
+  for (const f of files) {
+    const full = path.join(ROOT, f);
+    if (!fs.existsSync(full)) continue;
+    const data = JSON.parse(fs.readFileSync(full, 'utf8'));
+    for (const [slot, ad] of Object.entries(data.slots || {})) {
+      merged.slots[slot] = ad;
     }
   }
-  return { slots: {} };
+  return merged;
 }
 
 function seededPick(arr, seed, count) {
@@ -61,6 +62,30 @@ function seededPick(arr, seed, count) {
   return out.slice(0, count);
 }
 
+function splitArticle(body) {
+  const paras = String(body || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  if (!paras.length) return [''];
+
+  const pages = [];
+  let current = [];
+  let count = 0;
+
+  for (const p of paras) {
+    const w = p.split(/\s+/).length;
+    if (count + w > WORDS_PER_PAGE && current.length > 0) {
+      pages.push(current.join('\n\n'));
+      current = [p];
+      count = w;
+    } else {
+      current.push(p);
+      count += w;
+    }
+  }
+  if (current.length) pages.push(current.join('\n\n'));
+
+  return pages.length ? pages : [body];
+}
+
 function footerColumns() {
   return (config.footer.columns || []).map(c => `
     <div class="footer-col"><h4>${esc(c.title)}</h4>
@@ -74,6 +99,14 @@ function renderAd(ad) {
   const accent = tier === 'premium' ? '#e5a33b'
                : tier === 'shahar'  ? '#315e50'
                : '#e5a33b';
+
+  if (ad.image) {
+    return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" style="display:block;border:1px solid #e6e1d6;border-left:4px solid ${accent};border-radius:0 12px 12px 0;overflow:hidden;background:#fffefa;text-decoration:none;color:inherit;position:relative">
+      <img src="${esc(ad.image)}" alt="${esc(ad.sponsor || ad.title)}" loading="lazy" style="display:block;width:100%;height:auto">
+      <span style="position:absolute;top:8px;left:10px;padding:3px 8px;background:rgba(23,43,42,.78);color:#fff;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;border-radius:99px">प्रायोजित · ${esc(ad.sponsor)}</span>
+    </a>`;
+  }
+
   return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" style="display:grid;gap:6px;padding:18px 20px;border:1px solid #e6e1d6;border-left:4px solid ${accent};border-radius:0 12px 12px 0;background:#fffefa;text-decoration:none;color:inherit">
     <span style="font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#b8751f">प्रायोजित · ${esc(ad.sponsor)}</span>
     <span style="font-size:22px;line-height:1">${esc(ad.icon || '★')}</span>
@@ -85,8 +118,7 @@ function renderAd(ad) {
 
 function renderAdBlock(ads, pageKey) {
   const slots = (config.ads && config.ads.slots && config.ads.slots[pageKey])
-             || DEFAULT_AD_SLOTS[pageKey]
-             || [];
+             || (pageKey.startsWith('page') ? ['galli'] : []);
   if (!slots.length) return '';
   const items = slots.map(k => ads.slots && ads.slots[k]).filter(Boolean);
   if (!items.length) return '';
@@ -96,7 +128,7 @@ function renderAdBlock(ads, pageKey) {
   </div>`;
 }
 
-function renderCover(edition, date) {
+function renderCover(edition, date, totalPages) {
   const c = config.cover;
   return `<article class="news-page cover-page" id="page-1">
   <header class="cover-masthead">
@@ -115,19 +147,19 @@ function renderCover(edition, date) {
     <p class="cover-description">${esc(config.site.tagline)}</p>
     <div class="cover-bottom">
       <div class="cover-highlights">${(c.highlights||[]).map(h => `<span>${esc(h)}</span>`).join('')}</div>
-      <div class="cover-issue-number">आजचा अंक<b>१० पृष्ठे</b></div>
+      <div class="cover-issue-number">आजचा अंक<b>${toMr(totalPages)} पृष्ठे</b></div>
     </div>
   </div>
   <style>.cover-page::before{background:linear-gradient(180deg,rgba(15,30,29,.08) 0%,rgba(15,30,29,.18) 25%,rgba(15,30,29,.92) 68%,#172b2a 100%),url("${esc(c.image)}") center 28%/cover no-repeat;}</style>
 </article>`;
 }
 
-function renderContents(items, date) {
-  const list = items.map((it, i) => `
-    <li><a href="#page-${i+3}">
-      <span class="contents-number">${toMr(i+3)}</span>
-      <span class="contents-name">${esc(it.title)}<span class="contents-hint">${esc(it.category)}</span></span>
-      <span class="contents-page-no">${toMr(i+3)}</span>
+function renderContents(articles, date, totalPages) {
+  const list = articles.map(a => `
+    <li><a href="#page-${a.startPage}">
+      <span class="contents-number">${toMr(a.startPage)}</span>
+      <span class="contents-name">${esc(a.title)}<span class="contents-hint">${esc(a.category)}${a.totalParts > 1 ? ` · ${toMr(a.totalParts)} पृष्ठे` : ''}</span></span>
+      <span class="contents-page-no">${toMr(a.startPage)}</span>
     </a></li>`).join('');
   return `<article class="news-page" id="page-2">
   <div class="page-topline"><span>${esc(config.site.name)}</span><span>अनुक्रमणिका</span></div>
@@ -135,53 +167,81 @@ function renderContents(items, date) {
   <h2 class="page-title">आजचं<br><span class="accent">वाचन.</span></h2>
   <p class="page-subtitle">${esc(config.site.tagline)}</p>
   <ol class="contents-list">${list}</ol>
-  <footer class="page-footer"><strong>${esc(date)}</strong><span class="folio">०२ / १०</span></footer>
+  <footer class="page-footer"><strong>${esc(date)}</strong><span class="folio">०२ / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
-function renderArticle(a, n) {
+function renderArticle(a, n, part, totalParts, totalPages, ads) {
+  const isFirst = part === 1;
+  const adBlock = renderAdBlock(ads, `page${n}`);
   return `<article class="news-page" id="page-${n}">
-  <div class="page-topline"><span>${esc(a.category)}</span><span>पृष्ठ ${toMr(n)}</span></div>
+  <div class="page-topline">
+    <span>${esc(a.category)}${!isFirst ? ' · क्रमशः' : ''}</span>
+    <span>पृष्ठ ${toMr(n)}</span>
+  </div>
   <div class="eyebrow">${esc(a.category)}</div>
-  <h2 class="page-title">${esc(a.title)}</h2>
-  <div class="lead-photo"><img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy"></div>
-  <div class="page-copy" style="margin-top:20px"><p class="dropcap">${esc(a.body)}</p></div>
-  ${a.quote ? `<blockquote class="pull-quote">“${esc(a.quote)}”</blockquote>` : ''}
-  <footer class="page-footer"><strong>${esc(config.site.name)}</strong><span class="folio">${toMr(n)} / १०</span></footer>
+  ${isFirst
+    ? `<h2 class="page-title">${esc(a.title)}</h2>
+       <div class="lead-photo"><img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy"></div>
+       <div class="page-copy" style="margin-top:20px"><p class="dropcap">${esc(a.parts[part-1])}</p></div>`
+    : `<h2 class="page-title" style="font-size:26px">${esc(a.title)}<span style="font-size:14px;color:#747b72;font-weight:400"> · भाग ${toMr(part)} / ${toMr(totalParts)}</span></h2>
+       <div class="page-copy" style="margin-top:20px"><p>${esc(a.parts[part-1])}</p></div>`}
+  ${isFirst && a.quote && totalParts === 1 ? `<blockquote class="pull-quote">“${esc(a.quote)}”</blockquote>` : ''}
+  ${adBlock}
+  <footer class="page-footer"><strong>${esc(config.site.name)}</strong><span class="folio">${toMr(n)} / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
-function renderBack(edition, date) {
-  return `<article class="news-page closing-page" id="page-10">
+function renderBack(edition, date, totalPages) {
+  return `<article class="news-page closing-page" id="page-${totalPages}">
   <div class="page-topline"><span>समारोप</span><span>पुढील अंकाकडे</span></div>
   <div class="eyebrow">धन्यवाद</div>
   <h2 class="page-title">वाचत राहा,<br><span style="color:#f3c66e">जोडलेले राहा.</span></h2>
   <p class="page-subtitle">${esc(edition.name)} — ${esc(config.site.tagline)}</p>
   <div class="closing-signature"><div class="big-mark">म</div><p>मराठी वाचूया. मराठीत जोडलेले राहूया.</p></div>
-  <footer class="page-footer"><strong>${esc(edition.name)} · ${esc(date)}</strong><span class="folio">१० / १०</span></footer>
+  <footer class="page-footer"><strong>${esc(edition.name)} · ${esc(date)}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
-function injectAd(html, ads, pageKey) {
-  const block = renderAdBlock(ads, pageKey);
-  if (!block) return html;
-  return html.replace('<footer class="page-footer">', `${block}<footer class="page-footer">`);
-}
-
 function buildNewsletter(edition, date) {
+  const ads = loadAds(edition);
   const articlePages = config.pages.filter(p => p.type === 'article');
-  const picks = articlePages.map(p => {
+
+  const articles = articlePages.map(p => {
     const [a] = seededPick(loadArticles(p.category), date + p.category, 1);
-    return a || { title: 'शीघ्र', category: p.category, body: '', image: '', quote: '' };
+    const art = a || { title: 'शीघ्र', category: p.category, body: '', image: '', quote: '' };
+    return {
+      title: art.title,
+      category: art.category,
+      body: art.body,
+      image: art.image,
+      quote: art.quote,
+      parts: splitArticle(art.body),
+      totalParts: 1,
+      startPage: 0
+    };
   });
 
-  const ads = loadAds(edition);
+  articles.forEach(a => a.totalParts = a.parts.length);
 
-  let pages = [renderCover(edition, date), renderContents(picks, date)];
-  picks.forEach((a, i) => pages.push(renderArticle(a, i + 3)));
-  pages.push(renderBack(edition, date));
+  let cursor = 3;
+  articles.forEach(a => {
+    a.startPage = cursor;
+    cursor += a.totalParts;
+  });
 
-  pages = pages.map((html, i) => injectAd(html, ads, `page${i + 1}`));
+  const totalPages = cursor;
+
+  let pages = [renderCover(edition, date, totalPages), renderContents(articles, date, totalPages)];
+
+  for (const a of articles) {
+    for (let p = 1; p <= a.totalParts; p++) {
+      const n = a.startPage + p - 1;
+      pages.push(renderArticle(a, n, p, a.totalParts, totalPages, ads));
+    }
+  }
+
+  pages.push(renderBack(edition, date, totalPages));
 
   const tpl = fs.readFileSync(path.join(ROOT, 'src/templates/newsletter.html'), 'utf8');
 
@@ -246,4 +306,4 @@ fs.mkdirSync(path.join(OUT, '_assets'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'src/style.css'), path.join(OUT, '_assets/style.css'));
 fs.copyFileSync(path.join(ROOT, 'src/script.js'), path.join(OUT, '_assets/script.js'));
 
-console.log(`✅ Built ${n} editions + ${legalCount} legal pages + ads for ${today}`);
+console.log(`✅ Built ${n} editions + ${legalCount} legal pages for ${today}`);
