@@ -18,7 +18,18 @@ const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'
 
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
-function loadArticles(cat) {
+function loadArticles(cat, editionSlug) {
+  // Try edition-specific folder first
+  if (editionSlug) {
+    const localDir = path.join(ROOT, 'data/articles', editionSlug, cat);
+    if (fs.existsSync(localDir)) {
+      const files = fs.readdirSync(localDir).filter(f => f.endsWith('.json'));
+      if (files.length) {
+        return files.map(f => JSON.parse(fs.readFileSync(path.join(localDir, f), 'utf8')));
+      }
+    }
+  }
+  // Fall back to shared folder
   const dir = path.join(ROOT, 'data/articles', cat);
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter(f => f.endsWith('.json'))
