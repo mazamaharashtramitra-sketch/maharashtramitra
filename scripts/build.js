@@ -219,7 +219,7 @@ function buildNewsletter(edition, date) {
   const articlePages = config.pages.filter(p => p.type === 'article');
 
   const articles = articlePages.map(p => {
-    const [a] = seededPick(loadArticles(p.category), date + p.category, 1);
+const [a] = seededPick(loadArticles(p.category, edition.slug), date + p.category, 1);
     const art = a || { title: 'शीघ्र', category: p.category, body: '', image: '', quote: '' };
     return {
       title: art.title,
