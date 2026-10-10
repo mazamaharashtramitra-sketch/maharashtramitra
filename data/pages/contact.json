@@ -1,0 +1,11 @@
+{
+  "slug": "contact",
+  "title": "संपर्क",
+  "subtitle": "आमच्याशी बोला",
+  "updated": "2025-11-04",
+  "sections": [
+    { "heading": "ईमेल", "body": "hello@mazamitra.in" },
+    { "heading": "वेबसाइट", "body": "mazamitra.pages.dev" },
+    { "heading": "जाहिरात", "body": "advertise@mazamitra.in" }
+  ]
+}

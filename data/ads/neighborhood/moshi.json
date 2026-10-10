@@ -1,0 +1,6 @@
+{
+  "city": "मोशी",
+  "slots": {
+    "galli": { "sponsor": "श्रीराम किराणा", "title": "मोशीत घरपोच किराणा", "description": "ताजे धान्य, भाज्या — ३० मिनिटांत.", "cta": "ऑर्डर करा", "link": "https://example.com/sriram", "icon": "🛒", "tier": "galli" }
+  }
+}

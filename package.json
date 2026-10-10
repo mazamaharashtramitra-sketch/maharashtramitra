@@ -1,0 +1,11 @@
+{
+  "name": "mazamitra",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "preview": "npx serve public",
+    "deploy": "npx wrangler pages deploy public"
+  },
+  "engines": { "node": ">=20" }
+}

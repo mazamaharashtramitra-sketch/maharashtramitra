@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#162b2a">
+<meta name="description" content="{{PAGE_SUBTITLE}}">
+<title>{{PAGE_TITLE}} · माझा मित्र</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/_assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#content">मुख्य मजकुराकडे जा</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">म</span>
+      <span class="site-brand__text">
+        <strong>{{EDITION_NAME}}</strong>
+        <small>{{TAGLINE}}</small>
+      </span>
+    </a>
+    <nav class="site-nav">
+      <a href="/">आजचा अंक</a>
+      <a href="/about/">आमच्याविषयी</a>
+      <a href="/advertise/">जाहिरात</a>
+      <a href="/contact/">संपर्क</a>
+    </nav>
+  </div>
+</header>
+
+<main class="publication" id="content" style="margin-top:40px">
+  <article class="news-page" style="min-height:auto">
+    <div class="page-topline">
+      <span>{{EDITION_NAME}}</span>
+      <span>अद्ययावत: {{UPDATED}}</span>
+    </div>
+    <div class="eyebrow">{{CATEGORY}}</div>
+    <h1 class="page-title">{{PAGE_TITLE}}</h1>
+    <p class="page-subtitle">{{PAGE_SUBTITLE}}</p>
+
+    <div class="legal-body" style="margin-top:36px">
+      {{SECTIONS_HTML}}
+    </div>
+
+    <footer class="page-footer">
+      <strong>{{EDITION_NAME}}</strong>
+      <span class="folio">माझा मित्र</span>
+    </footer>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-mark">म</div>
+      <div>
+        <strong>{{EDITION_NAME}}</strong>
+        <span>{{TAGLINE}}</span>
+      </div>
+    </div>
+    {{FOOTER_COLUMNS}}
+  </div>
+  <div class="footer-bottom">
+    <span>© {{YEAR}} माझा मित्र · सर्व हक्क राखीव</span>
+    <span>{{EDITION_NAME}}</span>
+  </div>
+</footer>
+
+<script src="/_assets/script.js" defer></script>
+</body>
+</html>

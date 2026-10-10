@@ -1,0 +1,46 @@
+{
+  "site": {
+    "name": "माझा मित्र",
+    "tagline": "तुमच्या दिवसातला छोटा विराम",
+    "domain": "mazamitra.pages.dev",
+    "language": "mr"
+  },
+  "newsletter": { "totalPages": 10, "theme": "classic" },
+  "cover": {
+    "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=88",
+    "label": "आजचा विशेष अंक",
+    "highlights": ["संस्कृती", "प्रेरणा", "जीवनशैली", "कौशल्ये", "वाचन"]
+  },
+  "pages": [
+    { "page": 1,  "type": "cover" },
+    { "page": 2,  "type": "contents" },
+    { "page": 3,  "type": "article", "category": "featured" },
+    { "page": 4,  "type": "article", "category": "sanskruti" },
+    { "page": 5,  "type": "article", "category": "bhatkanti" },
+    { "page": 6,  "type": "article", "category": "arogya" },
+    { "page": 7,  "type": "article", "category": "shiksha" },
+    { "page": 8,  "type": "article", "category": "vyavsay" },
+    { "page": 9,  "type": "article", "category": "sahitya" },
+    { "page": 10, "type": "back-cover" }
+  ],
+  "footer": {
+    "columns": [
+      {
+        "title": "आमच्याविषयी",
+        "links": [
+          { "label": "आमची ओळख", "href": "/about/" },
+          { "label": "संपर्क", "href": "/contact/" },
+          { "label": "जाहिरात", "href": "/advertise/" }
+        ]
+      },
+      {
+        "title": "कायदेशीर",
+        "links": [
+          { "label": "गोपनीयता धोरण", "href": "/privacy/" },
+          { "label": "वापर अटी", "href": "/terms/" },
+          { "label": "तक्रार अधिकारी", "href": "/grievance/" }
+        ]
+      }
+    ]
+  }
+}

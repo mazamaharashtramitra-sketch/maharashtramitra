@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#162b2a">
+<meta name="description" content="{{META_DESCRIPTION}}">
+<title>{{PAGE_TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/_assets/style.css">
+</head>
+<body>
+<a class="skip-link" href="#page-1">मुख्य मजकुराकडे जा</a>
+<div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-brand" href="/">
+      <span class="site-brand__mark">म</span>
+      <span class="site-brand__text">
+        <strong>{{EDITION_NAME}}</strong>
+        <small>{{TAGLINE}}</small>
+      </span>
+    </a>
+    <nav class="site-nav">
+      <a href="/">आजचा अंक</a>
+      <a href="/about/">आमच्याविषयी</a>
+      <a href="/advertise/">जाहिरात</a>
+      <a href="/contact/">संपर्क</a>
+    </nav>
+    <div class="toolbar-actions">
+      <span class="page-status" id="pageStatus">पृष्ठ १ / १०</span>
+      <button class="tool-button" type="button" id="smallerText">A−</button>
+      <button class="tool-button" type="button" id="largerText">A+</button>
+      <button class="tool-button" type="button" id="themeToggle">◐</button>
+      <button class="tool-button" type="button" id="printButton">▤</button>
+    </div>
+  </div>
+</header>
+
+<main class="publication" id="publication">
+{{PAGES_HTML}}
+</main>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-mark">म</div>
+      <div>
+        <strong>{{EDITION_NAME}}</strong>
+        <span>{{TAGLINE}}</span>
+      </div>
+    </div>
+    {{FOOTER_COLUMNS}}
+  </div>
+  <div class="footer-bottom">
+    <span>© {{YEAR}} माझा मित्र · सर्व हक्क राखीव</span>
+    <span>{{ISSUE_DATE}}</span>
+  </div>
+</footer>
+
+<script src="/_assets/script.js" defer></script>
+</body>
+</html>

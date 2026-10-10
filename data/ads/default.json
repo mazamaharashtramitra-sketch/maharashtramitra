@@ -1,0 +1,8 @@
+{
+  "city": "महाराष्ट्र",
+  "slots": {
+    "premium": { "sponsor": "माझा मित्र", "title": "तुमची जाहिरात येथे", "description": "स्थानिक व्यवसायांसाठी विशेष दर.", "cta": "संपर्क करा", "link": "/advertise/", "icon": "📣", "tier": "premium" },
+    "shahar":  { "sponsor": "माझा मित्र", "title": "तुमची जाहिरात येथे", "description": "स्थानिक व्यवसायांसाठी विशेष दर.", "cta": "संपर्क करा", "link": "/advertise/", "icon": "📣", "tier": "shahar" },
+    "galli":   { "sponsor": "माझा मित्र", "title": "तुमची जाहिरात येथे", "description": "स्थानिक व्यवसायांसाठी विशेष दर.", "cta": "संपर्क करा", "link": "/advertise/", "icon": "📣", "tier": "galli" }
+  }
+}

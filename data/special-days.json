@@ -1,0 +1,11 @@
+{
+  "recurring": [
+    { "month": 8, "day": 15, "slug": "independence-day", "name": "स्वातंत्र्य दिन" },
+    { "month": 1, "day": 26, "slug": "republic-day", "name": "प्रजासत्ताक दिन" },
+    { "month": 5, "day": 1, "slug": "maharashtra-day", "name": "महाराष्ट्र दिन" }
+  ],
+  "specific": [
+    { "date": "2025-10-20", "slug": "diwali", "name": "दिवाळी" },
+    { "date": "2026-11-08", "slug": "diwali", "name": "दिवाळी" }
+  ]
+}
