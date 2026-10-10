@@ -2,10 +2,65 @@
   "slug": "contact",
   "title": "संपर्क",
   "subtitle": "आमच्याशी बोला",
-  "updated": "2025-11-04",
+  "updated": "2026-10-10",
   "sections": [
-    { "heading": "ईमेल", "body": "hello@mazamitra.in" },
-    { "heading": "वेबसाइट", "body": "mazamitra.pages.dev" },
-    { "heading": "जाहिरात", "body": "advertise@mazamitra.in" }
+    {
+      "heading": "💬 आमच्याशी संपर्क साधा",
+      "body": "तुमचे प्रश्न, सूचना, तक्रारी किंवा कौतुकासाठी आम्हाला संपर्क करा. खालील फॉर्म भरा — आम्ही २४ तासांत तुम्हाला उत्तर देऊ."
+    },
+    {
+      "type": "form",
+      "heading": "📬 संपर्क फॉर्म",
+      "body": "",
+      "form": {
+        "action": "https://formsubmit.co/mazamaharashtramitra@gmail.com",
+        "subject": "New Contact Message — माझा मित्र",
+        "submitText": "📩 संदेश पाठवा",
+        "note": "तुमची माहिती सुरक्षित राहील. आम्ही कोणत्याही तिसऱ्या व्यक्तीसोबत शेअर करणार नाही.",
+        "fields": [
+          { "name": "name", "label": "तुमचे नाव", "type": "text", "placeholder": "उदा. राहुल पाटील", "required": true },
+          { "name": "email", "label": "ईमेल", "type": "email", "placeholder": "you@example.com", "required": true },
+          { "name": "phone", "label": "मोबाईल नंबर", "type": "tel", "placeholder": "+91 98765 43210" },
+          {
+            "name": "subject",
+            "label": "विषय",
+            "type": "select",
+            "options": [
+              "📝 सर्वसाधारण चौकशी",
+              "💡 सूचना / कल्पना",
+              "🐞 तक्रार",
+              "🙏 अभिप्राय / कौतुक",
+              "📢 जाहिरात विषयक",
+              "🤝 सहयोग",
+              "📚 लेख पाठवायचा आहे"
+            ],
+            "required": true
+          },
+          {
+            "name": "message",
+            "label": "तुमचा संदेश",
+            "type": "textarea",
+            "placeholder": "तुमचा संदेश थोडक्यात लिहा…",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "heading": "📞 थेट संपर्क",
+      "body": "फॉर्म भरायचा नसेल तर थेट संपर्क करा:\n\n📧 ईमेल: mazamaharashtramitra@gmail.com\n\n🌐 वेबसाइट: maharashtramitra.pages.dev\n\n📍 स्थान: महाराष्ट्र, भारत\n\n⏰ प्रतिसाद वेळ: सोमवार ते शनिवार, सकाळी १० ते सायंकाळी ६"
+    },
+    {
+      "heading": "📢 जाहिरात विषयक",
+      "body": "तुमच्या व्यवसायाची जाहिरात देण्यासाठी किंवा जाहिरात दरांबद्दल माहिती हवी असल्यास आमच्या जाहिरात पानाला भेट द्या किंवा mazamaharashtramitra@gmail.com वर ईमेल करा.\n\n➡️ जाहिरात पान: /advertise/"
+    },
+    {
+      "heading": "⚖️ तक्रार अधिकारी",
+      "body": "कोणतीही तक्रार असल्यास खालील ईमेलवर संपर्क करा. ७२ तासांत उत्तर देण्याचा प्रयत्न केला जाईल.\n\n📧 तक्रार ईमेल: mazamaharashtramitra@gmail.com"
+    },
+    {
+      "heading": "🌐 सोशल मीडिया",
+      "body": "आमच्याशी जोडलेले राहा:\n\n• 📱 WhatsApp: लवकरच येत आहे\n\n• 📷 Instagram: लवकरच येत आहे\n\n• ▶️ YouTube: लवकरच येत आहे\n\n• 📘 Facebook: लवकरच येत आहे\n\n(सोशल मीडिया खाती लवकरच सुरू होतील.)"
+    }
   ]
 }
