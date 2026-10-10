@@ -167,7 +167,7 @@ function renderAdBlock(ads, pageKey) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PAGE 1 — FULL IMAGE COVER (perfectly fitted)
+   PAGE 1 — FULL IMAGE COVER
    ═══════════════════════════════════════════════════════ */
 function renderCover(edition, date, totalPages) {
   const c = config.cover;
@@ -177,7 +177,7 @@ function renderCover(edition, date, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PAGE 2 — EDITION INFO (premium magazine intro)
+   PAGE 2 — EDITION INFO
    ═══════════════════════════════════════════════════════ */
 function renderEditionInfo(edition, date, totalPages, articles) {
   const c = config.cover;
@@ -314,12 +314,7 @@ function renderBack(edition, date, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   BUILD NEWSLETTER — orchestrates pages
-   Page 1 = Cover image
-   Page 2 = Edition info  ← NEW
-   Page 3 = Contents
-   Page 4+ = Articles
-   Last = Back cover
+   NEWSLETTER BUILDER
    ═══════════════════════════════════════════════════════ */
 function buildNewsletter(edition, date) {
   const ads = loadAds(edition);
@@ -379,7 +374,10 @@ function buildNewsletter(edition, date) {
     .replace(/{{PAGES_HTML}}/g, pages.join('\n'))
     .replace(/{{FOOTER_COLUMNS}}/g, footerColumns());
 }
-/* ─── Render legal sections (supports pricing + form + html types) ─── */
+
+/* ═══════════════════════════════════════════════════════
+   LEGAL PAGE SECTIONS (supports pricing + form + html)
+   ═══════════════════════════════════════════════════════ */
 function renderLegalSections(sections) {
   return (sections || []).map(s => {
     // ─── Type: pricing grid ───
@@ -461,14 +459,14 @@ function renderLegalSections(sections) {
     </section>`;
   }).join('');
 }
+
+/* ═══════════════════════════════════════════════════════
+   LEGAL PAGE
+   ═══════════════════════════════════════════════════════ */
 function buildLegalPage(page) {
   const tpl = fs.readFileSync(path.join(ROOT, 'src/templates/legal.html'), 'utf8');
   const defaultEdition = editions.find(e => e.slug === 'maharashtra') || editions[0];
-  const sections = (page.sections || []).map(s => `
-    <section style="margin-bottom:32px">
-      <h2 style="font:700 20px/1.5 var(--serif);margin:0 0 10px;color:var(--ink)">${esc(s.heading)}</h2>
-      <p style="margin:0;color:var(--ink-soft);font-size:14px;line-height:1.95;white-space:pre-line;text-align:justify">${esc(s.body)}</p>
-    </section>`).join('');
+  const sections = renderLegalSections(page.sections);
   return tpl
     .replace(/{{EDITION_NAME}}/g, esc(defaultEdition.name))
     .replace(/{{TAGLINE}}/g, esc(defaultEdition.tagline))
@@ -481,6 +479,9 @@ function buildLegalPage(page) {
     .replace(/{{FOOTER_COLUMNS}}/g, footerColumns());
 }
 
+/* ═══════════════════════════════════════════════════════
+   MAIN BUILD
+   ═══════════════════════════════════════════════════════ */
 const today = new Date().toISOString().slice(0, 10);
 
 let n = 0;
