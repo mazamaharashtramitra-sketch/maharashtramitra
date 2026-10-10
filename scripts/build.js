@@ -47,17 +47,14 @@ function loadOverrides(date, editionSlug) {
     }
   };
 
-  // 1. Edition-specific: data/overrides/<edition-slug>/<date>.json
   if (editionSlug) {
     const local = tryLoad(path.join(ROOT, 'data/overrides', editionSlug, `${date}.json`));
     if (local) return local;
   }
 
-  // 2. Global: data/overrides/<date>.json
   const global = tryLoad(path.join(ROOT, 'data/overrides', `${date}.json`));
   if (global) return global;
 
-  // 3. Legacy: data/overrides/_global/<date>.json
   const legacy = tryLoad(path.join(ROOT, 'data/overrides', '_global', `${date}.json`));
   if (legacy) return legacy;
 
@@ -183,29 +180,14 @@ function renderAdBlock(ads, pageKey) {
   </div>`;
 }
 
+/* =========================================
+   COVER — FULL PAGE IMAGE ONLY
+   (फक्त हे फंक्शन बदलले आहे)
+   ========================================= */
 function renderCover(edition, date, totalPages) {
   const c = config.cover;
   return `<article class="news-page cover-page" id="page-1">
-  <header class="cover-masthead">
-    <div class="cover-logo">
-      <div class="cover-emblem">म</div>
-      <div>
-        <div class="cover-name">${esc(edition.name)}</div>
-        <div class="cover-kicker">${esc(config.site.tagline)}</div>
-      </div>
-    </div>
-    <div class="issue-stamp">दैनिक अंक<strong>${esc(date)}</strong></div>
-  </header>
-  <div class="cover-content">
-    <span class="cover-label">${esc(c.label)}</span>
-    <h1 class="cover-title">आजचं वाचन,<br><span>आजच्या मनाने.</span></h1>
-    <p class="cover-description">${esc(config.site.tagline)}</p>
-    <div class="cover-bottom">
-      <div class="cover-highlights">${(c.highlights||[]).map(h => `<span>${esc(h)}</span>`).join('')}</div>
-      <div class="cover-issue-number">आजचा अंक<b>${toMr(totalPages)} पृष्ठे</b></div>
-    </div>
-  </div>
-  <style>.cover-page::before{background:linear-gradient(180deg,rgba(15,30,29,.08) 0%,rgba(15,30,29,.18) 25%,rgba(15,30,29,.92) 68%,#172b2a 100%),url("${esc(c.image)}") center 28%/cover no-repeat;}</style>
+  <img class="cover-full-image" src="${esc(c.image)}" alt="${esc(edition.name)}" loading="eager">
 </article>`;
 }
 
