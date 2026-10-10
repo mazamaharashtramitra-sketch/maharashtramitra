@@ -68,16 +68,16 @@ button{font:inherit}
 /* =========================================
    COVER PAGE CUSTOMIZATION
    ========================================= */
-.cover-page{min-height:1120px;padding:0;color:#fffdf4;border:0;background:#172b2a;position:relative;} /* position:relative added */
+.cover-page{min-height:1120px;padding:0;color:#fffdf4;border:0;background:#172b2a;position:relative;}
 .cover-page::before{content:"";position:absolute;inset:0;z-index:-2}
 .cover-page::after{content:"";position:absolute;inset:20px;z-index:-1;border:1px solid rgba(255,255,255,.24);pointer-events:none}
 
 /* Top Masthead (Now only contains the Date at top-right) */
 .cover-masthead{display:flex;justify-content:space-between;gap:18px;padding:50px 55px 0}
-.issue-stamp{text-align:right;color:rgba(255,253,244,.78);font-size:10px;line-height:1.8;letter-spacing:.08em;margin-left:auto;} /* Pushes date to right */
+.issue-stamp{text-align:right;color:rgba(255,253,244,.78);font-size:10px;line-height:1.8;letter-spacing:.08em;margin-left:auto;}
 .issue-stamp strong{display:block;color:var(--saffron);font-size:13px}
 
-/* --- NEW CENTER HERO TITLE (माझा मोशी मित्र) --- */
+/* --- CENTER HERO TITLE (माझा मोशी मित्र) --- */
 .cover-logo {
   position: absolute;
   top: 45%; /* Moves it to the vertical middle */
@@ -121,7 +121,7 @@ button{font:inherit}
   text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
 }
 
-/* Bottom Content (Contains the small title) */
+/* Bottom Content */
 .cover-content {
   display: flex;
   flex-direction: column;
@@ -137,15 +137,15 @@ button{font:inherit}
 /* --- SMALL REGULAR TITLE (आजचं वाचन, आजच्या मनाने) --- */
 .cover-title {
   max-width: 100%;
-  margin: 0 0 15px 0;
+  margin: 0 0 10px 0;
   font-family: var(--serif);
-  font-weight: 700;
-  font-size: clamp(24px, 3vw, 36px); /* Small and regular */
+  font-weight: 400; /* Regular weight (removed bold) */
+  font-size: clamp(20px, 2.5vw, 28px); /* Small regular text */
   line-height: 1.3;
   letter-spacing: 0;
   color: #ffdf9e;
-  -webkit-text-stroke: 0; /* Remove outline */
-  text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8); /* Soft shadow */
+  -webkit-text-stroke: 0;
+  text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
   transform: none;
 }
 .cover-title span {
@@ -154,8 +154,8 @@ button{font:inherit}
 
 .cover-description {
   color: #ffffff;
-  font-weight: 400; /* Regular */
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 15px;
   text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
   letter-spacing: 0.05em;
   max-width: 560px;
@@ -220,13 +220,14 @@ body.night .pull-quote{background:#27372e;color:#c7dfc8}
   .cover-content{padding:0 29px 33px}
   
   /* Adjustments for Mobile */
-  .cover-logo { top: 40%; } /* Moves it slightly up on mobile */
+  .cover-logo { top: 40%; }
   .cover-emblem { width: 60px; height: 60px; font-size: 30px; margin-bottom: 15px; }
   .cover-name { font-size: clamp(35px, 10vw, 55px); }
   .cover-kicker { font-size: 14px; letter-spacing: 0.1em; }
   
-  .cover-title { font-size: clamp(20px, 6vw, 28px); }
-  .cover-description { font-size: 14px; }
+  /* Mobile: Even smaller regular text for bottom title */
+  .cover-title { font-size: clamp(16px, 4.5vw, 22px); font-weight: 400; }
+  .cover-description { font-size: 13px; }
   
   .cover-bottom{grid-template-columns:1fr}
   .page-title{font-size:clamp(30px,8vw,42px)}
