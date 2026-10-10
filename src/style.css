@@ -66,23 +66,57 @@ button{font:inherit}
 .folio::before{content:"";width:24px;height:1px;background:var(--saffron)}
 
 /* =========================================
-   COVER PAGE CUSTOMIZATION
+   LIGHT THEME COVER PAGE WITH AD STRIPES
    ========================================= */
-.cover-page{min-height:1120px;padding:0;color:#fffdf4;border:0;background:#172b2a;position:relative;}
-.cover-page::before{content:"";position:absolute;inset:0;z-index:-2}
-.cover-page::after{content:"";position:absolute;inset:20px;z-index:-1;border:1px solid rgba(255,255,255,.24);pointer-events:none}
+.cover-page {
+  position: relative;
+  background: #fffdf8; /* पांढरा/फिकट बॅकग्राउंड */
+  color: #172b2a; /* गडद मजकूर */
+  border: 1px solid #e6e1d6;
+  display: flex;
+  flex-direction: column;
+  min-height: 1120px;
+  padding: 0;
+}
+.cover-page::before, .cover-page::after { display: none; } /* जुने डार्क ओव्हरले हटवले */
 
-/* Top Masthead (Now only contains the Date at top-right) */
-.cover-masthead{display:flex;justify-content:space-between;gap:18px;padding:50px 55px 0}
-.issue-stamp{text-align:right;color:rgba(255,253,244,.78);font-size:10px;line-height:1.8;letter-spacing:.08em;margin-left:auto;}
-.issue-stamp strong{display:block;color:var(--saffron);font-size:13px}
+/* जाहिरातींसाठी वरची आणि खालची पट्टी */
+.cover-ad-top, .cover-ad-bottom {
+  width: 100%;
+  background: #f9f9f9; /* अगदी फिकट राखाडी रंग */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaaaaa;
+  font-family: var(--sans);
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.cover-ad-top {
+  min-height: 120px;
+  border-bottom: 2px dashed #cccccc;
+}
+.cover-ad-bottom {
+  min-height: 160px;
+  border-top: 2px dashed #cccccc;
+  margin-top: auto; /* खाली ठेवण्यासाठी */
+}
 
-/* --- CENTER HERO TITLE (माझा मोशी मित्र) --- */
+/* वरचा भाग (तारीख) */
+.cover-masthead {
+  padding: 30px 50px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* मध्यभागी मोठे शीर्षक */
 .cover-logo {
   position: absolute;
-  top: 45%; /* Moves it to the vertical middle */
+  top: 45%; /* मध्यभागी */
   left: 50%;
-  transform: translate(-50%, -50%); /* Centers it perfectly */
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -93,82 +127,77 @@ button{font:inherit}
 .cover-emblem {
   display: grid; place-items: center;
   width: 80px; height: 80px;
-  border: 2px solid rgba(255,255,255,.8);
+  border: 2px solid #315e50;
   border-radius: 50%;
   font: 800 45px/1 var(--serif);
-  color: var(--saffron);
+  color: #b8751f;
   margin-bottom: 20px;
 }
 .cover-name {
-  font: 900 clamp(50px, 7vw, 90px)/1.1 var(--serif); /* Very Big */
+  font: 900 clamp(50px, 7vw, 90px)/1.1 var(--serif);
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  
-  /* White to Light Yellow Gradient */
-  background: linear-gradient(180deg, #ffffff 20%, #ffebb3 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  
-  filter: drop-shadow(0px 5px 15px rgba(0, 0, 0, 0.9));
+  color: #172b2a;
+  background: none;
+  -webkit-text-fill-color: #172b2a;
+  filter: none;
   margin-bottom: 10px;
 }
 .cover-kicker {
-  color: #ffebb3; /* Light Yellow */
-  font-size: clamp(18px, 2.5vw, 26px); /* Medium Big */
+  color: #40514d;
+  font-size: clamp(18px, 2.5vw, 26px);
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
 }
 
-/* Bottom Content */
+/* खालचा भाग (लहान शीर्षक) */
 .cover-content {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   flex: 1;
-  padding: 0 65px 63px;
-  margin-top: auto; /* Ensures it stays at the bottom */
+  padding: 0 65px 40px;
   position: relative;
   z-index: 5;
 }
-.cover-label{display:inline-flex;align-self:flex-start;margin-bottom:18px;padding:7px 12px;border:1px solid rgba(229,163,59,.7);border-radius:99px;color:#ffcf7a;font-size:10px;font-weight:800;letter-spacing:.12em}
-
-/* --- SMALL REGULAR TITLE (आजचं वाचन, आजच्या मनाने) --- */
+.cover-label {
+  display: inline-flex; align-self: flex-start;
+  margin-bottom: 18px; padding: 7px 12px;
+  border: 1px solid #e5a33b; border-radius: 99px;
+  color: #b8751f; font-size: 10px; font-weight: 800; letter-spacing: .12em;
+  background: #fffdf8;
+}
 .cover-title {
   max-width: 100%;
   margin: 0 0 10px 0;
   font-family: var(--serif);
-  font-weight: 400; /* Regular weight (removed bold) */
-  font-size: clamp(20px, 2.5vw, 28px); /* Small regular text */
+  font-weight: 400;
+  font-size: clamp(20px, 2.5vw, 28px);
   line-height: 1.3;
   letter-spacing: 0;
-  color: #ffdf9e;
+  color: #172b2a;
   -webkit-text-stroke: 0;
-  text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
+  text-shadow: none;
   transform: none;
 }
-.cover-title span {
-  color: #ffffff;
-}
-
+.cover-title span { color: #315e50; }
 .cover-description {
-  color: #ffffff;
+  color: #40514d;
   font-weight: 400;
   font-size: 15px;
-  text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
+  text-shadow: none;
   letter-spacing: 0.05em;
   max-width: 560px;
   margin: 0 0 28px 0;
   line-height: 1.8;
-  opacity: 0.9;
 }
 
-.cover-bottom{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;padding-top:22px;border-top:1px solid rgba(255,255,255,.24)}
+.cover-bottom{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;padding-top:22px;border-top:1px solid #e6e1d6}
 .cover-highlights{display:flex;flex-wrap:wrap;gap:9px}
-.cover-highlights span{padding:7px 11px;border:1px solid rgba(255,255,255,.22);border-radius:99px;color:rgba(255,253,244,.9);font-size:10px}
-.cover-issue-number{color:rgba(255,253,244,.78);text-align:right;font-size:11px;line-height:1.8}
-.cover-issue-number b{display:block;color:#f3c66e;font-size:22px}
+.cover-highlights span{padding:7px 11px;border:1px solid #dcd6c8;border-radius:99px;color:#40514d;font-size:10px}
+.cover-issue-number{color:#40514d;text-align:right;font-size:11px;line-height:1.8}
+.cover-issue-number b{display:block;color:#b8751f;font-size:22px}
 
 /* Contents */
 .contents-list{margin:30px 0 0;padding:0;list-style:none}
@@ -219,13 +248,14 @@ body.night .pull-quote{background:#27372e;color:#c7dfc8}
   .cover-masthead{padding:31px 29px 0}
   .cover-content{padding:0 29px 33px}
   
-  /* Adjustments for Mobile */
+  .cover-ad-top { min-height: 80px; }
+  .cover-ad-bottom { min-height: 100px; }
+  
   .cover-logo { top: 40%; }
   .cover-emblem { width: 60px; height: 60px; font-size: 30px; margin-bottom: 15px; }
   .cover-name { font-size: clamp(35px, 10vw, 55px); }
   .cover-kicker { font-size: 14px; letter-spacing: 0.1em; }
   
-  /* Mobile: Even smaller regular text for bottom title */
   .cover-title { font-size: clamp(16px, 4.5vw, 22px); font-weight: 400; }
   .cover-description { font-size: 13px; }
   
