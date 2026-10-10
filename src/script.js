@@ -1,5 +1,33 @@
 (() => {
   'use strict';
+/* ─── Remember last edition ─── */
+(function () {
+  const LEGAL = ['about', 'advertise', 'contact', 'grievance', 'privacy', 'terms'];
+  const parts = location.pathname.split('/').filter(Boolean);
+  const currentSlug = parts[0] || '';
+
+  // Save edition when visiting an edition page (not a legal page, not root)
+  if (currentSlug && !LEGAL.includes(currentSlug)) {
+    try { localStorage.setItem('mazamitra_edition', currentSlug); } catch (e) {}
+  }
+
+  // Rewrite "आजचा अंक" link to point to last-visited edition
+  const saved = (() => {
+    try { return localStorage.getItem('mazamitra_edition'); } catch (e) { return null; }
+  })();
+
+  if (saved) {
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href="/"], a[href="./"]').forEach(a => {
+        // Skip brand logo if it points to "/"
+        // Actually — rewrite all of them to /<saved>/
+        a.setAttribute('href', '/' + saved + '/');
+      });
+    });
+  }
+})();
+
+  
   const body = document.body;
   const progressFill = document.getElementById('progressFill');
   const pageStatus = document.getElementById('pageStatus');
