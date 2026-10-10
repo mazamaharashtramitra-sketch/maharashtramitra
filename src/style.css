@@ -78,30 +78,44 @@ button{font:inherit}
 .cover-content{display:flex;flex-direction:column;justify-content:flex-end;flex:1;padding:0 65px 63px}
 .cover-label{display:inline-flex;align-self:flex-start;margin-bottom:18px;padding:7px 12px;border:1px solid rgba(229,163,59,.7);border-radius:99px;color:#ffcf7a;font-size:10px;font-weight:800;letter-spacing:.12em}
 
-/* --- 3D MAGAZINE TITLE EFFECT --- */
-.cover-name, .cover-title {
+/* --- 3D MAGAZINE TITLE EFFECT (Only for the big center title) --- */
+.cover-title {
+  max-width: 850px;
+  margin: 10px 0 20px 0;
   font-family: var(--serif);
   font-weight: 900;
+  font-size: clamp(55px, 8vw, 105px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: #ff9a00; /* Vibrant Orange */
   text-transform: uppercase;
-  letter-spacing: 0.02em;
   
-  /* 1. The Thick White Outline */
+  /* The Thick White Outline */
   -webkit-text-stroke: 5px #ffffff;
-  paint-order: stroke fill; /* Keeps the inside of the text colorful */
+  paint-order: stroke fill;
   
-  /* 2. The 3D Depth and Glow */
+  /* The 3D Depth and Glow */
   text-shadow: 
-    0px 4px 0px #cc7a00,  /* Light 3D edge */
-    0px 8px 0px #b34b00,  /* Mid 3D edge */
-    0px 12px 0px #6b2d00, /* Dark 3D edge */
-    0px 20px 30px rgba(0, 0, 0, 0.9); /* Deep drop shadow */
+    0px 4px 0px #cc7a00,
+    0px 8px 0px #b34b00,
+    0px 12px 0px #6b2d00,
+    0px 20px 30px rgba(0, 0, 0, 0.9);
     
-  transform: scale(1.05); /* Makes it slightly bigger */
+  transform: scale(1.02);
   display: inline-block;
-  margin: 10px 0 20px 0;
 }
-.cover-title span{color:#ffdf9e;} /* Slight color shift for secondary title text */
+.cover-title span {
+  color: #ffdf9e; /* Slight color shift for secondary title text */
+}
+
+/* --- Clean Masthead Title (Top Left) --- */
+.cover-name {
+  font: 900 32px/1.2 var(--serif);
+  letter-spacing: 0.02em;
+  color: #f3c66e; /* Premium Gold */
+  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
+}
 
 /* Bold subtitle to match the 3D title */
 .cover-description {
@@ -172,7 +186,7 @@ body.night .pull-quote{background:#27372e;color:#c7dfc8}
   
   /* Adjusted 3D text for mobile so it doesn't overflow */
   .cover-title{font-size:clamp(35px,10vw,55px); -webkit-text-stroke: 3px #ffffff;}
-  .cover-name{font-size: 30px; -webkit-text-stroke: 3px #ffffff;}
+  .cover-name{font-size: 26px;}
   .cover-description{font-size: 16px;}
   
   .cover-bottom{grid-template-columns:1fr}
