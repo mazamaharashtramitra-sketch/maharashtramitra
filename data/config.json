@@ -7,7 +7,7 @@
   },
 
   "newsletter": {
-    "totalPages": 11,
+    "totalPages": 12,
     "wordsPerPage": 450,
     "theme": "classic"
   },
@@ -19,18 +19,17 @@
   },
 
   "pages": [
-    { "page": 1, "type": "cover" },
-    { "page": 2, "type": "contents" },
-    { "page": 3, "type": "article", "category": "featured" },
-    { "page": 4, "type": "article", "category": "sanskruti" },
-    { "page": 5, "type": "article", "category": "bhatkanti" },
-    { "page": 6, "type": "article", "category": "arogya" },
-    { "page": 7, "type": "article", "category": "shiksha" },
-    { "page": 8, "type": "article", "category": "vyavsay" },
-    { "page": 9, "type": "article", "category": "sahitya" },
-{ "page": 10, "type": "article", "category": "katha" },
+    { "page": 1,  "type": "cover" },
+    { "page": 2,  "type": "contents" },
+    { "page": 3,  "type": "article", "category": "featured" },
+    { "page": 4,  "type": "article", "category": "sanskruti" },
+    { "page": 5,  "type": "article", "category": "bhatkanti" },
+    { "page": 6,  "type": "article", "category": "arogya" },
+    { "page": 7,  "type": "article", "category": "shiksha" },
+    { "page": 8,  "type": "article", "category": "vyavsay" },
+    { "page": 9,  "type": "article", "category": "sahitya" },
+    { "page": 10, "type": "article", "category": "katha" },
     { "page": 11, "type": "article", "category": "manoranjan" },
-
     { "page": 12, "type": "back-cover" }
   ],
 
@@ -44,8 +43,8 @@
       "page7":  ["galli"],
       "page8":  ["shahar"],
       "page9":  ["galli"],
-      "page10": ["galli"]
-        "page11": ["galli"]
+      "page10": ["galli"],
+      "page11": ["galli"]
     }
   },
 
