@@ -302,8 +302,8 @@ function buildLegalPage(page) {
   const sections = (page.sections || []).map(s => `
     <section style="margin-bottom:32px">
       <h2 style="font:700 20px/1.5 var(--serif);margin:0 0 10px;color:var(--ink)">${esc(s.heading)}</h2>
-      <p style="margin:0;color:var(--ink-soft);font-size:14px;line-height:1.95;white-space:pre-line">${esc(s.body)}</p>
-    </section>`).join('');
+<p style="margin:0;color:var(--ink-soft);font-size:14px;line-height:1.95;white-space:pre-line;text-align:justify">${esc(s.body)}</p>
+</section>`).join('');
 
   return tpl
     .replace(/{{EDITION_NAME}}/g, esc(defaultEdition.name))
