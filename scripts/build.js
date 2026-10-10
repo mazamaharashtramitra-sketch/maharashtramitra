@@ -15,12 +15,70 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const esc = (s='') => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'[+d]);
+
+/* ═══════════════════════════════════════════════════════
+   WEEKLY DATE HELPERS
+   ───────────────────────────────────────────────────────
+   आठवडा रविवार ते शनिवार असतो.
+   हा आठवडा म्हणजे शेवटचा रविवार (आज रविवारी असल्यास आजच).
+   ═══════════════════════════════════════════════════════ */
+function getWeekStart(d) {
+  const date = new Date(d);
+  date.setHours(0, 0, 0, 0);
+  const day = date.getDay();          // 0 = रविवार
+  const diff = date.getDate() - day;  // मागे रविवारी जा
+  const sunday = new Date(date);
+  sunday.setDate(diff);
+  return sunday;
+}
+
+function getWeekEnd(d) {
+  const start = getWeekStart(d);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);   // शनिवार
+  return end;
+}
+
+function toIsoDate(d) {
+  const date = new Date(d);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+const MONTHS_MR = ['जानेवारी','फेब्रुवारी','मार्च','एप्रिल','मे','जून','जुलै','ऑगस्ट','सप्टेंबर','ऑक्टोबर','नोव्हेंबर','डिसेंबर'];
+
 const toMrDate = (iso) => {
-  const months = ['जानेवारी','फेब्रुवारी','मार्च','एप्रिल','मे','जून','जुलै','ऑगस्ट','सप्टेंबर','ऑक्टोबर','नोव्हेंबर','डिसेंबर'];
   const [y, m, d] = iso.split('-');
   if (!y || !m || !d) return iso;
-  return `${toMr(+d)} ${months[+m - 1]} ${toMr(y)}`;
+  return `${toMr(+d)} ${MONTHS_MR[+m - 1]} ${toMr(y)}`;
 };
+
+const toMrWeekRange = (startIso, endIso) => {
+  const [sy, sm, sd] = startIso.split('-');
+  const [ey, em, ed] = endIso.split('-');
+  if (!sy || !sm || !sd || !ey || !em || !ed) return startIso;
+
+  // Same month
+  if (sm === em) {
+    return `${toMr(+sd)} ते ${toMr(+ed)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)}`;
+  }
+  // Different months, same year
+  if (sy === ey) {
+    return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(sy)}`;
+  }
+  // Different years
+  return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(ey)}`;
+};
+
+/* ─── THE WEEK (seed & display dates) ─── */
+const now = new Date();
+const weekStart = getWeekStart(now);          // रविवार
+const weekEnd = getWeekEnd(now);              // शनिवार
+const WEEK_START_ISO = toIsoDate(weekStart);  // seed साठी
+const WEEK_END_ISO = toIsoDate(weekEnd);
+const WEEK_RANGE_MR = toMrWeekRange(WEEK_START_ISO, WEEK_END_ISO);
 
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
@@ -54,7 +112,7 @@ function loadOverrides(date, editionSlug) {
       || {};
 }
 
-/* ─── Pick one article ─── */
+/* ─── Pick one article (seed = week start date) ─── */
 function pickArticle(category, editionSlug, date, overrides) {
   const pool = loadArticles(category, editionSlug);
   const overrideSlug = overrides[category];
@@ -169,7 +227,7 @@ function renderAdBlock(ads, pageKey) {
 /* ═══════════════════════════════════════════════════════
    PAGE 1 — FULL IMAGE COVER
    ═══════════════════════════════════════════════════════ */
-function renderCover(edition, date, totalPages) {
+function renderCover(edition, totalPages) {
   const c = config.cover;
   return `<article class="news-page cover-page" id="page-1" aria-label="पृष्ठ १ — मुखपृष्ठ">
   <img class="cover-full-image" src="${esc(c.image)}" alt="${esc(edition.name)}" loading="eager">
@@ -177,9 +235,9 @@ function renderCover(edition, date, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PAGE 2 — EDITION INFO
+   PAGE 2 — EDITION INFO (Weekly range)
    ═══════════════════════════════════════════════════════ */
-function renderEditionInfo(edition, date, totalPages, articles) {
+function renderEditionInfo(edition, totalPages, articles) {
   const c = config.cover;
   const tags = (c.highlights || []).map(h => `<span>${esc(h)}</span>`).join('');
   const previewList = articles.slice(0, 6).map((a, i) => `
@@ -198,12 +256,12 @@ function renderEditionInfo(edition, date, totalPages, articles) {
         <div class="ed-kicker">${esc(edition.tagline || config.site.tagline)}</div>
       </div>
     </div>
-    <div class="ed-issue-stamp">दैनिक अंक<strong>${esc(toMrDate(date))}</strong></div>
+    <div class="ed-issue-stamp">साप्ताहिक अंक<strong>${esc(WEEK_RANGE_MR)}</strong></div>
   </header>
 
   <div class="ed-hero">
     <span class="ed-label">${esc(c.label)}</span>
-    <h1 class="ed-title-main">आजचं वाचन,<br><span>आजच्या मनाने.</span></h1>
+    <h1 class="ed-title-main">या आठवड्याचं वाचन,<br><span>मनापासून.</span></h1>
     <p class="ed-desc">${esc(edition.tagline || config.site.tagline)}</p>
     <div class="ed-tags">${tags}</div>
   </div>
@@ -215,9 +273,9 @@ function renderEditionInfo(edition, date, totalPages, articles) {
       <small>${esc(edition.region || 'महाराष्ट्र, भारत')}</small>
     </div>
     <div class="meta-block">
-      <span class="meta-label">दिनांक</span>
-      <strong>${esc(toMrDate(date))}</strong>
-      <small>दैनिक अंक</small>
+      <span class="meta-label">आठवडा</span>
+      <strong>${esc(WEEK_RANGE_MR)}</strong>
+      <small>साप्ताहिक अंक</small>
     </div>
     <div class="meta-block">
       <span class="meta-label">एकूण पृष्ठे</span>
@@ -227,13 +285,13 @@ function renderEditionInfo(edition, date, totalPages, articles) {
   </div>
 
   <div class="ed-preview">
-    <div class="ed-rule">आजच्या अंकात</div>
+    <div class="ed-rule">या आठवड्याच्या अंकात</div>
     <ol class="ed-list">${previewList}</ol>
   </div>
 
   <div class="ed-note">
     <span class="ed-note-label">संपादकाचं मनोगत</span>
-    <p>प्रिय वाचकहो, हा अंक तुमच्या दिवसातला छोटा विराम घेऊन आला आहे. प्रत्येक पानावर एक नवा विषय, एक नवा दृष्टिकोन आणि थोडं थांबून विचार करण्याची संधी. वाचत राहा, जोडलेले राहा.</p>
+    <p>प्रिय वाचकहो, हा साप्ताहिक अंक तुमच्या आठवड्यातला छोटा विराम घेऊन आला आहे. प्रत्येक पानावर एक नवा विषय, एक नवा दृष्टिकोन आणि थोडं थांबून विचार करण्याची संधी. वाचत राहा, जोडलेले राहा.</p>
   </div>
 
   <footer class="page-footer"><strong>${esc(edition.name)}</strong><span class="folio">०२ / ${toMr(totalPages)}</span></footer>
@@ -243,7 +301,7 @@ function renderEditionInfo(edition, date, totalPages, articles) {
 /* ═══════════════════════════════════════════════════════
    PAGE 3 — CONTENTS
    ═══════════════════════════════════════════════════════ */
-function renderContents(articles, date, totalPages) {
+function renderContents(articles, totalPages) {
   const list = articles.map(a => `
     <li><a href="#page-${a.startPage}">
       <span class="contents-number">${toMr(a.startPage).padStart(2, '०')}</span>
@@ -253,11 +311,11 @@ function renderContents(articles, date, totalPages) {
 
   return `<article class="news-page" id="page-3" aria-label="पृष्ठ ३ — अनुक्रमणिका">
   <div class="page-topline"><span>${esc(config.site.name)}</span><span>अनुक्रमणिका</span></div>
-  <div class="eyebrow">या अंकात काय आहे?</div>
+  <div class="eyebrow">या आठवड्यात काय आहे?</div>
   <h2 class="page-title">विचारांची एक सुंदर<br><span class="accent">वाचनयात्रा.</span></h2>
   <p class="page-subtitle">${esc(config.site.tagline)}</p>
   <ol class="contents-list">${list}</ol>
-  <footer class="page-footer"><strong>${esc(toMrDate(date))}</strong><span class="folio">०३ / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(WEEK_RANGE_MR)}</strong><span class="folio">०३ / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
@@ -302,27 +360,33 @@ function renderArticle(a, n, part, totalParts, totalPages, ads) {
 /* ═══════════════════════════════════════════════════════
    BACK COVER
    ═══════════════════════════════════════════════════════ */
-function renderBack(edition, date, totalPages) {
+function renderBack(edition, totalPages) {
   return `<article class="news-page closing-page" id="page-${totalPages}">
-  <div class="page-topline"><span>समारोप</span><span>पुढील अंकाकडे</span></div>
+  <div class="page-topline"><span>समारोप</span><span>पुढील आठवड्याकडे</span></div>
   <div class="eyebrow">धन्यवाद</div>
   <h2 class="page-title">वाचत राहा,<br><span style="color:#f3c66e">जोडलेले राहा.</span></h2>
   <p class="page-subtitle">${esc(edition.name)} — ${esc(config.site.tagline)}</p>
   <div class="closing-signature"><div class="big-mark">म</div><p>मराठी वाचूया. मराठीत जोडलेले राहूया.</p></div>
-  <footer class="page-footer"><strong>${esc(edition.name)} · ${esc(toMrDate(date))}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(edition.name)} · ${esc(WEEK_RANGE_MR)}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
 /* ═══════════════════════════════════════════════════════
    NEWSLETTER BUILDER
+   Page 1 = Cover
+   Page 2 = Edition info (weekly range)
+   Page 3 = Contents
+   Page 4+ = Articles
+   Last = Back cover
    ═══════════════════════════════════════════════════════ */
-function buildNewsletter(edition, date) {
+function buildNewsletter(edition) {
   const ads = loadAds(edition);
-  const overrides = loadOverrides(date, edition.slug);
+  const overrides = loadOverrides(WEEK_START_ISO, edition.slug);
   const articlePages = config.pages.filter(p => p.type === 'article');
 
+  // Article picking uses WEEK_START_ISO as seed → same week = same content
   const articles = articlePages.map(p => {
-    const art = pickArticle(p.category, edition.slug, date, overrides);
+    const art = pickArticle(p.category, edition.slug, WEEK_START_ISO, overrides);
     return {
       title: art.title,
       category: art.category,
@@ -338,7 +402,6 @@ function buildNewsletter(edition, date) {
 
   articles.forEach(a => a.totalParts = a.parts.length);
 
-  // Articles start at page 4 (1=cover, 2=edition-info, 3=contents)
   let cursor = 4;
   articles.forEach(a => {
     a.startPage = cursor;
@@ -348,9 +411,9 @@ function buildNewsletter(edition, date) {
   const totalPages = cursor;
 
   const pages = [
-    renderCover(edition, date, totalPages),
-    renderEditionInfo(edition, date, totalPages, articles),
-    renderContents(articles, date, totalPages)
+    renderCover(edition, totalPages),
+    renderEditionInfo(edition, totalPages, articles),
+    renderContents(articles, totalPages)
   ];
 
   for (const a of articles) {
@@ -360,7 +423,7 @@ function buildNewsletter(edition, date) {
     }
   }
 
-  pages.push(renderBack(edition, date, totalPages));
+  pages.push(renderBack(edition, totalPages));
 
   const tpl = fs.readFileSync(path.join(ROOT, 'src/templates/newsletter.html'), 'utf8');
 
@@ -370,17 +433,16 @@ function buildNewsletter(edition, date) {
     .replace(/{{PAGE_TITLE}}/g, esc(edition.name + ' · ' + config.site.tagline))
     .replace(/{{META_DESCRIPTION}}/g, esc(edition.tagline))
     .replace(/{{YEAR}}/g, esc(new Date().getFullYear()))
-    .replace(/{{ISSUE_DATE}}/g, esc(date))
+    .replace(/{{ISSUE_DATE}}/g, esc(WEEK_RANGE_MR))
     .replace(/{{PAGES_HTML}}/g, pages.join('\n'))
     .replace(/{{FOOTER_COLUMNS}}/g, footerColumns());
 }
 
 /* ═══════════════════════════════════════════════════════
-   LEGAL PAGE SECTIONS (supports pricing + form + html)
+   LEGAL PAGE SECTIONS
    ═══════════════════════════════════════════════════════ */
 function renderLegalSections(sections) {
   return (sections || []).map(s => {
-    // ─── Type: pricing grid ───
     if (s.type === 'pricing') {
       const cards = (s.cards || []).map(c => `
         <div class="pricing-card${c.featured ? ' featured' : ''}">
@@ -406,7 +468,6 @@ function renderLegalSections(sections) {
       </section>`;
     }
 
-    // ─── Type: contact form (FormSubmit.co) ───
     if (s.type === 'form') {
       const f = s.form || {};
       const fields = (f.fields || []).map(fld => {
@@ -436,7 +497,7 @@ function renderLegalSections(sections) {
         ${s.heading ? `<h2 class="legal-heading">${esc(s.heading)}</h2>` : ''}
         ${s.body ? `<p class="legal-body">${esc(s.body)}</p>` : ''}
         <form action="${esc(f.action || 'https://formsubmit.co/mazamaharashtramitra@gmail.com')}" method="POST" class="lead-form">
-          <input type="hidden" name="_subject" value="${esc(f.subject || 'New Advertise Enquiry — माझा मित्र')}">
+          <input type="hidden" name="_subject" value="${esc(f.subject || 'New Enquiry — माझा मित्र')}">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_next" value="https://maharashtramitra.pages.dev/thank-you/">
@@ -447,12 +508,10 @@ function renderLegalSections(sections) {
       </section>`;
     }
 
-    // ─── Type: raw HTML (advanced) ───
     if (s.type === 'html') {
       return `<section class="legal-section">${s.html || ''}</section>`;
     }
 
-    // ─── Default: heading + body ───
     return `<section class="legal-section">
       ${s.heading ? `<h2 class="legal-heading">${esc(s.heading)}</h2>` : ''}
       ${s.body ? `<p class="legal-body">${esc(s.body)}</p>` : ''}
@@ -482,11 +541,9 @@ function buildLegalPage(page) {
 /* ═══════════════════════════════════════════════════════
    MAIN BUILD
    ═══════════════════════════════════════════════════════ */
-const today = new Date().toISOString().slice(0, 10);
-
 let n = 0;
 for (const ed of editions) {
-  const html = buildNewsletter(ed, today);
+  const html = buildNewsletter(ed);
   const dir = ed.slug === 'maharashtra' ? OUT : path.join(OUT, ed.slug);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), html);
@@ -510,4 +567,4 @@ fs.mkdirSync(path.join(OUT, '_assets'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'src/style.css'), path.join(OUT, '_assets/style.css'));
 fs.copyFileSync(path.join(ROOT, 'src/script.js'), path.join(OUT, '_assets/script.js'));
 
-console.log(`✅ Built ${n} editions + ${legalCount} legal pages for ${today}`);
+console.log(`✅ Built ${n} editions + ${legalCount} legal pages — Week: ${WEEK_RANGE_MR}`);
