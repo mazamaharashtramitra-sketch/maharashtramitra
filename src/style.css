@@ -72,15 +72,49 @@ button{font:inherit}
 .cover-masthead{display:flex;justify-content:space-between;gap:18px;padding:50px 55px 0}
 .cover-logo{display:flex;align-items:center;gap:13px}
 .cover-emblem{display:grid;place-items:center;width:53px;height:53px;border:1px solid rgba(255,255,255,.7);border-radius:50%;font:800 29px/1 var(--serif);color:var(--saffron)}
-.cover-name{font:800 27px/1.3 var(--serif);letter-spacing:-.02em}
 .cover-kicker{margin-top:3px;color:rgba(255,253,244,.78);font-size:10px;letter-spacing:.17em}
 .issue-stamp{text-align:right;color:rgba(255,253,244,.78);font-size:10px;line-height:1.8;letter-spacing:.08em}
 .issue-stamp strong{display:block;color:var(--saffron);font-size:13px}
 .cover-content{display:flex;flex-direction:column;justify-content:flex-end;flex:1;padding:0 65px 63px}
 .cover-label{display:inline-flex;align-self:flex-start;margin-bottom:18px;padding:7px 12px;border:1px solid rgba(229,163,59,.7);border-radius:99px;color:#ffcf7a;font-size:10px;font-weight:800;letter-spacing:.12em}
-.cover-title{max-width:720px;margin:0;font:800 clamp(45px,7vw,80px)/1.15 var(--serif);letter-spacing:-.055em}
-.cover-title span{color:#f3c66e}
-.cover-description{max-width:560px;margin:23px 0 28px;color:rgba(255,253,244,.83);font-size:16px;line-height:2}
+
+/* --- 3D MAGAZINE TITLE EFFECT --- */
+.cover-name, .cover-title {
+  font-family: var(--serif);
+  font-weight: 900;
+  color: #ff9a00; /* Vibrant Orange */
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  
+  /* 1. The Thick White Outline */
+  -webkit-text-stroke: 5px #ffffff;
+  paint-order: stroke fill; /* Keeps the inside of the text colorful */
+  
+  /* 2. The 3D Depth and Glow */
+  text-shadow: 
+    0px 4px 0px #cc7a00,  /* Light 3D edge */
+    0px 8px 0px #b34b00,  /* Mid 3D edge */
+    0px 12px 0px #6b2d00, /* Dark 3D edge */
+    0px 20px 30px rgba(0, 0, 0, 0.9); /* Deep drop shadow */
+    
+  transform: scale(1.05); /* Makes it slightly bigger */
+  display: inline-block;
+  margin: 10px 0 20px 0;
+}
+.cover-title span{color:#ffdf9e;} /* Slight color shift for secondary title text */
+
+/* Bold subtitle to match the 3D title */
+.cover-description {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 20px;
+  text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.05em;
+  max-width: 560px;
+  margin: 23px 0 28px;
+  line-height: 1.8;
+}
+
 .cover-bottom{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:end;padding-top:22px;border-top:1px solid rgba(255,255,255,.24)}
 .cover-highlights{display:flex;flex-wrap:wrap;gap:9px}
 .cover-highlights span{padding:7px 11px;border:1px solid rgba(255,255,255,.22);border-radius:99px;color:rgba(255,253,244,.9);font-size:10px}
@@ -135,7 +169,12 @@ body.night .pull-quote{background:#27372e;color:#c7dfc8}
   .cover-page{min-height:min(820px,calc(100svh - 95px))}
   .cover-masthead{padding:31px 29px 0}
   .cover-content{padding:0 29px 33px}
-  .cover-title{font-size:clamp(39px,11vw,60px)}
+  
+  /* Adjusted 3D text for mobile so it doesn't overflow */
+  .cover-title{font-size:clamp(35px,10vw,55px); -webkit-text-stroke: 3px #ffffff;}
+  .cover-name{font-size: 30px; -webkit-text-stroke: 3px #ffffff;}
+  .cover-description{font-size: 16px;}
+  
   .cover-bottom{grid-template-columns:1fr}
   .page-title{font-size:clamp(30px,8vw,42px)}
   .footer-grid{grid-template-columns:1fr}
