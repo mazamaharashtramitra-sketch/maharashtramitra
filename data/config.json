@@ -7,7 +7,7 @@
   },
 
   "newsletter": {
-    "totalPages": 10,
+    "totalPages": 11,
     "wordsPerPage": 450,
     "theme": "classic"
   },
@@ -28,7 +28,7 @@
     { "page": 7, "type": "article", "category": "shiksha" },
     { "page": 8, "type": "article", "category": "vyavsay" },
     { "page": 9, "type": "article", "category": "sahitya" },
-    { "page": 10, "category": "katha" },
+{ "page": 10, "type": "article", "category": "katha" },
     { "page": 11, "type": "back-cover" }
   ],
 
