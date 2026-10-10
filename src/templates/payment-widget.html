@@ -1,0 +1,392 @@
+<div id="mm-secure-pay-2026"></div>
+
+<script>
+(() => {
+  const mount = document.getElementById('mm-secure-pay-2026');
+  if (!mount || mount.shadowRoot) return;
+
+  const shadow = mount.attachShadow({ mode: 'open' });
+
+  const DATA = {
+    name: "Sachin Ambekar",
+    role: "Authorised Payment Collection Partner",
+    brand: "माझा मित्र",
+    brandKicker: "तुमच्या दिवसातला छोटा विराम",
+    upi: "BHARATPE09B9S1M8C3G33183@yesbankltd",
+    qr: "https://blogger.googleusercontent.com/img/a/AVvXsEgDcwNxrSfRxZ0rySQ8BjSGYfMyMGVRDJuTH2wkWoK9Q7Pmy0rKnTc0EMnstFW3-oUJHTOF_vn2oY7VXCfcXS_lUZywyejaq1SJwqXPT2sS_xyES8RakvAYvdAe78xwja8IjzYiS4guVRKVnU40fsijJAWTHz1xqmVhexuYnDAZfsVG5ShV3hpXee98eUY=s1600"
+  };
+
+  const ICONS = {
+    shield: `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    check: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`,
+    copy: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+    download: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+    close: `<svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+    bolt: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    lock: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+    user: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>`
+  };
+
+  shadow.innerHTML = `
+    <style>
+      :host {
+        all: initial;
+        display: block;
+        contain: content;
+        font-family: "Noto Sans Devanagari", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        color: #162235;
+        line-height: 1.55;
+
+        --navy: #19324D;
+        --navy-dark: #12263C;
+        --navy-soft: #EEF4F9;
+        --blue: #35688F;
+        --blue-soft: #F3F7FB;
+        --blue-border: #CFDEEA;
+        --green: #157A52;
+        --green-soft: #EDF8F3;
+        --green-border: #B9E1CD;
+        --text: #162235;
+        --text-2: #586779;
+        --text-3: #8793A2;
+        --white: #FFFFFF;
+        --surface: #F8FAFC;
+        --surface-2: #F4F7FA;
+        --border: #DCE4EB;
+        --border-strong: #C9D3DD;
+        --shadow-xs: 0 1px 2px rgba(15,23,42,.04);
+        --shadow-sm: 0 3px 8px rgba(15,23,42,.05);
+        --shadow-md: 0 8px 20px rgba(15,23,42,.07);
+        --shadow-lg: 0 18px 40px rgba(15,23,42,.09);
+        --radius-lg: 18px;
+        --radius-md: 13px;
+        --radius-sm: 10px;
+      }
+      :host *, :host *::before, :host *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      button, img { font-family: inherit; }
+      button { -webkit-tap-highlight-color: transparent; }
+
+      .wrap { width: 100%; max-width: 780px; margin: 26px auto; padding: 0 15px; }
+      .card { position: relative; overflow: hidden; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+      .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--navy); }
+
+      .head { padding: 34px 28px 0; text-align: center; }
+
+      .logo { display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 18px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-xs); }
+      .logo-mark { display: grid; place-items: center; width: 44px; height: 44px; background: var(--navy); color: #e5a33b; border-radius: 50%; font: 800 24px/1 "Noto Serif Devanagari", Georgia, serif; }
+      .logo-text { text-align: left; }
+      .logo-name { color: var(--navy); font-size: 1.05rem; font-weight: 800; line-height: 1.2; }
+      .logo-kicker { color: var(--text-3); font-size: .7rem; margin-top: 2px; }
+
+      .badge { display: inline-flex; align-items: center; gap: 7px; margin-top: 17px; padding: 7px 13px; color: var(--navy); background: var(--navy-soft); border: 1px solid var(--blue-border); border-radius: 999px; font-size: 10.5px; font-weight: 750; letter-spacing: .55px; text-transform: uppercase; }
+      .dot { width: 7px; height: 7px; flex: 0 0 7px; background: var(--green); border-radius: 50%; box-shadow: 0 0 0 3px rgba(21,122,82,.10); }
+
+      h1 { margin-top: 16px; color: var(--text); font-size: clamp(1.55rem, 4vw, 1.95rem); font-weight: 800; line-height: 1.2; letter-spacing: -.02em; }
+      .sub { max-width: 535px; margin: 9px auto 0; color: var(--text-2); font-size: .88rem; line-height: 1.7; }
+
+      .trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; margin-top: 20px; }
+      .trust span { display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; color: #536273; background: #FBFCFD; border: 1px solid var(--border); border-radius: 999px; font-size: .72rem; font-weight: 650; }
+      .trust svg { color: var(--green); flex-shrink: 0; }
+
+      .divider { display: flex; align-items: center; gap: 15px; margin: 28px 28px 0; }
+      .divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: var(--border); }
+      .divider-icon { width: 34px; height: 34px; display: grid; place-items: center; flex-shrink: 0; color: var(--navy); background: var(--navy-soft); border: 1px solid var(--blue-border); border-radius: 50%; }
+
+      .panel { margin: 24px; overflow: hidden; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+
+      .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+      .eyebrow { color: var(--blue); font-size: 9.5px; font-weight: 800; letter-spacing: .85px; text-transform: uppercase; }
+      .pname { margin-top: 2px; color: var(--text); font-size: 1.04rem; font-weight: 750; }
+
+      .status { display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; padding: 6px 10px; color: var(--green); background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 999px; font-size: .68rem; font-weight: 750; white-space: nowrap; }
+      .status::before { content: ""; width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
+
+      .payee { margin: 20px; padding: 17px; background: var(--blue-soft); border: 1px solid var(--blue-border); border-radius: var(--radius-md); }
+      .payee-top { display: flex; align-items: center; gap: 8px; color: var(--text-2); font-size: .64rem; font-weight: 750; letter-spacing: .55px; text-transform: uppercase; }
+      .payee-ic { width: 28px; height: 28px; display: grid; place-items: center; flex-shrink: 0; color: var(--navy); background: var(--white); border: 1px solid var(--blue-border); border-radius: 8px; }
+      .payee-name { margin-top: 8px; color: var(--text); font-size: 1rem; font-weight: 750; }
+      .payee-role { margin-top: 2px; color: var(--text-2); font-size: .74rem; }
+      .v-badge { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; padding: 4px 8px; color: var(--green); background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 999px; font-size: .67rem; font-weight: 750; }
+
+      .grid { display: grid; grid-template-columns: minmax(250px, 280px) minmax(0, 1fr); gap: 20px; padding: 0 20px 24px; }
+
+      .qr-card { padding: 20px; text-align: center; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); }
+      .qr-title { color: var(--text); font-size: .84rem; font-weight: 750; }
+      .qr-frame { width: 200px; height: 200px; display: block; margin: 16px auto 11px; padding: 12px; background: var(--white); border: 1px solid var(--border-strong); border-radius: 13px; box-shadow: var(--shadow-md); cursor: zoom-in; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+      .qr-frame:hover { transform: translateY(-2px); border-color: #AEC4D6; box-shadow: var(--shadow-lg); }
+      .qr-frame:focus-visible { outline: 3px solid rgba(53,104,143,.17); outline-offset: 3px; }
+      .qr-frame img { width: 100%; height: 100%; display: block; object-fit: contain; }
+      .qr-hint { color: var(--text-2); font-size: .72rem; font-weight: 520; }
+
+      .apps-wrap { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border); }
+      .apps-label { margin-bottom: 10px; color: var(--text-3); font-size: .62rem; font-weight: 750; letter-spacing: .55px; text-transform: uppercase; }
+      .apps { display: flex; justify-content: center; gap: 8px; }
+      .apps img { width: 32px; height: 32px; padding: 4px; background: var(--white); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow-xs); transition: transform .2s ease, border-color .2s ease; }
+      .apps img:hover { transform: translateY(-2px); border-color: var(--blue-border); }
+
+      .btn-dl { width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 16px; padding: 10px 12px; color: var(--text); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: .78rem; font-weight: 650; cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+      .btn-dl:hover { background: #EDF2F6; border-color: var(--border-strong); transform: translateY(-1px); }
+
+      .upi-card { display: flex; flex-direction: column; justify-content: center; padding: 22px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+      .upi-title { display: flex; align-items: center; gap: 9px; color: var(--text); font-size: .95rem; font-weight: 750; }
+      .upi-title i { width: 30px; height: 30px; display: grid; place-items: center; flex-shrink: 0; color: var(--white); background: var(--navy); border-radius: 9px; font-size: .9rem; font-style: normal; font-weight: 800; }
+      .upi-desc { max-width: 440px; margin-top: 8px; color: var(--text-2); font-size: .79rem; line-height: 1.65; }
+
+      .upi-box { margin-top: 16px; padding: 15px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-xs); }
+      .upi-l { color: var(--text-3); font-size: .62rem; font-weight: 800; letter-spacing: .55px; text-transform: uppercase; }
+      .upi-v { margin-top: 6px; color: var(--text); font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: .94rem; font-weight: 700; line-height: 1.45; word-break: break-all; user-select: all; }
+
+      .btn-copy { width: 100%; display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 15px; padding: 12px 14px; color: var(--white); background: var(--navy); border: 1px solid var(--navy); border-radius: var(--radius-sm); font-size: .84rem; font-weight: 750; cursor: pointer; box-shadow: 0 5px 14px rgba(25,50,77,.17); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+      .btn-copy:hover { background: var(--navy-dark); border-color: var(--navy-dark); transform: translateY(-1px); box-shadow: 0 8px 18px rgba(25,50,77,.21); }
+      .btn-copy.copied { background: var(--green) !important; border-color: var(--green) !important; }
+
+      .secure-note { display: flex; gap: 10px; margin-top: 15px; padding: 12px; color: #466077; background: var(--blue-soft); border: 1px solid var(--blue-border); border-radius: var(--radius-sm); font-size: .72rem; line-height: 1.65; }
+      .secure-note svg { flex-shrink: 0; margin-top: 2px; color: var(--navy); }
+      .secure-note strong { color: var(--text); }
+
+      .how { margin: 0 24px 24px; padding: 20px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+      .how h3 { display: flex; align-items: center; gap: 8px; color: var(--text); font-size: .89rem; font-weight: 750; }
+      .how h3 svg { color: var(--navy); }
+      .how-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; margin-top: 16px; }
+      .how-item { padding: 15px 11px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+      .how-item:hover { border-color: var(--blue-border); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+      .how-num { width: 29px; height: 29px; display: grid; place-items: center; margin: 0 auto 8px; color: var(--navy); background: var(--navy-soft); border: 1px solid var(--blue-border); border-radius: 50%; font-size: .82rem; font-weight: 800; }
+      .how-item b { display: block; color: var(--text); font-size: .78rem; font-weight: 750; }
+      .how-item span { display: block; margin-top: 4px; color: var(--text-2); font-size: .68rem; line-height: 1.55; }
+
+      .foot { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 24px 21px; color: var(--text-3); font-size: .7rem; font-weight: 650; }
+      .foot-line { width: 100px; max-width: 100px; height: 1px; background: var(--border); }
+
+      .toast { position: fixed; left: 50%; bottom: 28px; z-index: 99999; max-width: calc(100vw - 28px); padding: 11px 17px; color: var(--white); background: #17283C; border-radius: 999px; box-shadow: var(--shadow-lg); font-size: .8rem; font-weight: 650; text-align: center; white-space: nowrap; opacity: 0; pointer-events: none; transform: translate(-50%, 70px); transition: opacity .25s ease, transform .3s cubic-bezier(.2,.8,.2,1); }
+      .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+      .lightbox { position: fixed; inset: 0; z-index: 99999; display: none; place-items: center; padding: 20px; background: rgba(12,24,38,.84); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); opacity: 0; transition: opacity .2s ease; }
+      .lightbox.open { display: grid; opacity: 1; }
+      .lightbox-content { position: relative; width: min(90vw, 405px); padding: 16px; background: var(--white); border-radius: 17px; box-shadow: var(--shadow-lg); animation: zoomIn .2s ease; }
+      .lightbox img { display: block; width: 100%; height: auto; border-radius: 9px; }
+      .lightbox-close { position: absolute; top: -42px; right: 0; width: 33px; height: 33px; display: grid; place-items: center; color: var(--white); background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.24); border-radius: 50%; cursor: pointer; }
+      .lightbox-close:hover { background: rgba(255,255,255,.25); }
+      @keyframes zoomIn { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+      @media (max-width: 760px) {
+        .grid { grid-template-columns: 1fr; }
+        .panel, .how { margin-left: 16px; margin-right: 16px; }
+        .how-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 520px) {
+        .wrap { margin: 16px auto; padding: 0 9px; }
+        .head { padding: 25px 16px 0; }
+        .panel { margin: 16px; }
+        .how { margin: 0 16px 16px; }
+        .grid { gap: 16px; padding: 0 14px 18px; }
+        .qr-card, .upi-card { padding: 16px; }
+        .qr-frame { width: 190px; height: 190px; }
+        .how-grid { grid-template-columns: 1fr; }
+        .toast { white-space: normal; width: max-content; max-width: calc(100vw - 28px); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      }
+    </style>
+
+    <div class="wrap">
+      <div class="card">
+        <div class="head">
+          <div class="logo">
+            <div class="logo-mark">म</div>
+            <div class="logo-text">
+              <div class="logo-name">${DATA.brand}</div>
+              <div class="logo-kicker">${DATA.brandKicker}</div>
+            </div>
+          </div>
+
+          <div>
+            <span class="badge"><span class="dot"></span> सुरक्षित UPI पेमेंट</span>
+          </div>
+
+          <h1>सुरक्षित पेमेंट पोर्टल</h1>
+          <p class="sub">माझा मित्र जाहिरात पेमेंटसाठी अधिकृत पोर्टल. QR स्कॅन करा किंवा UPI ID कॉपी करा आणि तुमच्या आवडत्या UPI ॲपने पेमेंट करा.</p>
+
+          <div class="trust">
+            <span>${ICONS.lock} UPI सुरक्षित</span>
+            <span>${ICONS.bolt} त्वरित पेमेंट</span>
+            <span>${ICONS.check} सत्यापित खाते</span>
+            <span>${ICONS.check} कोणतेही अतिरिक्त शुल्क नाही</span>
+          </div>
+
+          <div class="divider">
+            <div class="divider-icon">${ICONS.shield}</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">सत्यापित पेमेंट प्राप्तकर्ता</div>
+              <div class="pname">${DATA.name}</div>
+            </div>
+            <div class="status">सक्रिय आणि सत्यापित</div>
+          </div>
+
+          <div class="payee">
+            <div class="payee-top">
+              <div class="payee-ic">${ICONS.user}</div>
+              अधिकृत संकलन भागीदार
+            </div>
+            <div class="payee-name">${DATA.name}</div>
+            <div class="payee-role">${DATA.role}</div>
+            <span class="v-badge">${ICONS.check} माझा मित्र सत्यापित व्यापारी</span>
+          </div>
+
+          <div class="grid">
+            <div class="qr-card">
+              <div class="qr-title">कोणत्याही UPI ॲपने स्कॅन करा</div>
+              <div class="qr-frame" id="qrFrame" role="button" tabindex="0" aria-label="QR कोड मोठा करा">
+                <img src="${DATA.qr}" alt="UPI QR कोड — ${DATA.name}">
+              </div>
+              <div class="qr-hint">QR कोड मोठा करण्यासाठी टॅप करा</div>
+              <div class="apps-wrap">
+                <div class="apps-label">सर्व प्रमुख UPI ॲपवर उपलब्ध</div>
+                <div class="apps">
+                  <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhAehBTAyHOlcTPJPDFV7Ad7kh2_gHf7k2uUnMNXHJF-BwLJaVHcSGHxuTaC1xwDrzYplkXsl8JEeZq_0J2PDFnfIK6lq-0dw7RPKKrY2hFwFkNlPeCIMnD3Gmz0FRMzD9KArpukNKW6PzGhuzykQxhCcB2OY0b8kCySzBb20pHsHFSmpPtyZX8VosI5fo" title="PhonePe" alt="PhonePe">
+                  <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhSs2HXT0K9PzJieP__MMOEW_ScMvHSpd8b8c6tz5rTH3XiKPMonBi7sZrrElxlcNuXHRJ4MlzbgAWV3ADoWXMkDdTUd3tq0gsacf4NHsc9u1qSGa4uNzmGlnHLzyIdUyb8kil-DLO5F-9wk_VAJf6vTJ4uhk-Qm8sIQczcyp0hnG4tUhgIiFJ4rB3-dOc" title="Google Pay" alt="GPay">
+                  <img src="https://blogger.googleusercontent.com/img/a/AVvXsEj6Ib1wFnMJ422BlbxoUPmW3C7LbXZwe1vdwfBVoNlxPFsP60JACyLzyYLpUkly3ZJUTGqGhR7tEFYU-a5OEmJEfffodgdc6WflIVszWmswAu6C9cQqwey0pKHxdy2J7T5r6_HX2ZZsBdkMlWDUAoEO6Aat8v-UqYikd2qg-ilFlg7LkUAvcRA_n6DADfs" title="Paytm" alt="Paytm">
+                  <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjmxCjMuiaA9RHbm3opbm_POKBqIYztf2fB_s2WLKCad9-TFdGNwzmeBAaiqWu1gXkn00eR0xPNyoN0yJTTGEhoeU1dBQsaYz3nr9WHrLmFGVtboOf6vBbH_bhCLH-iaF72xLDDctPaML3oJlM22RizHwNcdumKLfoydqmDnv2UOoytxFhgD-ehJGxS7ms" title="BHIM" alt="BHIM">
+                </div>
+                <button class="btn-dl" id="dlBtn">${ICONS.download} QR कोड डाउनलोड करा</button>
+              </div>
+            </div>
+
+            <div class="upi-card">
+              <div class="upi-title">
+                <i>@</i>
+                अधिकृत UPI ID
+              </div>
+              <div class="upi-desc">तुमच्या बँकिंग किंवा UPI ॲपमध्ये खालील UPI ID वापरा. UPI PIN कोणालाही सांगू नका.</div>
+              <div class="upi-box">
+                <div class="upi-l">UPI ID • कॉपी करा</div>
+                <div class="upi-v" id="upiText">${DATA.upi}</div>
+              </div>
+              <button class="btn-copy" id="copyBtn">${ICONS.copy} UPI ID कॉपी करा</button>
+              <div class="secure-note">
+                ${ICONS.shield}
+                <span><strong>सुरक्षा तपासणी:</strong> स्कॅन केल्यानंतर तुमच्या UPI ॲपमध्ये <strong>${DATA.name}</strong> हे नाव दिसले पाहिजे. नाव जुळल्यावरच पेमेंट पूर्ण करा.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="how">
+          <h3>${ICONS.shield} पेमेंट कसे पूर्ण करायचे</h3>
+          <div class="how-grid">
+            <div class="how-item">
+              <div class="how-num">१</div>
+              <b>QR स्कॅन</b>
+              <span>PhonePe, GPay, Paytm किंवा BHIM उघडा आणि QR स्कॅन करा.</span>
+            </div>
+            <div class="how-item">
+              <div class="how-num">२</div>
+              <b>नाव तपासा</b>
+              <span>पेमेंटपूर्वी <b>${DATA.name}</b> हे नाव सत्यापित करा.</span>
+            </div>
+            <div class="how-item">
+              <div class="how-num">३</div>
+              <b>रक्कम टाका</b>
+              <span>माझा मित्र ने सांगितलेली अचूक रक्कम टाका.</span>
+            </div>
+            <div class="how-item">
+              <div class="how-num">४</div>
+              <b>मंजूर करा</b>
+              <span>पेमेंट तपशील तपासा आणि UPI PIN टाका.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="foot">
+          <div class="foot-line"></div>
+          <span>${DATA.brand} · सुरक्षित UPI पेमेंट</span>
+          <div class="foot-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="मोठा QR कोड">
+      <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose" aria-label="QR कोड बंद करा">${ICONS.close}</button>
+        <img src="${DATA.qr}" alt="मोठा UPI QR कोड">
+      </div>
+    </div>
+  `;
+
+  const $ = id => shadow.getElementById(id);
+  const toast = $('toast');
+
+  function show(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  $('copyBtn').onclick = async function () {
+    try {
+      await navigator.clipboard.writeText(DATA.upi);
+      this.innerHTML = `${ICONS.check} कॉपी झाले!`;
+      this.classList.add('copied');
+      show('✓ UPI ID क्लिपबोर्डवर कॉपी झाले');
+      setTimeout(() => {
+        this.innerHTML = `${ICONS.copy} UPI ID कॉपी करा`;
+        this.classList.remove('copied');
+      }, 2000);
+    } catch (err) {
+      const ta = document.createElement('textarea');
+      ta.value = DATA.upi;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      show('✓ UPI ID क्लिपबोर्डवर कॉपी झाले');
+    }
+  };
+
+  $('dlBtn').onclick = async () => {
+    try {
+      const res = await fetch(DATA.qr, { mode: 'cors' });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Maza-Mitra-QR-${DATA.name.replace(/\s+/g, '_')}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      show('✓ QR कोड डाउनलोड झाला');
+    } catch (e) {
+      window.open(DATA.qr, '_blank');
+      show('QR नवीन टॅबमध्ये उघडला. तिथून सेव्ह करा.');
+    }
+  };
+
+  const openLightbox = () => $('lightbox').classList.add('open');
+  const closeLightbox = () => $('lightbox').classList.remove('open');
+
+  $('qrFrame').onclick = openLightbox;
+  $('qrFrame').onkeydown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openLightbox();
+    }
+  };
+  $('lightboxClose').onclick = closeLightbox;
+  $('lightbox').onclick = (e) => { if (e.target === $('lightbox')) closeLightbox(); };
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('lightbox').classList.contains('open')) closeLightbox();
+  });
+})();
+</script>
