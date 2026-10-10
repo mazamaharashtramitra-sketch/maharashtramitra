@@ -56,7 +56,7 @@ button{font:inherit}
 .page-title .accent{color:var(--green)}
 .page-subtitle{max-width:650px;margin:0;color:var(--ink-soft);font-size:15px;line-height:1.95}
 .page-copy{font-size:calc(14px * var(--body-scale));line-height:2.02}
-.page-copy p{margin:0 0 14px}
+.page-copy p{margin:0 0 14px;text-align:justify;text-justify:inter-word;hyphens:auto}
 .dropcap:first-letter{float:left;padding:2px 10px 0 0;color:var(--saffron-deep);font:800 58px/.95 var(--serif)}
 .pull-quote{margin:25px 0;padding:20px 21px 20px 25px;border-radius:0 14px 14px 0;background:var(--green-pale);color:var(--green);font:700 19px/1.7 var(--serif)}
 .lead-photo{overflow:hidden;border-radius:16px;background:#d3d0c5}
