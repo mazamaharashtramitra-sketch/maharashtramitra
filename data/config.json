@@ -29,7 +29,9 @@
     { "page": 8, "type": "article", "category": "vyavsay" },
     { "page": 9, "type": "article", "category": "sahitya" },
 { "page": 10, "type": "article", "category": "katha" },
-    { "page": 11, "type": "back-cover" }
+    { "page": 11, "type": "article", "category": "manoranjan" },
+
+    { "page": 12, "type": "back-cover" }
   ],
 
   "ads": {
@@ -43,6 +45,7 @@
       "page8":  ["shahar"],
       "page9":  ["galli"],
       "page10": ["galli"]
+        "page11": ["galli"]
     }
   },
 
