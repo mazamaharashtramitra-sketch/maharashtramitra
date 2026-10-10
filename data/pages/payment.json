@@ -1,0 +1,91 @@
+{
+  "slug": "payment",
+  "title": "पेमेंट करा",
+  "subtitle": "सुरक्षित UPI पेमेंट",
+  "updated": "2026-10-11",
+  "sections": [
+    {
+      "heading": "💳 सुरक्षित जाहिरात पेमेंट",
+      "body": "माझा मित्र सोबत जाहिरात देण्यासाठी खालील QR स्कॅन करा किंवा UPI ID कॉपी करा. सर्व पेमेंट्स NPCI च्या UPI नेटवर्कद्वारे १००% सुरक्षित आहेत.\n\n⚠️ स्कॅन केल्यानंतर तुमच्या UPI ॲपमध्ये \"Sachin Ambekar\" हे नाव दिसले पाहिजे. नाव जुळल्यावरच पेमेंट पूर्ण करा."
+    },
+    {
+      "type": "html",
+      "html": "<div style=\"text-align:center;padding:32px 20px;background:#f0f9f4;border:2px solid #157A52;border-radius:20px;margin:24px 0\"><div style=\"display:inline-block;padding:6px 14px;background:#157A52;color:#fff;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px\">सुरक्षित UPI पेमेंट</div><h3 style=\"font-size:22px;font-weight:800;color:#19324D;margin:0 0 8px 0\">Sachin Ambekar</h3><p style=\"font-size:13px;color:#586779;margin:0 0 24px 0\">Authorised Payment Collection Partner</p><div style=\"display:inline-block;padding:16px;background:#fff;border:2px solid #157A52;border-radius:16px;box-shadow:0 12px 32px rgba(21,122,82,.15);margin-bottom:20px\"><img src=\"https://blogger.googleusercontent.com/img/a/AVvXsEgDcwNxrSfRxZ0rySQ8BjSGYfMyMGVRDJuTH2wkWoK9Q7Pmy0rKnTc0EMnstFW3-oUJHTOF_vn2oY7VXCfcXS_lUZywyejaq1SJwqXPT2sS_xyES8RakvAYvdAe78xwja8IjzYiS4guVRKVnU40fsijJAWTHz1xqmVhexuYnDAZfsVG5ShV3hpXee98eUY=s1600\" alt=\"UPI QR Code\" style=\"width:240px;height:240px;display:block;border-radius:10px\"></div><div style=\"max-width:420px;margin:0 auto;padding:18px;background:#fff;border:1px solid #dce4eb;border-radius:12px\"><div style=\"font-size:10px;color:#8793A2;text-transform:uppercase;letter-spacing:.55px;font-weight:800;margin-bottom:8px\">अधिकृत UPI ID</div><code style=\"font-family:ui-monospace,monospace;font-size:14px;font-weight:700;color:#162235;word-break:break-all;line-height:1.5;display:block\">BHARATPE09B9S1M8C3G33183@yesbankltd</code></div><div style=\"margin-top:20px;padding:14px;background:#EEF4F9;border:1px solid #CFDEEA;border-radius:10px;font-size:12.5px;color:#466077;line-height:1.65;max-width:500px;margin-left:auto;margin-right:auto;text-align:left\"><strong style=\"color:#162235\">🛡 सुरक्षा तपासणी:</strong> स्कॅन केल्यानंतर तुमच्या UPI ॲपमध्ये <strong style=\"color:#162235\">Sachin Ambekar</strong> हे नाव दिसले पाहिजे.</div></div>"
+    },
+    {
+      "heading": "📋 UPI ID थेट वापरा",
+      "body": "QR स्कॅन करता येत नसेल तर UPI ID थेट वापरा:\n\n📧 UPI ID: BHARATPE09B9S1M8C3G33183@yesbankltd\n\n👤 नाव: Sachin Ambekar\n\n💬 Note: माझा मित्र — जाहिरात पेमेंट"
+    },
+    {
+      "type": "pricing",
+      "heading": "💰 पॅकेज नुसार रक्कम",
+      "body": "खालील पॅकेजमधून तुमच्या गरजेचं पॅकेज निवडा:",
+      "cards": [
+        {
+          "icon": "🏪",
+          "name": "गल्ली प्लॅन",
+          "price": "₹१,०००",
+          "period": "/ वर्ष",
+          "description": "एका परिसरासाठी",
+          "features": ["१ परिसरात जाहिरात", "३ पानांवर दिसेल", "वर्षभर सक्रिय"]
+        },
+        {
+          "icon": "🏙️",
+          "name": "शहर प्लॅन",
+          "price": "₹४९९",
+          "period": "/ महिना",
+          "description": "एका शहरासाठी",
+          "features": ["शहरातील सर्व आवृत्त्या", "४ पानांवर दिसेल", "मासिक अहवाल"],
+          "featured": true
+        },
+        {
+          "icon": "🏆",
+          "name": "प्रीमियम प्लॅन",
+          "price": "₹३,०००",
+          "period": "/ वर्ष",
+          "description": "शहर + परिसर",
+          "features": ["शहर + परिसर", "६ पानांवर दिसेल", "इमेज बॅनर"]
+        },
+        {
+          "icon": "🌐",
+          "name": "राज्य प्लॅन",
+          "price": "₹५०,०००",
+          "period": "/ वर्ष",
+          "description": "संपूर्ण महाराष्ट्र",
+          "features": ["सर्व आवृत्त्या", "८ पानांवर दिसेल", "प्राधान्य सेवा"]
+        }
+      ]
+    },
+    {
+      "type": "form",
+      "heading": "✅ पेमेंट नंतर confirmation द्या",
+      "body": "पेमेंट केल्यावर खालील फॉर्म भरा. UTR/Txn ID नक्की टाका.",
+      "form": {
+        "action": "https://formsubmit.co/mazamaharashtramitra@gmail.com",
+        "subject": "New Payment Confirmation — माझा मित्र",
+        "submitText": "📩 पेमेंट Confirm करा",
+        "note": "२४ तासांत verify होईल आणि जाहिरात लाइव्ह होईल.",
+        "fields": [
+          { "name": "name", "label": "तुमचे नाव", "type": "text", "placeholder": "उदा. राहुल पाटील", "required": true },
+          { "name": "business", "label": "व्यवसायाचे नाव", "type": "text", "placeholder": "उदा. जय मल्हार हॉटेल", "required": true },
+          { "name": "email", "label": "ईमेल", "type": "email", "placeholder": "you@example.com", "required": true },
+          { "name": "phone", "label": "मोबाईल नंबर", "type": "tel", "placeholder": "+91 98765 43210", "required": true },
+          { "name": "package", "label": "पेमेंट केलेले पॅकेज", "type": "select", "options": ["🏪 गल्ली प्लॅन — ₹१,०००/वर्ष", "🏙️ शहर प्लॅन — ₹४९९/महिना", "🏙️ शहर प्लॅन — ₹३,०००/वर्ष", "🏆 प्रीमियम प्लॅन — ₹३,०००/वर्ष", "🌐 राज्यस्तरीय प्लॅन — ₹५०,०००/वर्ष"], "required": true },
+          { "name": "amount", "label": "पेमेंट केलेली रक्कम (₹)", "type": "text", "placeholder": "उदा. 1000", "required": true },
+          { "name": "utr", "label": "UTR / Transaction ID", "type": "text", "placeholder": "उदा. 412345678901", "required": true },
+          { "name": "upi_app", "label": "कोणत्या UPI ॲपने पेमेंट केले?", "type": "select", "options": ["Google Pay", "PhonePe", "Paytm", "BHIM UPI", "Amazon Pay", "इतर"], "required": true },
+          { "name": "payment_date", "label": "पेमेंट तारीख", "type": "text", "placeholder": "उदा. 11-10-2026", "required": true },
+          { "name": "message", "label": "अतिरिक्त माहिती (ऐच्छिक)", "type": "textarea", "placeholder": "काही विशेष सूचना असल्यास…" }
+        ]
+      }
+    },
+    {
+      "heading": "🔒 सुरक्षा आणि विश्वास",
+      "body": "✅ फक्त अधिकृत UPI नेटवर्क (NPCI) वापरले जाते\n\n✅ तुमचे बँक तपशील, पासवर्ड किंवा OTP आम्ही कधीही मागत नाही\n\n✅ कोणत्याही कार्ड माहितीची गरज नाही\n\n✅ प्रत्येक पेमेंटसाठी पक्के बिल (Invoice) दिले जाते\n\n⚠️ सूचना: आम्ही कधीही फोनवर OTP किंवा पासवर्ड मागत नाही."
+    },
+    {
+      "heading": "📞 मदत हवी?",
+      "body": "पेमेंटमध्ये काही अडचण आल्यास आमच्याशी संपर्क करा:\n\n📧 ईमेल: mazamaharashtramitra@gmail.com\n\n🌐 वेबसाइट: maharashtramitra.pages.dev\n\n📍 स्थान: महाराष्ट्र, भारत\n\n⏰ प्रतिसाद वेळ: सोमवार ते शनिवार, सकाळी १० ते सायंकाळी ६\n\n📌 ईमेल पाठवताना विषय लिहा: \"PAYMENT HELP\""
+    }
+  ]
+}
