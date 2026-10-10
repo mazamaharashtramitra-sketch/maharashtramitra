@@ -28,7 +28,8 @@
     { "page": 7, "type": "article", "category": "shiksha" },
     { "page": 8, "type": "article", "category": "vyavsay" },
     { "page": 9, "type": "article", "category": "sahitya" },
-    { "page": 10, "type": "back-cover" }
+    { "page": 10, "category": "katha" },
+    { "page": 11, "type": "back-cover" }
   ],
 
   "ads": {
