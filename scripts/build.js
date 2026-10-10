@@ -379,7 +379,88 @@ function buildNewsletter(edition, date) {
     .replace(/{{PAGES_HTML}}/g, pages.join('\n'))
     .replace(/{{FOOTER_COLUMNS}}/g, footerColumns());
 }
+/* ─── Render legal sections (supports pricing + form + html types) ─── */
+function renderLegalSections(sections) {
+  return (sections || []).map(s => {
+    // ─── Type: pricing grid ───
+    if (s.type === 'pricing') {
+      const cards = (s.cards || []).map(c => `
+        <div class="pricing-card${c.featured ? ' featured' : ''}">
+          ${c.featured ? '<span class="pricing-badge">सर्वात लोकप्रिय</span>' : ''}
+          <div class="pricing-icon">${esc(c.icon || '★')}</div>
+          <h3 class="pricing-name">${esc(c.name)}</h3>
+          <div class="pricing-price">
+            <span class="price-amount">${esc(c.price)}</span>
+            ${c.period ? `<span class="price-period">${esc(c.period)}</span>` : ''}
+          </div>
+          ${c.description ? `<p class="pricing-desc">${esc(c.description)}</p>` : ''}
+          <ul class="pricing-features">
+            ${(c.features || []).map(f => `<li>${esc(f)}</li>`).join('')}
+          </ul>
+          <a href="${esc(c.ctaLink || '#contact-form')}" class="pricing-cta">${esc(c.cta || 'निवडा')}</a>
+        </div>
+      `).join('');
+      const cols = Math.min((s.cards || []).length, 4);
+      return `<section class="legal-section legal-section-pricing">
+        ${s.heading ? `<h2 class="legal-heading">${esc(s.heading)}</h2>` : ''}
+        ${s.body ? `<p class="legal-body">${esc(s.body)}</p>` : ''}
+        <div class="pricing-grid cols-${cols}">${cards}</div>
+      </section>`;
+    }
 
+    // ─── Type: contact form (FormSubmit.co) ───
+    if (s.type === 'form') {
+      const f = s.form || {};
+      const fields = (f.fields || []).map(fld => {
+        const req = fld.required ? 'required' : '';
+        const ph = fld.placeholder ? `placeholder="${esc(fld.placeholder)}"` : '';
+        if (fld.type === 'textarea') {
+          return `<label class="form-field form-field-full">
+            <span class="form-label">${esc(fld.label)}${fld.required ? ' *' : ''}</span>
+            <textarea name="${esc(fld.name)}" rows="5" ${req} ${ph}></textarea>
+          </label>`;
+        }
+        if (fld.type === 'select') {
+          return `<label class="form-field">
+            <span class="form-label">${esc(fld.label)}${fld.required ? ' *' : ''}</span>
+            <select name="${esc(fld.name)}" ${req}>
+              ${(fld.options || []).map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('')}
+            </select>
+          </label>`;
+        }
+        return `<label class="form-field">
+          <span class="form-label">${esc(fld.label)}${fld.required ? ' *' : ''}</span>
+          <input type="${esc(fld.type || 'text')}" name="${esc(fld.name)}" ${req} ${ph}>
+        </label>`;
+      }).join('');
+
+      return `<section class="legal-section legal-section-form" id="contact-form">
+        ${s.heading ? `<h2 class="legal-heading">${esc(s.heading)}</h2>` : ''}
+        ${s.body ? `<p class="legal-body">${esc(s.body)}</p>` : ''}
+        <form action="${esc(f.action || 'https://formsubmit.co/mazamaharashtramitra@gmail.com')}" method="POST" class="lead-form">
+          <input type="hidden" name="_subject" value="${esc(f.subject || 'New Advertise Enquiry — माझा मित्र')}">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_next" value="https://maharashtramitra.pages.dev/thank-you/">
+          <div class="form-grid">${fields}</div>
+          <button type="submit" class="form-submit">${esc(f.submitText || '📩 पाठवा')}</button>
+          <p class="form-note">${esc(f.note || 'आम्ही २४ तासांत तुम्हाला उत्तर देऊ.')}</p>
+        </form>
+      </section>`;
+    }
+
+    // ─── Type: raw HTML (advanced) ───
+    if (s.type === 'html') {
+      return `<section class="legal-section">${s.html || ''}</section>`;
+    }
+
+    // ─── Default: heading + body ───
+    return `<section class="legal-section">
+      ${s.heading ? `<h2 class="legal-heading">${esc(s.heading)}</h2>` : ''}
+      ${s.body ? `<p class="legal-body">${esc(s.body)}</p>` : ''}
+    </section>`;
+  }).join('');
+}
 function buildLegalPage(page) {
   const tpl = fs.readFileSync(path.join(ROOT, 'src/templates/legal.html'), 'utf8');
   const defaultEdition = editions.find(e => e.slug === 'maharashtra') || editions[0];
