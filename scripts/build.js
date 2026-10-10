@@ -15,18 +15,22 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const esc = (s='') => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'[+d]);
+const toMrDate = (iso) => {
+  const months = ['जानेवारी','फेब्रुवारी','मार्च','एप्रिल','मे','जून','जुलै','ऑगस्ट','सप्टेंबर','ऑक्टोबर','नोव्हेंबर','डिसेंबर'];
+  const [y, m, d] = iso.split('-');
+  if (!y || !m || !d) return iso;
+  return `${toMr(+d)} ${months[+m - 1]} ${toMr(y)}`;
+};
 
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
-/* ─── Load articles (edition-specific first, then shared) ─── */
+/* ─── Load articles ─── */
 function loadArticles(cat, editionSlug) {
   if (editionSlug) {
     const localDir = path.join(ROOT, 'data/articles', editionSlug, cat);
     if (fs.existsSync(localDir)) {
       const files = fs.readdirSync(localDir).filter(f => f.endsWith('.json'));
-      if (files.length) {
-        return files.map(f => JSON.parse(fs.readFileSync(path.join(localDir, f), 'utf8')));
-      }
+      if (files.length) return files.map(f => JSON.parse(fs.readFileSync(path.join(localDir, f), 'utf8')));
     }
   }
   const dir = path.join(ROOT, 'data/articles', cat);
@@ -35,48 +39,34 @@ function loadArticles(cat, editionSlug) {
     .map(f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
 }
 
-/* ─── Load overrides (edition-specific first, then global) ─── */
+/* ─── Load overrides ─── */
 function loadOverrides(date, editionSlug) {
-  const tryLoad = (filePath) => {
-    if (!fs.existsSync(filePath)) return null;
-    try {
-      return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    } catch (e) {
-      console.warn(`⚠ Invalid override JSON: ${filePath}`);
-      return null;
-    }
+  const tryLoad = (p) => {
+    if (!fs.existsSync(p)) return null;
+    try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; }
   };
-
   if (editionSlug) {
     const local = tryLoad(path.join(ROOT, 'data/overrides', editionSlug, `${date}.json`));
     if (local) return local;
   }
-
-  const global = tryLoad(path.join(ROOT, 'data/overrides', `${date}.json`));
-  if (global) return global;
-
-  const legacy = tryLoad(path.join(ROOT, 'data/overrides', '_global', `${date}.json`));
-  if (legacy) return legacy;
-
-  return {};
+  return tryLoad(path.join(ROOT, 'data/overrides', `${date}.json`))
+      || tryLoad(path.join(ROOT, 'data/overrides', '_global', `${date}.json`))
+      || {};
 }
 
-/* ─── Pick one article: override > seeded random ─── */
+/* ─── Pick one article ─── */
 function pickArticle(category, editionSlug, date, overrides) {
   const pool = loadArticles(category, editionSlug);
   const overrideSlug = overrides[category];
-
   if (overrideSlug) {
     const found = pool.find(a => a.slug === overrideSlug);
     if (found) return found;
-    console.warn(`⚠ Override not found: "${overrideSlug}" in category "${category}" — using fallback`);
   }
-
   const [a] = seededPick(pool, date + category, 1);
   return a || { title: 'शीघ्र', category, body: '', image: '', quote: '' };
 }
 
-/* ─── Load ads with tier merging ─── */
+/* ─── Load ads ─── */
 function loadAds(edition) {
   const files = [
     'data/ads/default.json',
@@ -91,14 +81,12 @@ function loadAds(edition) {
     const full = path.join(ROOT, f);
     if (!fs.existsSync(full)) continue;
     const data = JSON.parse(fs.readFileSync(full, 'utf8'));
-    for (const [slot, ad] of Object.entries(data.slots || {})) {
-      merged.slots[slot] = ad;
-    }
+    for (const [slot, ad] of Object.entries(data.slots || {})) merged.slots[slot] = ad;
   }
   return merged;
 }
 
-/* ─── Deterministic shuffle by date ─── */
+/* ─── Deterministic shuffle ─── */
 function seededPick(arr, seed, count) {
   if (!arr.length) return [];
   const a = [...arr];
@@ -115,7 +103,7 @@ function seededPick(arr, seed, count) {
   return out.slice(0, count);
 }
 
-/* ─── Split long article into pages ─── */
+/* ─── Split long article ─── */
 function splitArticle(body) {
   const paras = String(body || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   if (!paras.length) return [''];
@@ -144,27 +132,25 @@ function footerColumns() {
     </div>`).join('');
 }
 
-/* ─── Render one ad ─── */
+/* ─── Render ad ─── */
 function renderAd(ad) {
   if (!ad) return '';
   const tier = ad.tier || 'galli';
-  const accent = tier === 'premium' ? '#e5a33b'
-               : tier === 'shahar'  ? '#315e50'
-               : '#e5a33b';
+  const accent = tier === 'premium' ? '#e5a33b' : tier === 'shahar' ? '#315e50' : '#e5a33b';
 
   if (ad.image) {
-    return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" style="display:block;border:1px solid #e6e1d6;border-left:4px solid ${accent};border-radius:0 12px 12px 0;overflow:hidden;background:#fffefa;text-decoration:none;color:inherit;position:relative">
-      <img src="${esc(ad.image)}" alt="${esc(ad.sponsor || ad.title)}" loading="lazy" style="display:block;width:100%;height:auto">
-      <span style="position:absolute;top:8px;left:10px;padding:3px 8px;background:rgba(23,43,42,.78);color:#fff;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;border-radius:99px">प्रायोजित · ${esc(ad.sponsor)}</span>
+    return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" class="ad-card ad-image">
+      <img src="${esc(ad.image)}" alt="${esc(ad.sponsor || ad.title)}" loading="lazy">
+      <span class="ad-badge">प्रायोजित · ${esc(ad.sponsor)}</span>
     </a>`;
   }
 
-  return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" style="display:grid;gap:6px;padding:18px 20px;border:1px solid #e6e1d6;border-left:4px solid ${accent};border-radius:0 12px 12px 0;background:#fffefa;text-decoration:none;color:inherit">
-    <span style="font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#b8751f">प्रायोजित · ${esc(ad.sponsor)}</span>
-    <span style="font-size:22px;line-height:1">${esc(ad.icon || '★')}</span>
-    <strong style="font:700 15px/1.5 Georgia,serif;color:#172b2a">${esc(ad.title)}</strong>
-    <span style="color:#40514d;font-size:12px;line-height:1.8">${esc(ad.description)}</span>
-    <span style="margin-top:4px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#315e50">${esc(ad.cta)} →</span>
+  return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" class="ad-card ad-text" style="border-left-color:${accent}">
+    <span class="ad-label">प्रायोजित · ${esc(ad.sponsor)}</span>
+    <span class="ad-icon">${esc(ad.icon || '★')}</span>
+    <strong class="ad-title">${esc(ad.title)}</strong>
+    <span class="ad-desc">${esc(ad.description)}</span>
+    <span class="ad-cta">${esc(ad.cta)} →</span>
   </a>`;
 }
 
@@ -175,39 +161,109 @@ function renderAdBlock(ads, pageKey) {
   const items = slots.map(k => ads.slots && ads.slots[k]).filter(Boolean);
   if (!items.length) return '';
   const cols = items.length === 1 ? '1fr' : items.length === 2 ? '1fr 1fr' : 'repeat(3,1fr)';
-  return `<div style="display:grid;grid-template-columns:${cols};gap:12px;margin:28px 0">
+  return `<div class="ad-grid" style="grid-template-columns:${cols}">
     ${items.map(renderAd).join('')}
   </div>`;
 }
 
-/* =========================================
-   COVER — FULL PAGE IMAGE ONLY
-   (फक्त हे फंक्शन बदलले आहे)
-   ========================================= */
+/* ═══════════════════════════════════════════════════════
+   PAGE 1 — FULL IMAGE COVER (perfectly fitted)
+   ═══════════════════════════════════════════════════════ */
 function renderCover(edition, date, totalPages) {
   const c = config.cover;
-  return `<article class="news-page cover-page" id="page-1">
+  return `<article class="news-page cover-page" id="page-1" aria-label="पृष्ठ १ — मुखपृष्ठ">
   <img class="cover-full-image" src="${esc(c.image)}" alt="${esc(edition.name)}" loading="eager">
 </article>`;
 }
 
-function renderContents(articles, date, totalPages) {
-  const list = articles.map(a => `
-    <li><a href="#page-${a.startPage}">
-      <span class="contents-number">${toMr(a.startPage)}</span>
-      <span class="contents-name">${esc(a.title)}<span class="contents-hint">${esc(a.category)}${a.totalParts > 1 ? ` · ${toMr(a.totalParts)} पृष्ठे` : ''}</span></span>
-      <span class="contents-page-no">${toMr(a.startPage)}</span>
-    </a></li>`).join('');
-  return `<article class="news-page" id="page-2">
-  <div class="page-topline"><span>${esc(config.site.name)}</span><span>अनुक्रमणिका</span></div>
-  <div class="eyebrow">आजचा अंक</div>
-  <h2 class="page-title">आजचं<br><span class="accent">वाचन.</span></h2>
-  <p class="page-subtitle">${esc(config.site.tagline)}</p>
-  <ol class="contents-list">${list}</ol>
-  <footer class="page-footer"><strong>${esc(date)}</strong><span class="folio">०२ / ${toMr(totalPages)}</span></footer>
+/* ═══════════════════════════════════════════════════════
+   PAGE 2 — EDITION INFO (premium magazine intro)
+   ═══════════════════════════════════════════════════════ */
+function renderEditionInfo(edition, date, totalPages, articles) {
+  const c = config.cover;
+  const tags = (c.highlights || []).map(h => `<span>${esc(h)}</span>`).join('');
+  const previewList = articles.slice(0, 6).map((a, i) => `
+    <li>
+      <span class="ed-num">${toMr(i + 1).padStart(2, '०')}</span>
+      <span class="ed-title">${esc(a.title)}</span>
+      <span class="ed-cat">${esc(a.category)}</span>
+    </li>`).join('');
+
+  return `<article class="news-page edition-info-page" id="page-2" aria-label="पृष्ठ २ — अंक परिचय">
+  <header class="ed-masthead">
+    <div class="ed-logo">
+      <div class="ed-emblem">म</div>
+      <div>
+        <div class="ed-name">${esc(edition.name)}</div>
+        <div class="ed-kicker">${esc(edition.tagline || config.site.tagline)}</div>
+      </div>
+    </div>
+    <div class="ed-issue-stamp">दैनिक अंक<strong>${esc(toMrDate(date))}</strong></div>
+  </header>
+
+  <div class="ed-hero">
+    <span class="ed-label">${esc(c.label)}</span>
+    <h1 class="ed-title-main">आजचं वाचन,<br><span>आजच्या मनाने.</span></h1>
+    <p class="ed-desc">${esc(edition.tagline || config.site.tagline)}</p>
+    <div class="ed-tags">${tags}</div>
+  </div>
+
+  <div class="ed-meta">
+    <div class="meta-block">
+      <span class="meta-label">स्थान</span>
+      <strong>${esc(edition.city || 'महाराष्ट्र')}</strong>
+      <small>${esc(edition.region || 'महाराष्ट्र, भारत')}</small>
+    </div>
+    <div class="meta-block">
+      <span class="meta-label">दिनांक</span>
+      <strong>${esc(toMrDate(date))}</strong>
+      <small>दैनिक अंक</small>
+    </div>
+    <div class="meta-block">
+      <span class="meta-label">एकूण पृष्ठे</span>
+      <strong>${toMr(totalPages)}</strong>
+      <small>वाचनासाठी सज्ज</small>
+    </div>
+  </div>
+
+  <div class="ed-preview">
+    <div class="ed-rule">आजच्या अंकात</div>
+    <ol class="ed-list">${previewList}</ol>
+  </div>
+
+  <div class="ed-note">
+    <span class="ed-note-label">संपादकाचं मनोगत</span>
+    <p>प्रिय वाचकहो, हा अंक तुमच्या दिवसातला छोटा विराम घेऊन आला आहे. प्रत्येक पानावर एक नवा विषय, एक नवा दृष्टिकोन आणि थोडं थांबून विचार करण्याची संधी. वाचत राहा, जोडलेले राहा.</p>
+  </div>
+
+  <footer class="page-footer"><strong>${esc(edition.name)}</strong><span class="folio">०२ / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
+/* ═══════════════════════════════════════════════════════
+   PAGE 3 — CONTENTS
+   ═══════════════════════════════════════════════════════ */
+function renderContents(articles, date, totalPages) {
+  const list = articles.map(a => `
+    <li><a href="#page-${a.startPage}">
+      <span class="contents-number">${toMr(a.startPage).padStart(2, '०')}</span>
+      <span class="contents-name">${esc(a.title)}<span class="contents-hint">${esc(a.category)}${a.totalParts > 1 ? ` · ${toMr(a.totalParts)} पृष्ठे` : ''}</span></span>
+      <span class="contents-page-no">${toMr(a.startPage).padStart(2, '०')}</span>
+    </a></li>`).join('');
+
+  return `<article class="news-page" id="page-3" aria-label="पृष्ठ ३ — अनुक्रमणिका">
+  <div class="page-topline"><span>${esc(config.site.name)}</span><span>अनुक्रमणिका</span></div>
+  <div class="eyebrow">या अंकात काय आहे?</div>
+  <h2 class="page-title">विचारांची एक सुंदर<br><span class="accent">वाचनयात्रा.</span></h2>
+  <p class="page-subtitle">${esc(config.site.tagline)}</p>
+  <ol class="contents-list">${list}</ol>
+  <footer class="page-footer"><strong>${esc(toMrDate(date))}</strong><span class="folio">०३ / ${toMr(totalPages)}</span></footer>
+</article>`;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ARTICLE PAGES
+   ═══════════════════════════════════════════════════════ */
 function renderArticle(a, n, part, totalParts, totalPages, ads) {
   const isFirst = part === 1;
   const adBlock = renderAdBlock(ads, `page${n}`);
@@ -215,23 +271,19 @@ function renderArticle(a, n, part, totalParts, totalPages, ads) {
   let videoBlock = '';
   if (isFirst && a.youtube && a.youtube.id) {
     const start = a.youtube.start ? `?start=${a.youtube.start}` : '';
-    videoBlock = `
-      <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px;margin:20px 0;background:#000">
-        <iframe
-          src="https://www.youtube.com/embed/${esc(a.youtube.id)}${start}"
+    videoBlock = `<div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/${esc(a.youtube.id)}${start}"
           title="${esc(a.youtube.title || a.title)}"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          style="position:absolute;top:0;left:0;width:100%;height:100%">
-        </iframe>
+          allowfullscreen></iframe>
       </div>`;
   }
 
   return `<article class="news-page" id="page-${n}">
   <div class="page-topline">
     <span>${esc(a.category)}${!isFirst ? ' · क्रमशः' : ''}</span>
-    <span>पृष्ठ ${toMr(n)}</span>
+    <span>पृष्ठ ${toMr(n).padStart(2, '०')}</span>
   </div>
   <div class="eyebrow">${esc(a.category)}</div>
   ${isFirst
@@ -243,10 +295,13 @@ function renderArticle(a, n, part, totalParts, totalPages, ads) {
        <div class="page-copy" style="margin-top:20px"><p>${esc(a.parts[part-1])}</p></div>`}
   ${isFirst && a.quote && totalParts === 1 ? `<blockquote class="pull-quote">“${esc(a.quote)}”</blockquote>` : ''}
   ${adBlock}
-  <footer class="page-footer"><strong>${esc(config.site.name)}</strong><span class="folio">${toMr(n)} / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(config.site.name)}</strong><span class="folio">${toMr(n).padStart(2, '०')} / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
+/* ═══════════════════════════════════════════════════════
+   BACK COVER
+   ═══════════════════════════════════════════════════════ */
 function renderBack(edition, date, totalPages) {
   return `<article class="news-page closing-page" id="page-${totalPages}">
   <div class="page-topline"><span>समारोप</span><span>पुढील अंकाकडे</span></div>
@@ -254,10 +309,18 @@ function renderBack(edition, date, totalPages) {
   <h2 class="page-title">वाचत राहा,<br><span style="color:#f3c66e">जोडलेले राहा.</span></h2>
   <p class="page-subtitle">${esc(edition.name)} — ${esc(config.site.tagline)}</p>
   <div class="closing-signature"><div class="big-mark">म</div><p>मराठी वाचूया. मराठीत जोडलेले राहूया.</p></div>
-  <footer class="page-footer"><strong>${esc(edition.name)} · ${esc(date)}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(edition.name)} · ${esc(toMrDate(date))}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
+/* ═══════════════════════════════════════════════════════
+   BUILD NEWSLETTER — orchestrates pages
+   Page 1 = Cover image
+   Page 2 = Edition info  ← NEW
+   Page 3 = Contents
+   Page 4+ = Articles
+   Last = Back cover
+   ═══════════════════════════════════════════════════════ */
 function buildNewsletter(edition, date) {
   const ads = loadAds(edition);
   const overrides = loadOverrides(date, edition.slug);
@@ -280,7 +343,8 @@ function buildNewsletter(edition, date) {
 
   articles.forEach(a => a.totalParts = a.parts.length);
 
-  let cursor = 3;
+  // Articles start at page 4 (1=cover, 2=edition-info, 3=contents)
+  let cursor = 4;
   articles.forEach(a => {
     a.startPage = cursor;
     cursor += a.totalParts;
@@ -288,7 +352,11 @@ function buildNewsletter(edition, date) {
 
   const totalPages = cursor;
 
-  let pages = [renderCover(edition, date, totalPages), renderContents(articles, date, totalPages)];
+  const pages = [
+    renderCover(edition, date, totalPages),
+    renderEditionInfo(edition, date, totalPages, articles),
+    renderContents(articles, date, totalPages)
+  ];
 
   for (const a of articles) {
     for (let p = 1; p <= a.totalParts; p++) {
@@ -315,13 +383,11 @@ function buildNewsletter(edition, date) {
 function buildLegalPage(page) {
   const tpl = fs.readFileSync(path.join(ROOT, 'src/templates/legal.html'), 'utf8');
   const defaultEdition = editions.find(e => e.slug === 'maharashtra') || editions[0];
-
   const sections = (page.sections || []).map(s => `
     <section style="margin-bottom:32px">
       <h2 style="font:700 20px/1.5 var(--serif);margin:0 0 10px;color:var(--ink)">${esc(s.heading)}</h2>
       <p style="margin:0;color:var(--ink-soft);font-size:14px;line-height:1.95;white-space:pre-line;text-align:justify">${esc(s.body)}</p>
     </section>`).join('');
-
   return tpl
     .replace(/{{EDITION_NAME}}/g, esc(defaultEdition.name))
     .replace(/{{TAGLINE}}/g, esc(defaultEdition.tagline))
