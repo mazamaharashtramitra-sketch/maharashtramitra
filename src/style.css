@@ -70,15 +70,41 @@ button{font:inherit}
 .cover-page::before{content:"";position:absolute;inset:0;z-index:-2}
 .cover-page::after{content:"";position:absolute;inset:20px;z-index:-1;border:1px solid rgba(255,255,255,.24);pointer-events:none}
 .cover-masthead{display:flex;justify-content:space-between;gap:18px;padding:50px 55px 0}
-.cover-logo{display:flex;align-items:center;gap:13px}
+.cover-logo{display:flex;align-items:center;gap:15px} /* गॅप थोडा वाढवला */
 .cover-emblem{display:grid;place-items:center;width:53px;height:53px;border:1px solid rgba(255,255,255,.7);border-radius:50%;font:800 29px/1 var(--serif);color:var(--saffron)}
-.cover-kicker{margin-top:3px;color:rgba(255,253,244,.78);font-size:10px;letter-spacing:.17em}
+
+/* --- मुख्य बदल: टायटल मोठे, पांढरे आणि फिकट पिवळे --- */
+.cover-name {
+  font: 900 clamp(32px, 4vw, 46px)/1.1 var(--serif); /* मोठा आकार */
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  
+  /* White ते Light Yellow ग्रॅडिएंट */
+  background: linear-gradient(180deg, #ffffff 20%, #ffebb3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* गडद सावली जेणेकरून मजकूर स्पष्ट दिसेल */
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.9));
+}
+
+/* --- टॅगलाइन लहान आणि स्वच्छ --- */
+.cover-kicker {
+  color: #ffebb3; /* फिकट पिवळा */
+  font-size: 12px; /* लहान आकार */
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
 .issue-stamp{text-align:right;color:rgba(255,253,244,.78);font-size:10px;line-height:1.8;letter-spacing:.08em}
 .issue-stamp strong{display:block;color:var(--saffron);font-size:13px}
 .cover-content{display:flex;flex-direction:column;justify-content:flex-end;flex:1;padding:0 65px 63px}
 .cover-label{display:inline-flex;align-self:flex-start;margin-bottom:18px;padding:7px 12px;border:1px solid rgba(229,163,59,.7);border-radius:99px;color:#ffcf7a;font-size:10px;font-weight:800;letter-spacing:.12em}
 
-/* --- 3D MAGAZINE TITLE EFFECT (Only for the big center title) --- */
+/* --- 3D MAGAZINE TITLE EFFECT (मुख्य मध्यभागी असलेले शीर्षक) --- */
 .cover-title {
   max-width: 850px;
   margin: 10px 0 20px 0;
@@ -105,16 +131,7 @@ button{font:inherit}
   display: inline-block;
 }
 .cover-title span {
-  color: #ffdf9e; /* Slight color shift for secondary title text */
-}
-
-/* --- Clean Masthead Title (Top Left) --- */
-.cover-name {
-  font: 900 32px/1.2 var(--serif);
-  letter-spacing: 0.02em;
-  color: #f3c66e; /* Premium Gold */
-  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.8);
-  text-transform: uppercase;
+  color: #ffdf9e;
 }
 
 /* Bold subtitle to match the 3D title */
@@ -184,9 +201,12 @@ body.night .pull-quote{background:#27372e;color:#c7dfc8}
   .cover-masthead{padding:31px 29px 0}
   .cover-content{padding:0 29px 33px}
   
+  /* मोबाइलसाठी टायटल आणि टॅगलाइनचा आकार */
+  .cover-name { font-size: 32px; }
+  .cover-kicker { font-size: 10px; letter-spacing: 0.1em; }
+  
   /* Adjusted 3D text for mobile so it doesn't overflow */
   .cover-title{font-size:clamp(35px,10vw,55px); -webkit-text-stroke: 3px #ffffff;}
-  .cover-name{font-size: 26px;}
   .cover-description{font-size: 16px;}
   
   .cover-bottom{grid-template-columns:1fr}
