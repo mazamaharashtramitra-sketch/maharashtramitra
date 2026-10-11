@@ -175,7 +175,17 @@ function renderParagraphs(text, dropcap = false) {
   const paras = String(text || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   if (!paras.length) return '<p>—</p>';
   return paras.map((p, i) => {
-    const cls = (i === 0 && dropcap) ? ' class="dropcap"' : '';
+    // Detect heading pattern: ━━━ ... ━━━ or short with dash wrappers
+    const headingMatch = p.match(/^━+\s*(.+?)\s*━+$/);
+    if (headingMatch) {
+      return `<h3 class="section-head">${esc(headingMatch[1])}</h3>`;
+    }
+    // Just a divider (only ━ characters)
+    if (/^━+$/.test(p)) {
+      return `<div class="section-divider"></div>`;
+    }
+    // Regular paragraph
+    const cls = (i === 0 && dropcap && !/^[🌸🙏🎉🌺✨]/.test(p)) ? ' class="dropcap"' : '';
     return `<p${cls}>${esc(p)}</p>`;
   }).join('');
 }
