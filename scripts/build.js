@@ -121,9 +121,6 @@ function seededPick(arr, seed, count = 1) {
 
 /* ═══════════════════════════════════════════════════════
    PICK ARTICLE FOR SLOT
-   Priority:
-     1. Special article matching slot + city + week
-     2. Regular article from pool (city-matched, unused)
    ═══════════════════════════════════════════════════════ */
 function pickArticleForSlot(slot, citySlug, weekStart, weekEnd, usedSlugs) {
   // 1. Special
@@ -151,7 +148,7 @@ function pickArticleForSlot(slot, citySlug, weekStart, weekEnd, usedSlugs) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SPLIT ARTICLE
+   SPLIT ARTICLE (into pages, by word count)
    ═══════════════════════════════════════════════════════ */
 function splitArticle(body) {
   const paras = String(body || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
@@ -169,6 +166,18 @@ function splitArticle(body) {
   }
   if (current.length) pages.push(current.join('\n\n'));
   return pages.length ? pages : [body];
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⭐ NEW: RENDER PARAGRAPHS (proper <p> tags)
+   ═══════════════════════════════════════════════════════ */
+function renderParagraphs(text, dropcap = false) {
+  const paras = String(text || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  if (!paras.length) return '<p>—</p>';
+  return paras.map((p, i) => {
+    const cls = (i === 0 && dropcap) ? ' class="dropcap"' : '';
+    return `<p${cls}>${esc(p)}</p>`;
+  }).join('');
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -231,7 +240,7 @@ function renderPageAds(cityCode, pageNum) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER COVER (dynamic HTML/CSS)
+   RENDER COVER
    ═══════════════════════════════════════════════════════ */
 function renderCover(city, totalPages) {
   const c = config.cover || {};
@@ -355,7 +364,7 @@ function renderContents(articles, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER ARTICLE
+   ⭐ FIXED: RENDER ARTICLE (with proper paragraphs)
    ═══════════════════════════════════════════════════════ */
 function renderArticle(a, n, part, totalParts, totalPages, cityCode) {
   const isFirst = part === 1;
@@ -383,9 +392,9 @@ function renderArticle(a, n, part, totalParts, totalPages, cityCode) {
     ? `<h2 class="page-title">${esc(a.title)}</h2>
        ${a.image ? `<div class="lead-photo"><img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy"></div>` : ''}
        ${videoBlock}
-       <div class="page-copy" style="margin-top:20px"><p class="dropcap">${esc(a.parts[part-1])}</p></div>`
+       <div class="page-copy" style="margin-top:20px">${renderParagraphs(a.parts[part-1], true)}</div>`
     : `<h2 class="page-title" style="font-size:26px">${esc(a.title)}<span style="font-size:14px;color:#747b72;font-weight:400"> · भाग ${toMr(part)} / ${toMr(totalParts)}</span></h2>
-       <div class="page-copy" style="margin-top:20px"><p>${esc(a.parts[part-1])}</p></div>`}
+       <div class="page-copy" style="margin-top:20px">${renderParagraphs(a.parts[part-1], false)}</div>`}
   ${isFirst && a.quote && totalParts === 1 ? `<blockquote class="pull-quote">“${esc(a.quote)}”</blockquote>` : ''}
   ${adBlock}
   <footer class="page-footer"><strong>${esc(config.site.name)}</strong><span class="folio">${toMr(n).padStart(2, '०')} / ${toMr(totalPages)}</span></footer>
@@ -420,7 +429,6 @@ function buildNewsletter(citySlug, city) {
     const art = pickArticleForSlot(slot, citySlug, WEEK_START_ISO, WEEK_END_ISO, usedSlugs);
 
     if (!art) {
-      // Placeholder for empty slot
       articles.push({
         title: 'लवकरच येत आहे',
         label: SLOT_LABELS[slot] || 'वाचन',
