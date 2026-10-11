@@ -1006,7 +1006,7 @@ body.night .pull-quote{background:#27372e;color:#c7dfc8}
   .ed-note{margin:18px 22px 0; padding:16px 18px}
 
   .page-title{font-size:clamp(30px,8vw,42px)}
-  .footer-grid{grid-template-columns:1fr}
+.footer-grid{grid-template-columns:1fr;gap:24px}
   .footer-bottom{flex-direction:column}
   .site-footer{padding:32px 20px 20px}
 }
