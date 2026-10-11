@@ -60,18 +60,20 @@ button{font:inherit}
    ARTICLE TEXT — Premium magazine typography
    ═══════════════════════════════════════════════════════ */
 .page-copy {
-  font-size: calc(16px * var(--body-scale));
-  line-height: 2.15;
-  color: var(--ink);
-  letter-spacing: 0.005em;
-  word-spacing: 0.02em;
+  font-family: var(--serif);
+  font-size: calc(17px * var(--body-scale));
+  line-height: 1.95;
+  color: #1a2320;
+  letter-spacing: 0.01em;
+  word-spacing: 0.03em;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
 }
 
 .page-copy p {
-  margin: 0 0 22px;
+  margin: 0 0 24px;
   text-align: left;
   hyphens: manual;
-  font-feature-settings: "kern" 1, "liga" 1;
 }
 
 .page-copy p:last-child { margin-bottom: 0; }
@@ -80,68 +82,81 @@ button{font:inherit}
 
 /* ─── Greeting line (bold + gold box) ─── */
 .page-copy .greeting-line {
-  font: 800 calc(22px * var(--body-scale))/1.6 var(--serif);
+  font: 800 calc(23px * var(--body-scale))/1.55 var(--serif);
   text-align: center;
-  margin: 8px 0 32px;
-  padding: 26px 28px;
-  border-radius: 18px;
+  margin: 8px 0 36px;
+  padding: 28px 30px;
+  border-radius: 20px;
   background: linear-gradient(135deg, #fff8e8 0%, #fdf3d8 100%);
   border: 2px solid var(--saffron);
-  color: var(--saffron-deep);
+  color: #8a5410;
   letter-spacing: .01em;
   position: relative;
-  box-shadow: 0 8px 28px rgba(229,163,59,.18);
-  text-shadow: 0 1px 2px rgba(184,117,31,.15);
+  box-shadow: 0 10px 32px rgba(229,163,59,.20);
+  text-shadow: 0 1px 2px rgba(184,117,31,.12);
 }
 .page-copy .greeting-line::before {
   content: "";
   position: absolute;
-  top: -2px; left: 30px; right: 30px;
-  height: 2px;
+  top: -2px; left: 40px; right: 40px;
+  height: 3px;
   background: linear-gradient(90deg, transparent, var(--saffron-deep), transparent);
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 /* ─── First paragraph (intro) ─── */
-.page-copy > p:first-of-type:not(.greeting-line):not(.dropcap) {
-  font-size: calc(17px * var(--body-scale));
-  color: var(--ink-soft);
-  line-height: 2.1;
+.page-copy > p:first-of-type:not(.greeting-line) {
+  font-size: calc(18px * var(--body-scale));
+  color: #2d3b38;
+  line-height: 1.9;
 }
 
-/* ─── Section headings inside article ─── */
+/* ─── Auto dropcap on first paragraph ─── */
+.page-copy > p:first-of-type:not(.greeting-line)::first-letter {
+  float: left;
+  padding: 4px 14px 0 0;
+  color: var(--saffron-deep);
+  font: 900 68px/0.85 var(--serif);
+  letter-spacing: -.03em;
+  margin-top: 4px;
+}
+
+/* ─── Section headings — bold green with gold bar ─── */
 .page-copy .section-head {
-  font: 800 calc(24px * var(--body-scale))/1.4 var(--serif);
-  color: var(--green);
-  letter-spacing: -.015em;
-  margin: 44px 0 22px;
-  padding: 0 0 0 20px;
+  font: 900 calc(22px * var(--body-scale))/1.4 var(--serif);
+  color: #1f4a3d;
+  letter-spacing: -.01em;
+  margin: 48px 0 24px;
+  padding: 4px 0 10px 22px;
   position: relative;
   display: block;
   border: none;
   background: none;
+  border-bottom: 1px solid rgba(229,163,59,.25);
 }
 .page-copy .section-head::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 4px;
+  top: 8px;
+  bottom: 12px;
+  width: 5px;
   background: linear-gradient(180deg, var(--saffron), var(--saffron-deep));
-  border-radius: 2px;
-  box-shadow: 0 0 12px rgba(229,163,59,.45);
+  border-radius: 3px;
+  box-shadow: 0 0 14px rgba(229,163,59,.5);
 }
 .page-copy .section-head::after { display: none; }
 
 /* ─── Section divider ─── */
 .page-copy .section-divider {
-  height: 1px;
-  margin: 36px 0;
-  background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
+  height: 2px;
+  margin: 40px auto;
+  max-width: 200px;
+  background: linear-gradient(90deg, transparent, var(--saffron), transparent);
+  border-radius: 2px;
 }
 
-/* ─── Dropcap ─── */
+/* ─── Dropcap class (manual) ─── */
 .dropcap::first-letter {
   float: left;
   padding: 6px 12px 0 0;
@@ -152,37 +167,41 @@ button{font:inherit}
 
 /* ─── Pull quote ─── */
 .pull-quote {
-  margin: 32px 0;
-  padding: 24px 26px 24px 30px;
-  border-radius: 0 14px 14px 0;
-  background: var(--green-pale);
-  color: var(--green);
-  font: 700 20px/1.7 var(--serif);
+  margin: 40px 0;
+  padding: 28px 30px 28px 34px;
+  border-radius: 0 16px 16px 0;
+  background: linear-gradient(135deg, #f3f9f4 0%, #e8efe8 100%);
+  color: #1f4a3d;
+  font: 800 21px/1.65 var(--serif);
   position: relative;
+  border-left: 4px solid var(--green);
+  box-shadow: 0 8px 24px rgba(49,94,80,.08);
 }
 .pull-quote::before {
   content: "“";
   position: absolute;
-  top: -12px;
-  left: 14px;
+  top: -16px;
+  left: 18px;
   color: #b7c8b8;
-  font: 900 56px/1 Georgia, serif;
-  opacity: .6;
+  font: 900 64px/1 Georgia, serif;
+  opacity: .8;
 }
 
 /* ─── Lead photo ─── */
 .lead-photo {
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 18px;
   background: #d3d0c5;
-  margin-bottom: 22px;
+  margin-bottom: 28px;
+  box-shadow: 0 12px 32px rgba(23,43,42,.12);
 }
 .lead-photo img {
   width: 100%;
   height: auto;
   aspect-ratio: 16/9;
   object-fit: cover;
-  max-height: 480px;
+  max-height: 500px;
+  display: block;
 }
 
 .page-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto;padding-top:24px;color:var(--muted);border-top:1px solid var(--line);font-size:10px}
@@ -382,12 +401,14 @@ body.night .edition-info-page .ed-note{background:#252f2a}
 body.night .edition-info-page .ed-list li{border-color:#39453f}
 body.night .edition-info-page .ed-masthead{border-color:#39453f}
 body.night .page-title,body.night .page-copy strong,body.night .contents-name{color:#f3f0e6}
-body.night .page-subtitle,body.night .page-copy{color:#c4cdc4}
-body.night .pull-quote{background:#27372e;color:#c7dfc8}
-body.night .page-copy .section-head{color:#a9d4b8}
+body.night .page-subtitle,body.night .page-copy{color:#d4ddd4}
+body.night .pull-quote{background:#27372e;color:#c7dfc8;border-left-color:#5a8a6e}
+body.night .page-copy .section-head{color:#a9d4b8;border-bottom-color:rgba(229,163,59,.15)}
 body.night .page-copy .greeting-line{background:linear-gradient(135deg, #2a2418 0%, #1e1a10 100%);color:#f3c66e;border-color:#b8751f}
 body.night .page-copy .greeting-line::before{background:linear-gradient(90deg, transparent, #f3c66e, transparent)}
 body.night .page-copy > p:first-of-type:not(.greeting-line){color:#d4ddd4}
+body.night .page-copy > p:first-of-type:not(.greeting-line)::first-letter{color:#f3c66e}
+body.night .dropcap::first-letter{color:#f3c66e}
 
 /* ═══════════════════════════════════════════════════════
    RESPONSIVE
@@ -464,11 +485,13 @@ body.night .page-copy > p:first-of-type:not(.greeting-line){color:#d4ddd4}
   .site-footer{padding:32px 20px 20px}
 
   /* Article text mobile */
-  .page-copy{font-size:calc(15px * var(--body-scale));line-height:2.05}
-  .page-copy p{margin:0 0 18px}
-  .page-copy > p:first-of-type:not(.greeting-line){font-size:calc(16px * var(--body-scale))}
-  .page-copy .section-head{font-size:calc(19px * var(--body-scale));margin:32px 0 16px}
-  .page-copy .greeting-line{font-size:calc(19px * var(--body-scale));padding:20px 22px;margin:8px 0 24px}
+  .page-copy{font-size:calc(16px * var(--body-scale));line-height:1.9}
+  .page-copy p{margin:0 0 20px}
+  .page-copy > p:first-of-type:not(.greeting-line){font-size:calc(17px * var(--body-scale))}
+  .page-copy > p:first-of-type:not(.greeting-line)::first-letter{font:900 58px/0.85 var(--serif)}
+  .page-copy .section-head{font-size:calc(19px * var(--body-scale));margin:36px 0 18px}
+  .page-copy .greeting-line{font-size:calc(19px * var(--body-scale));padding:22px 22px;margin:8px 0 28px}
+  .pull-quote{font-size:18px;padding:22px 24px 22px 26px;margin:32px 0}
 }
 
 @media (max-width:390px){
