@@ -2,7 +2,7 @@
   "site": {
     "name": "माझा मित्र",
     "tagline": "तुमच्या दिवसातला छोटा विराम",
-    "domain": "maharashtramitra.pages.dev",
+    "domain": "mazamitra.in",
     "language": "mr"
   },
 
@@ -13,7 +13,6 @@
   },
 
   "cover": {
-    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjoEdcnndzlBlbeHobI7rKKDygJr2lGcqFKYNT4YFl25hWmkGPvc_2ns5LrroyJUeohk0GgtCPwTIAaOyg1kILK8KXYK9jw4BH3IH3nDxYuL0wuBFWiGQ4xw2_uPB7K7zeP6n12R5RxF8R5f_QX63x8Zytyg8WGimROvOWAtlGUTHjr11hJNRhUgrA0/s1600/image.png",
     "label": "आजचा विशेष अंक",
     "highlights": ["संस्कृती", "प्रेरणा", "जीवनशैली", "कौशल्ये", "वाचन"]
   },
@@ -34,21 +33,6 @@
     { "page": 13, "type": "back-cover" }
   ],
 
-  "ads": {
-    "enabled": true,
-    "slots": {
-      "page4":  ["premium"],
-      "page5":  ["shahar"],
-      "page6":  ["galli"],
-      "page7":  ["shahar"],
-      "page8":  ["galli"],
-      "page9":  ["shahar"],
-      "page10": ["galli"],
-      "page11": ["galli"],
-      "page12": ["galli"]
-    }
-  },
-
   "footer": {
     "columns": [
       {
@@ -58,6 +42,17 @@
           { "label": "संपर्क", "href": "/contact/" },
           { "label": "जाहिरात", "href": "/advertise/" },
           { "label": "पेमेंट", "href": "/payment/" }
+        ]
+      },
+      {
+        "title": "आवृत्त्या",
+        "links": [
+          { "label": "माझा महाराष्ट्र मित्र", "href": "/" },
+          { "label": "माझा पुणे मित्र", "href": "/pune/" },
+          { "label": "माझा मोशी मित्र", "href": "/moshi/" },
+          { "label": "माझा निगडी मित्र", "href": "/nigdi/" },
+          { "label": "माझा फलटण मित्र", "href": "/phaltan/" },
+          { "label": "माझा सातारा मित्र", "href": "/satara/" }
         ]
       },
       {
