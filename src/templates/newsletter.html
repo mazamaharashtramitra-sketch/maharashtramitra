@@ -58,6 +58,89 @@
   <div class="footer-bottom">
     <span>© {{YEAR}} माझा मित्र · सर्व हक्क राखीव</span>
     <span>{{ISSUE_DATE}}</span>
+
+<!-- ═══════════════════════════════════════════════════
+     FLOATING CONTACT WIDGET
+     ═══════════════════════════════════════════════════ -->
+
+<!-- Floating Button -->
+<button class="float-contact-btn" id="floatContactBtn" aria-label="संपर्क करा">
+  <span class="float-icon">💬</span>
+  <span class="float-label">संपर्क</span>
+</button>
+
+<!-- Modal Overlay -->
+<div class="float-modal-overlay" id="floatModal">
+  <div class="float-modal">
+    <button class="float-modal-close" id="floatClose" aria-label="बंद करा">✕</button>
+    
+    <div class="float-modal-head">
+      <div class="float-modal-icon">📬</div>
+      <h3>आमच्याशी संपर्क करा</h3>
+      <p>24 तासांत उत्तर देऊ</p>
+    </div>
+    
+    <form action="https://formsubmit.co/mazamaharashtramitra@gmail.com" 
+          method="POST" 
+          class="float-form">
+      
+      <!-- FormSubmit settings -->
+      <input type="hidden" name="_subject" value="📬 New Contact — माझा मित्र">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" value="https://mazamitra.in/thank-you/">
+      <input type="text" name="_honey" style="display:none">
+      
+      <!-- Name -->
+      <label class="float-field">
+        <span class="float-label-text">तुमचं नाव <em>*</em></span>
+        <input type="text" name="name" required placeholder="उदा. राहुल पाटील">
+      </label>
+      
+      <!-- Mobile -->
+      <label class="float-field">
+        <span class="float-label-text">मोबाईल नंबर <em>*</em></span>
+        <input type="tel" name="mobile" required placeholder="+91 98765 43210" 
+               pattern="[0-9+\s]{10,15}">
+      </label>
+      
+      <!-- Email -->
+      <label class="float-field">
+        <span class="float-label-text">ईमेल <em>*</em></span>
+        <input type="email" name="email" required placeholder="you@example.com">
+      </label>
+      
+      <!-- Reason -->
+      <label class="float-field">
+        <span class="float-label-text">कारण <em>*</em></span>
+        <select name="reason" required>
+          <option value="">— निवडा —</option>
+          <option value="जाहिरात चौकशी">💼 जाहिरात चौकशी</option>
+          <option value="Directory Listing">📞 Directory Listing (₹100)</option>
+          <option value="तक्रार">⚠️ तक्रार</option>
+          <option value="सूचना">💡 सूचना</option>
+          <option value="लेख सबमिट">✍️ लेख सबमिट</option>
+          <option value="इतर">💬 इतर</option>
+        </select>
+      </label>
+      
+      <!-- Message (Optional) -->
+      <label class="float-field">
+        <span class="float-label-text">संदेश <em class="optional">(ऐच्छिक)</em></span>
+        <textarea name="message" rows="3" 
+                  placeholder="थोडक्यात लिहा..."></textarea>
+      </label>
+      
+      <button type="submit" class="float-submit">
+        <span>📩</span> पाठवा
+      </button>
+      
+      <p class="float-note">तुमची माहिती सुरक्षित राहील 🔒</p>
+    </form>
+  </div>
+</div>
+
+    
   </div>
 </footer>
 
