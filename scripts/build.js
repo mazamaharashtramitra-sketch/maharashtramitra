@@ -226,9 +226,9 @@ function renderCover(edition, totalPages) {
 
   const accent = edition.accent || '#e5a33b';
   const accentSoft = edition.accentSoft || '#f5c66b';
-  const skyTop = edition.skyTop || '#0d1f1c';
-  const skyMid = edition.skyMid || '#172b2a';
-  const skyLow = edition.skyLow || '#1e3a35';
+  const skyTop = edition.skyTop || '#1a1410';
+  const skyMid = edition.skyMid || '#2a1d18';
+  const skyLow = edition.skyLow || '#3d2818';
   const city = edition.city || 'महाराष्ट्र';
   const region = edition.region || 'महाराष्ट्र, भारत';
 
@@ -237,6 +237,8 @@ function renderCover(edition, totalPages) {
 
     <div class="cv-bg" aria-hidden="true">
       <div class="cv-sky"></div>
+      <div class="cv-aurora"></div>
+      <div class="cv-rays"></div>
       <div class="cv-stars"></div>
       <div class="cv-hills cv-hills-far"></div>
       <div class="cv-hills cv-hills-mid"></div>
@@ -245,10 +247,13 @@ function renderCover(edition, totalPages) {
       <div class="cv-trees"></div>
       <div class="cv-fireflies"></div>
       <div class="cv-vignette"></div>
-      <div class="cv-corner cv-corner-tl"></div>
-      <div class="cv-corner cv-corner-tr"></div>
-      <div class="cv-corner cv-corner-bl"></div>
-      <div class="cv-corner cv-corner-br"></div>
+    </div>
+
+    <div class="cv-corners" aria-hidden="true">
+      <span class="cv-corner cv-corner-tl"></span>
+      <span class="cv-corner cv-corner-tr"></span>
+      <span class="cv-corner cv-corner-bl"></span>
+      <span class="cv-corner cv-corner-br"></span>
     </div>
 
     <div class="cv-content">
