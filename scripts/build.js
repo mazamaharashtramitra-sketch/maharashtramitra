@@ -18,15 +18,12 @@ const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'
 
 /* ═══════════════════════════════════════════════════════
    WEEKLY DATE HELPERS
-   ───────────────────────────────────────────────────────
-   आठवडा रविवार ते शनिवार असतो.
-   हा आठवडा म्हणजे शेवटचा रविवार (आज रविवारी असल्यास आजच).
    ═══════════════════════════════════════════════════════ */
 function getWeekStart(d) {
   const date = new Date(d);
   date.setHours(0, 0, 0, 0);
-  const day = date.getDay();          // 0 = रविवार
-  const diff = date.getDate() - day;  // मागे रविवारी जा
+  const day = date.getDay();
+  const diff = date.getDate() - day;
   const sunday = new Date(date);
   sunday.setDate(diff);
   return sunday;
@@ -35,7 +32,7 @@ function getWeekStart(d) {
 function getWeekEnd(d) {
   const start = getWeekStart(d);
   const end = new Date(start);
-  end.setDate(start.getDate() + 6);   // शनिवार
+  end.setDate(start.getDate() + 6);
   return end;
 }
 
@@ -59,24 +56,19 @@ const toMrWeekRange = (startIso, endIso) => {
   const [sy, sm, sd] = startIso.split('-');
   const [ey, em, ed] = endIso.split('-');
   if (!sy || !sm || !sd || !ey || !em || !ed) return startIso;
-
-  // Same month
   if (sm === em) {
     return `${toMr(+sd)} ते ${toMr(+ed)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)}`;
   }
-  // Different months, same year
   if (sy === ey) {
     return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(sy)}`;
   }
-  // Different years
   return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(ey)}`;
 };
 
-/* ─── THE WEEK (seed & display dates) ─── */
 const now = new Date();
-const weekStart = getWeekStart(now);          // रविवार
-const weekEnd = getWeekEnd(now);              // शनिवार
-const WEEK_START_ISO = toIsoDate(weekStart);  // seed साठी
+const weekStart = getWeekStart(now);
+const weekEnd = getWeekEnd(now);
+const WEEK_START_ISO = toIsoDate(weekStart);
 const WEEK_END_ISO = toIsoDate(weekEnd);
 const WEEK_RANGE_MR = toMrWeekRange(WEEK_START_ISO, WEEK_END_ISO);
 
@@ -112,7 +104,7 @@ function loadOverrides(date, editionSlug) {
       || {};
 }
 
-/* ─── Pick one article (seed = week start date) ─── */
+/* ─── Pick one article ─── */
 function pickArticle(category, editionSlug, date, overrides) {
   const pool = loadArticles(category, editionSlug);
   const overrideSlug = overrides[category];
@@ -225,17 +217,102 @@ function renderAdBlock(ads, pageKey) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PAGE 1 — FULL IMAGE COVER
+   PAGE 1 — DYNAMIC HTML/CSS COVER (nature-inspired, no image)
    ═══════════════════════════════════════════════════════ */
 function renderCover(edition, totalPages) {
   const c = config.cover;
-  return `<article class="news-page cover-page" id="page-1" aria-label="पृष्ठ १ — मुखपृष्ठ">
-  <img class="cover-full-image" src="${esc(c.image)}" alt="${esc(edition.name)}" loading="eager">
-</article>`;
+  const highlights = (c.highlights || [])
+    .map(h => `<span class="cv-pill">${esc(h)}</span>`)
+    .join('');
+
+  const accent = edition.accent || '#e5a33b';
+  const accentSoft = edition.accentSoft || '#f5c66b';
+  const skyTop = edition.skyTop || '#0d1f1c';
+  const skyMid = edition.skyMid || '#172b2a';
+  const skyLow = edition.skyLow || '#1e3a35';
+  const city = edition.city || 'महाराष्ट्र';
+  const region = edition.region || 'महाराष्ट्र, भारत';
+
+  return `<article class="news-page cover-page" id="page-1" aria-label="पृष्ठ १ — मुखपृष्ठ"
+    style="--cv-accent:${esc(accent)};--cv-accent-soft:${esc(accentSoft)};--cv-sky-top:${esc(skyTop)};--cv-sky-mid:${esc(skyMid)};--cv-sky-low:${esc(skyLow)}">
+
+    <div class="cv-bg" aria-hidden="true">
+      <div class="cv-sky"></div>
+      <div class="cv-stars"></div>
+      <div class="cv-sun"></div>
+      <div class="cv-horizon"></div>
+      <div class="cv-hills cv-hills-far"></div>
+      <div class="cv-hills cv-hills-mid"></div>
+      <div class="cv-hills cv-hills-near"></div>
+      <div class="cv-trees"></div>
+      <div class="cv-fireflies"></div>
+      <div class="cv-vignette"></div>
+    </div>
+
+    <div class="cv-content">
+
+      <header class="cv-masthead">
+        <div class="cv-emblem">
+          <span class="cv-emblem-letter">म</span>
+          <span class="cv-emblem-ring"></span>
+        </div>
+        <div class="cv-brand">
+          <div class="cv-name">${esc(edition.name)}</div>
+          <div class="cv-tagline">${esc(edition.tagline || config.site.tagline)}</div>
+        </div>
+      </header>
+
+      <div class="cv-badge">
+        <span class="cv-badge-dot"></span>
+        <span>${esc(c.label)}</span>
+      </div>
+
+      <div class="cv-hero">
+        <div class="cv-hero-kicker">साप्ताहिक अंक</div>
+        <h1 class="cv-title">
+          <span class="cv-title-line">${esc(edition.name)}</span>
+        </h1>
+        <p class="cv-subtitle">${esc(edition.tagline || config.site.tagline)}</p>
+        <div class="cv-underline">
+          <span></span><i>◆</i><span></span>
+        </div>
+      </div>
+
+      <div class="cv-meta">
+        <div class="cv-meta-item">
+          <span class="cv-meta-label">आठवडा</span>
+          <strong class="cv-meta-value">${esc(WEEK_RANGE_MR)}</strong>
+        </div>
+        <div class="cv-meta-divider"></div>
+        <div class="cv-meta-item">
+          <span class="cv-meta-label">स्थान</span>
+          <strong class="cv-meta-value">${esc(city)}</strong>
+          <span class="cv-meta-sub">${esc(region)}</span>
+        </div>
+        <div class="cv-meta-divider"></div>
+        <div class="cv-meta-item">
+          <span class="cv-meta-label">एकूण पृष्ठे</span>
+          <strong class="cv-meta-value">${toMr(totalPages)}</strong>
+        </div>
+      </div>
+
+      <div class="cv-highlights">
+        ${highlights}
+      </div>
+
+      <footer class="cv-footer">
+        <span class="cv-footer-line"></span>
+        <span class="cv-footer-text">मराठी वाचूया. मराठीत जोडलेले राहूया.</span>
+        <span class="cv-footer-line"></span>
+      </footer>
+
+    </div>
+
+  </article>`;
 }
 
 /* ═══════════════════════════════════════════════════════
-   PAGE 2 — EDITION INFO (Weekly range)
+   PAGE 2 — EDITION INFO
    ═══════════════════════════════════════════════════════ */
 function renderEditionInfo(edition, totalPages, articles) {
   const c = config.cover;
@@ -373,18 +450,12 @@ function renderBack(edition, totalPages) {
 
 /* ═══════════════════════════════════════════════════════
    NEWSLETTER BUILDER
-   Page 1 = Cover
-   Page 2 = Edition info (weekly range)
-   Page 3 = Contents
-   Page 4+ = Articles
-   Last = Back cover
    ═══════════════════════════════════════════════════════ */
 function buildNewsletter(edition) {
   const ads = loadAds(edition);
   const overrides = loadOverrides(WEEK_START_ISO, edition.slug);
   const articlePages = config.pages.filter(p => p.type === 'article');
 
-  // Article picking uses WEEK_START_ISO as seed → same week = same content
   const articles = articlePages.map(p => {
     const art = pickArticle(p.category, edition.slug, WEEK_START_ISO, overrides);
     return {
