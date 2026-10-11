@@ -78,53 +78,70 @@ button{font:inherit}
 
 .page-copy strong { color: var(--ink); font-weight: 800; }
 
-/* First paragraph slightly larger (intro feel) */
-.page-copy > p:first-of-type {
+/* ─── Greeting line (bold + gold box) ─── */
+.page-copy .greeting-line {
+  font: 800 calc(22px * var(--body-scale))/1.6 var(--serif);
+  text-align: center;
+  margin: 8px 0 32px;
+  padding: 26px 28px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff8e8 0%, #fdf3d8 100%);
+  border: 2px solid var(--saffron);
+  color: var(--saffron-deep);
+  letter-spacing: .01em;
+  position: relative;
+  box-shadow: 0 8px 28px rgba(229,163,59,.18);
+  text-shadow: 0 1px 2px rgba(184,117,31,.15);
+}
+.page-copy .greeting-line::before {
+  content: "";
+  position: absolute;
+  top: -2px; left: 30px; right: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--saffron-deep), transparent);
+  border-radius: 2px;
+}
+
+/* ─── First paragraph (intro) ─── */
+.page-copy > p:first-of-type:not(.greeting-line):not(.dropcap) {
   font-size: calc(17px * var(--body-scale));
   color: var(--ink-soft);
   line-height: 2.1;
 }
 
-/* Section headings inside article */
+/* ─── Section headings inside article ─── */
 .page-copy .section-head {
-  font: 800 calc(22px * var(--body-scale))/1.5 var(--serif);
+  font: 800 calc(24px * var(--body-scale))/1.4 var(--serif);
   color: var(--green);
   letter-spacing: -.015em;
-  margin: 40px 0 20px;
-  padding: 0;
+  margin: 44px 0 22px;
+  padding: 0 0 0 20px;
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  display: block;
+  border: none;
+  background: none;
 }
 .page-copy .section-head::before {
   content: "";
-  flex: 0 0 auto;
-  width: 24px;
-  height: 2px;
-  background: var(--saffron);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  background: linear-gradient(180deg, var(--saffron), var(--saffron-deep));
   border-radius: 2px;
+  box-shadow: 0 0 12px rgba(229,163,59,.45);
 }
-.page-copy .section-head::after {
-  content: "";
-  flex: 1;
-  height: 2px;
-  background: linear-gradient(90deg, var(--saffron), transparent);
-  border-radius: 2px;
-}
-.page-copy > p:first-of-type + .section-head,
-.page-copy .section-head:first-child {
-  margin-top: 8px;
-}
+.page-copy .section-head::after { display: none; }
 
-/* Divider between sections */
+/* ─── Section divider ─── */
 .page-copy .section-divider {
   height: 1px;
-  margin: 32px 0;
+  margin: 36px 0;
   background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
 }
 
-/* Dropcap */
+/* ─── Dropcap ─── */
 .dropcap::first-letter {
   float: left;
   padding: 6px 12px 0 0;
@@ -133,10 +150,41 @@ button{font:inherit}
   letter-spacing: -.02em;
 }
 
-.pull-quote{margin:32px 0;padding:24px 26px 24px 30px;border-radius:0 14px 14px 0;background:var(--green-pale);color:var(--green);font:700 20px/1.7 var(--serif);position:relative}
-.pull-quote::before{content:"“";position:absolute;top:-12px;left:14px;color:#b7c8b8;font:900 56px/1 Georgia,serif;opacity:.6}
-.lead-photo{overflow:hidden;border-radius:16px;background:#d3d0c5;margin-bottom:22px}
-.lead-photo img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;max-height:480px}
+/* ─── Pull quote ─── */
+.pull-quote {
+  margin: 32px 0;
+  padding: 24px 26px 24px 30px;
+  border-radius: 0 14px 14px 0;
+  background: var(--green-pale);
+  color: var(--green);
+  font: 700 20px/1.7 var(--serif);
+  position: relative;
+}
+.pull-quote::before {
+  content: "“";
+  position: absolute;
+  top: -12px;
+  left: 14px;
+  color: #b7c8b8;
+  font: 900 56px/1 Georgia, serif;
+  opacity: .6;
+}
+
+/* ─── Lead photo ─── */
+.lead-photo {
+  overflow: hidden;
+  border-radius: 16px;
+  background: #d3d0c5;
+  margin-bottom: 22px;
+}
+.lead-photo img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  max-height: 480px;
+}
+
 .page-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto;padding-top:24px;color:var(--muted);border-top:1px solid var(--line);font-size:10px}
 .folio{display:inline-flex;align-items:center;gap:9px}
 .folio::before{content:"";width:24px;height:1px;background:var(--saffron)}
@@ -162,7 +210,6 @@ button{font:inherit}
 .cover-page::before,
 .cover-page::after{display:none}
 
-/* ─── Background stack ─── */
 .cv-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 .cv-sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--cv-sky-top,#1a1410) 0%,var(--cv-sky-mid,#2a1d18) 40%,var(--cv-sky-low,#3d2818) 70%,#0f0a08 100%)}
 .cv-aurora{position:absolute;inset:-20%;background:radial-gradient(ellipse 45% 40% at 25% 30%,rgba(255,140,60,.45),transparent 60%),radial-gradient(ellipse 40% 35% at 75% 35%,rgba(255,200,100,.38),transparent 60%),radial-gradient(ellipse 50% 45% at 50% 75%,rgba(255,90,60,.35),transparent 60%),radial-gradient(ellipse 35% 30% at 15% 75%,rgba(255,220,140,.30),transparent 60%);animation:cv-aurora 14s ease-in-out infinite alternate;filter:blur(20px);opacity:.9}
@@ -338,9 +385,13 @@ body.night .page-title,body.night .page-copy strong,body.night .contents-name{co
 body.night .page-subtitle,body.night .page-copy{color:#c4cdc4}
 body.night .pull-quote{background:#27372e;color:#c7dfc8}
 body.night .page-copy .section-head{color:#a9d4b8}
-body.night .page-copy > p:first-of-type{color:#d4ddd4}
+body.night .page-copy .greeting-line{background:linear-gradient(135deg, #2a2418 0%, #1e1a10 100%);color:#f3c66e;border-color:#b8751f}
+body.night .page-copy .greeting-line::before{background:linear-gradient(90deg, transparent, #f3c66e, transparent)}
+body.night .page-copy > p:first-of-type:not(.greeting-line){color:#d4ddd4}
 
-/* Responsive */
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
 @media (max-width:900px){
   .cv-title{font-size:clamp(28px,4.2vw,56px)}
 }
@@ -415,8 +466,9 @@ body.night .page-copy > p:first-of-type{color:#d4ddd4}
   /* Article text mobile */
   .page-copy{font-size:calc(15px * var(--body-scale));line-height:2.05}
   .page-copy p{margin:0 0 18px}
-  .page-copy > p:first-of-type{font-size:calc(16px * var(--body-scale))}
+  .page-copy > p:first-of-type:not(.greeting-line){font-size:calc(16px * var(--body-scale))}
   .page-copy .section-head{font-size:calc(19px * var(--body-scale));margin:32px 0 16px}
+  .page-copy .greeting-line{font-size:calc(19px * var(--body-scale));padding:20px 22px;margin:8px 0 24px}
 }
 
 @media (max-width:390px){
