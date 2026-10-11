@@ -14,6 +14,27 @@
       "image": "https://via.placeholder.com/400x200/172b2a/e5a33b?text=Ad+Space+Available",
       "link": "https://mazamitra.in/advertise/",
       "sponsor": "तुमची जाहिरात येथे"
+    },
+    "PU1-P1-B1": {
+      "image": "https://via.placeholder.com/400x200/172b2a/e85d3a?text=Pune+Ad+1",
+      "link": "https://mazamitra.in/advertise/",
+      "sponsor": "पुणे जाहिरात 1"
+    },
+    "PU1-P1-B2": {
+      "image": "https://via.placeholder.com/400x200/172b2a/e85d3a?text=Pune+Ad+2",
+      "link": "https://mazamitra.in/advertise/",
+      "sponsor": "पुणे जाहिरात 2"
+    },
+    "PU1-P1-B3": {
+      "image": "https://via.placeholder.com/400x200/172b2a/e85d3a?text=Pune+Ad+3",
+      "link": "https://mazamitra.in/advertise/",
+      "sponsor": "पुणे जाहिरात 3"
     }
+
+
+
+
+
+    
   }
 }
