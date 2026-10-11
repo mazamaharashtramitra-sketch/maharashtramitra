@@ -58,5 +58,17 @@
     "skyTop": "#15091a",
     "skyMid": "#24112e",
     "skyLow": "#331842"
+  },
+    "pune": {
+    "code": "PU1",
+    "name": "माझा पुणे मित्र",
+    "tagline": "तुमच्या दिवसातला छोटा विराम",
+    "city": "पुणे",
+    "region": "पुणे जिल्हा, महाराष्ट्र",
+    "accent": "#e85d3a",
+    "accentSoft": "#ffb89e",
+    "skyTop": "#1a0a05",
+    "skyMid": "#2a1408",
+    "skyLow": "#3d1f0f"
   }
 }
