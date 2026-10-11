@@ -148,7 +148,7 @@ function pickArticleForSlot(slot, citySlug, weekStart, weekEnd, usedSlugs) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SPLIT ARTICLE (into pages, by word count)
+   SPLIT ARTICLE
    ═══════════════════════════════════════════════════════ */
 function splitArticle(body) {
   const paras = String(body || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
@@ -169,25 +169,37 @@ function splitArticle(body) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   ⭐ NEW: RENDER PARAGRAPHS (proper <p> tags)
+   ⭐ RENDER PARAGRAPHS — bold greeting, clean headings
    ═══════════════════════════════════════════════════════ */
 function renderParagraphs(text, dropcap = false) {
   const paras = String(text || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   if (!paras.length) return '<p>—</p>';
   return paras.map((p, i) => {
-    // Detect heading pattern: ━━━ ... ━━━ or short with dash wrappers
-    const headingMatch = p.match(/^━+\s*(.+?)\s*━+$/);
+    // 1. Remove pure dash divider lines (━ or ─)
+    if (/^[━─]+$/.test(p)) return '';
+
+    // 2. Heading: ━━━ Text ━━━
+    const headingMatch = p.match(/^[━─]+\s*(.+?)\s*[━─]+$/);
     if (headingMatch) {
       return `<h3 class="section-head">${esc(headingMatch[1])}</h3>`;
     }
-    // Just a divider (only ━ characters)
-    if (/^━+$/.test(p)) {
-      return `<div class="section-divider"></div>`;
+
+    // 3. Partial heading: leading dashes + text
+    const partialHeading = p.match(/^[━─]+\s*(.+)$/);
+    if (partialHeading && partialHeading[1].length < 80) {
+      return `<h3 class="section-head">${esc(partialHeading[1])}</h3>`;
     }
-    // Regular paragraph
-    const cls = (i === 0 && dropcap && !/^[🌸🙏🎉🌺✨]/.test(p)) ? ' class="dropcap"' : '';
+
+    // 4. Greeting paragraph — first paragraph with emojis
+    const isGreeting = (i === 0) && /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(p);
+    if (isGreeting) {
+      return `<p class="greeting-line">${esc(p)}</p>`;
+    }
+
+    // 5. Regular paragraph
+    const cls = (i === 0 && dropcap && !/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(p)) ? ' class="dropcap"' : '';
     return `<p${cls}>${esc(p)}</p>`;
-  }).join('');
+  }).filter(Boolean).join('');
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -374,7 +386,7 @@ function renderContents(articles, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   ⭐ FIXED: RENDER ARTICLE (with proper paragraphs)
+   RENDER ARTICLE
    ═══════════════════════════════════════════════════════ */
 function renderArticle(a, n, part, totalParts, totalPages, cityCode) {
   const isFirst = part === 1;
@@ -402,9 +414,9 @@ function renderArticle(a, n, part, totalParts, totalPages, cityCode) {
     ? `<h2 class="page-title">${esc(a.title)}</h2>
        ${a.image ? `<div class="lead-photo"><img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy"></div>` : ''}
        ${videoBlock}
-       <div class="page-copy" style="margin-top:20px">${renderParagraphs(a.parts[part-1], true)}</div>`
+       <div class="page-copy" style="margin-top:24px">${renderParagraphs(a.parts[part-1], true)}</div>`
     : `<h2 class="page-title" style="font-size:26px">${esc(a.title)}<span style="font-size:14px;color:#747b72;font-weight:400"> · भाग ${toMr(part)} / ${toMr(totalParts)}</span></h2>
-       <div class="page-copy" style="margin-top:20px">${renderParagraphs(a.parts[part-1], false)}</div>`}
+       <div class="page-copy" style="margin-top:24px">${renderParagraphs(a.parts[part-1], false)}</div>`}
   ${isFirst && a.quote && totalParts === 1 ? `<blockquote class="pull-quote">“${esc(a.quote)}”</blockquote>` : ''}
   ${adBlock}
   <footer class="page-footer"><strong>${esc(config.site.name)}</strong><span class="folio">${toMr(n).padStart(2, '०')} / ${toMr(totalPages)}</span></footer>
