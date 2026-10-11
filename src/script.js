@@ -2,7 +2,7 @@
   'use strict';
 /* ─── Remember last edition ─── */
 (function () {
-  const LEGAL = ['about', 'advertise', 'contact', 'grievance', 'privacy', 'terms'];
+  const LEGAL = ['about', 'advertise', 'contact', 'grievance', 'privacy', 'terms','payment'];
   const parts = location.pathname.split('/').filter(Boolean);
   const currentSlug = parts[0] || '';
 
