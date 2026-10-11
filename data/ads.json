@@ -1,19 +1,150 @@
 {
   "ads": {
-    "PU1-P4-B1": {
-      "image": "https://via.placeholder.com/400x200/FF6B6B/FFFFFF?text=TEST+PUNA+AD",
-      "link": "https://google.com",
-      "sponsor": "टेस्ट जाहिरात"
-    },
-    "PU1-P4-B2": {
-      "image": "https://via.placeholder.com/400x200/4CAF50/FFFFFF?text=TEST+B2",
-      "link": "https://google.com",
-      "sponsor": "दुसरी जाहिरात"
-    },
-    "PU1-P4-B3": {
-      "image": "https://via.placeholder.com/400x200/2196F3/FFFFFF?text=TEST+B3",
-      "link": "https://google.com",
-      "sponsor": "तिसरी जाहिरात"
-    }
+    "M1-P4-B1": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+AD+1", "link": "https://google.com", "sponsor": "महाराष्ट्र जाहिरात १" },
+    "M1-P4-B2": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+AD+2", "link": "https://google.com", "sponsor": "महाराष्ट्र जाहिरात २" },
+    "M1-P4-B3": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+AD+3", "link": "https://google.com", "sponsor": "महाराष्ट्र जाहिरात ३" },
+    "M1-P5-B1": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+P5+AD", "link": "https://google.com", "sponsor": "महाराष्ट्र P5" },
+
+    "MB-P4-B1": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+1", "link": "https://google.com", "sponsor": "मुंबई जाहिरात १" },
+    "MB-P4-B2": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+2", "link": "https://google.com", "sponsor": "मुंबई जाहिरात २" },
+    "MB-P4-B3": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+3", "link": "https://google.com", "sponsor": "मुंबई जाहिरात ३" },
+    "MB-P5-B1": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+P5", "link": "https://google.com", "sponsor": "मुंबई P5" },
+
+    "PU1-P4-B1": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+AD+1", "link": "https://google.com", "sponsor": "पुणे जाहिरात १" },
+    "PU1-P4-B2": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+AD+2", "link": "https://google.com", "sponsor": "पुणे जाहिरात २" },
+    "PU1-P4-B3": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+AD+3", "link": "https://google.com", "sponsor": "पुणे जाहिरात ३" },
+    "PU1-P5-B1": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+P5", "link": "https://google.com", "sponsor": "पुणे P5" },
+
+    "NG-P4-B1": { "image": "https://via.placeholder.com/400x200/d35400/FFFFFF?text=NAGPUR+AD+1", "link": "https://google.com", "sponsor": "नागपूर जाहिरात १" },
+    "NG-P4-B2": { "image": "https://via.placeholder.com/400x200/d35400/FFFFFF?text=NAGPUR+AD+2", "link": "https://google.com", "sponsor": "नागपूर जाहिरात २" },
+    "NG-P4-B3": { "image": "https://via.placeholder.com/400x200/d35400/FFFFFF?text=NAGPUR+AD+3", "link": "https://google.com", "sponsor": "नागपूर जाहिरात ३" },
+
+    "NK-P4-B1": { "image": "https://via.placeholder.com/400x200/6a4c93/FFFFFF?text=NASHIK+AD+1", "link": "https://google.com", "sponsor": "नाशिक जाहिरात १" },
+    "NK-P4-B2": { "image": "https://via.placeholder.com/400x200/6a4c93/FFFFFF?text=NASHIK+AD+2", "link": "https://google.com", "sponsor": "नाशिक जाहिरात २" },
+    "NK-P4-B3": { "image": "https://via.placeholder.com/400x200/6a4c93/FFFFFF?text=NASHIK+AD+3", "link": "https://google.com", "sponsor": "नाशिक जाहिरात ३" },
+
+    "TH-P4-B1": { "image": "https://via.placeholder.com/400x200/16a085/FFFFFF?text=THANE+AD+1", "link": "https://google.com", "sponsor": "ठाणे जाहिरात १" },
+    "TH-P4-B2": { "image": "https://via.placeholder.com/400x200/16a085/FFFFFF?text=THANE+AD+2", "link": "https://google.com", "sponsor": "ठाणे जाहिरात २" },
+    "TH-P4-B3": { "image": "https://via.placeholder.com/400x200/16a085/FFFFFF?text=THANE+AD+3", "link": "https://google.com", "sponsor": "ठाणे जाहिरात ३" },
+
+    "KD-P4-B1": { "image": "https://via.placeholder.com/400x200/4a3d8f/FFFFFF?text=KALYAN+AD+1", "link": "https://google.com", "sponsor": "कल्याण-डोंबिवली जाहिरात १" },
+    "KD-P4-B2": { "image": "https://via.placeholder.com/400x200/4a3d8f/FFFFFF?text=KALYAN+AD+2", "link": "https://google.com", "sponsor": "कल्याण-डोंबिवली जाहिरात २" },
+    "KD-P4-B3": { "image": "https://via.placeholder.com/400x200/4a3d8f/FFFFFF?text=KALYAN+AD+3", "link": "https://google.com", "sponsor": "कल्याण-डोंबिवली जाहिरात ३" },
+
+    "MIR-P4-B1": { "image": "https://via.placeholder.com/400x200/0d7a7a/FFFFFF?text=MIRA+AD+1", "link": "https://google.com", "sponsor": "मीरा-भाईंदर जाहिरात १" },
+    "MIR-P4-B2": { "image": "https://via.placeholder.com/400x200/0d7a7a/FFFFFF?text=MIRA+AD+2", "link": "https://google.com", "sponsor": "मीरा-भाईंदर जाहिरात २" },
+    "MIR-P4-B3": { "image": "https://via.placeholder.com/400x200/0d7a7a/FFFFFF?text=MIRA+AD+3", "link": "https://google.com", "sponsor": "मीरा-भाईंदर जाहिरात ३" },
+
+    "UL-P4-B1": { "image": "https://via.placeholder.com/400x200/b8722c/FFFFFF?text=ULHASNAGAR+AD+1", "link": "https://google.com", "sponsor": "उल्हासनगर जाहिरात १" },
+    "UL-P4-B2": { "image": "https://via.placeholder.com/400x200/b8722c/FFFFFF?text=ULHASNAGAR+AD+2", "link": "https://google.com", "sponsor": "उल्हासनगर जाहिरात २" },
+    "UL-P4-B3": { "image": "https://via.placeholder.com/400x200/b8722c/FFFFFF?text=ULHASNAGAR+AD+3", "link": "https://google.com", "sponsor": "उल्हासनगर जाहिरात ३" },
+
+    "CS-P4-B1": { "image": "https://via.placeholder.com/400x200/c0392b/FFFFFF?text=SAMBHAJI+AD+1", "link": "https://google.com", "sponsor": "छत्रपती संभाजीनगर जाहिरात १" },
+    "CS-P4-B2": { "image": "https://via.placeholder.com/400x200/c0392b/FFFFFF?text=SAMBHAJI+AD+2", "link": "https://google.com", "sponsor": "छत्रपती संभाजीनगर जाहिरात २" },
+    "CS-P4-B3": { "image": "https://via.placeholder.com/400x200/c0392b/FFFFFF?text=SAMBHAJI+AD+3", "link": "https://google.com", "sponsor": "छत्रपती संभाजीनगर जाहिरात ३" },
+
+    "SP-P4-B1": { "image": "https://via.placeholder.com/400x200/b03a48/FFFFFF?text=SOLAPUR+AD+1", "link": "https://google.com", "sponsor": "सोलापूर जाहिरात १" },
+    "SP-P4-B2": { "image": "https://via.placeholder.com/400x200/b03a48/FFFFFF?text=SOLAPUR+AD+2", "link": "https://google.com", "sponsor": "सोलापूर जाहिरात २" },
+    "SP-P4-B3": { "image": "https://via.placeholder.com/400x200/b03a48/FFFFFF?text=SOLAPUR+AD+3", "link": "https://google.com", "sponsor": "सोलापूर जाहिरात ३" },
+
+    "KP-P4-B1": { "image": "https://via.placeholder.com/400x200/a01e3c/FFFFFF?text=KOLHAPUR+AD+1", "link": "https://google.com", "sponsor": "कोल्हापूर जाहिरात १" },
+    "KP-P4-B2": { "image": "https://via.placeholder.com/400x200/a01e3c/FFFFFF?text=KOLHAPUR+AD+2", "link": "https://google.com", "sponsor": "कोल्हापूर जाहिरात २" },
+    "KP-P4-B3": { "image": "https://via.placeholder.com/400x200/a01e3c/FFFFFF?text=KOLHAPUR+AD+3", "link": "https://google.com", "sponsor": "कोल्हापूर जाहिरात ३" },
+
+    "IC-P4-B1": { "image": "https://via.placeholder.com/400x200/6a1b6a/FFFFFF?text=ICHALKARANJI+AD+1", "link": "https://google.com", "sponsor": "इचलकरंजी जाहिरात १" },
+    "IC-P4-B2": { "image": "https://via.placeholder.com/400x200/6a1b6a/FFFFFF?text=ICHALKARANJI+AD+2", "link": "https://google.com", "sponsor": "इचलकरंजी जाहिरात २" },
+    "IC-P4-B3": { "image": "https://via.placeholder.com/400x200/6a1b6a/FFFFFF?text=ICHALKARANJI+AD+3", "link": "https://google.com", "sponsor": "इचलकरंजी जाहिरात ३" },
+
+    "AM-P4-B1": { "image": "https://via.placeholder.com/400x200/4a5fbf/FFFFFF?text=AMRAVATI+AD+1", "link": "https://google.com", "sponsor": "अमरावती जाहिरात १" },
+    "AM-P4-B2": { "image": "https://via.placeholder.com/400x200/4a5fbf/FFFFFF?text=AMRAVATI+AD+2", "link": "https://google.com", "sponsor": "अमरावती जाहिरात २" },
+    "AM-P4-B3": { "image": "https://via.placeholder.com/400x200/4a5fbf/FFFFFF?text=AMRAVATI+AD+3", "link": "https://google.com", "sponsor": "अमरावती जाहिरात ३" },
+
+    "ND-P4-B1": { "image": "https://via.placeholder.com/400x200/7a1f2e/FFFFFF?text=NANDED+AD+1", "link": "https://google.com", "sponsor": "नांदेड जाहिरात १" },
+    "ND-P4-B2": { "image": "https://via.placeholder.com/400x200/7a1f2e/FFFFFF?text=NANDED+AD+2", "link": "https://google.com", "sponsor": "नांदेड जाहिरात २" },
+    "ND-P4-B3": { "image": "https://via.placeholder.com/400x200/7a1f2e/FFFFFF?text=NANDED+AD+3", "link": "https://google.com", "sponsor": "नांदेड जाहिरात ३" },
+
+    "SG-P4-B1": { "image": "https://via.placeholder.com/400x200/d63384/FFFFFF?text=SANGLI+AD+1", "link": "https://google.com", "sponsor": "सांगली जाहिरात १" },
+    "SG-P4-B2": { "image": "https://via.placeholder.com/400x200/d63384/FFFFFF?text=SANGLI+AD+2", "link": "https://google.com", "sponsor": "सांगली जाहिरात २" },
+    "SG-P4-B3": { "image": "https://via.placeholder.com/400x200/d63384/FFFFFF?text=SANGLI+AD+3", "link": "https://google.com", "sponsor": "सांगली जाहिरात ३" },
+
+    "JG-P4-B1": { "image": "https://via.placeholder.com/400x200/f5c518/000000?text=JALGAON+AD+1", "link": "https://google.com", "sponsor": "जळगाव जाहिरात १" },
+    "JG-P4-B2": { "image": "https://via.placeholder.com/400x200/f5c518/000000?text=JALGAON+AD+2", "link": "https://google.com", "sponsor": "जळगाव जाहिरात २" },
+    "JG-P4-B3": { "image": "https://via.placeholder.com/400x200/f5c518/000000?text=JALGAON+AD+3", "link": "https://google.com", "sponsor": "जळगाव जाहिरात ३" },
+
+    "AK-P4-B1": { "image": "https://via.placeholder.com/400x200/1e7e34/FFFFFF?text=AKOLA+AD+1", "link": "https://google.com", "sponsor": "अकोला जाहिरात १" },
+    "AK-P4-B2": { "image": "https://via.placeholder.com/400x200/1e7e34/FFFFFF?text=AKOLA+AD+2", "link": "https://google.com", "sponsor": "अकोला जाहिरात २" },
+    "AK-P4-B3": { "image": "https://via.placeholder.com/400x200/1e7e34/FFFFFF?text=AKOLA+AD+3", "link": "https://google.com", "sponsor": "अकोला जाहिरात ३" },
+
+    "LT-P4-B1": { "image": "https://via.placeholder.com/400x200/5b7c99/FFFFFF?text=LATUR+AD+1", "link": "https://google.com", "sponsor": "लातूर जाहिरात १" },
+    "LT-P4-B2": { "image": "https://via.placeholder.com/400x200/5b7c99/FFFFFF?text=LATUR+AD+2", "link": "https://google.com", "sponsor": "लातूर जाहिरात २" },
+    "LT-P4-B3": { "image": "https://via.placeholder.com/400x200/5b7c99/FFFFFF?text=LATUR+AD+3", "link": "https://google.com", "sponsor": "लातूर जाहिरात ३" },
+
+    "AH-P4-B1": { "image": "https://via.placeholder.com/400x200/b45309/FFFFFF?text=AHILYANAGAR+AD+1", "link": "https://google.com", "sponsor": "अहिल्यानगर जाहिरात १" },
+    "AH-P4-B2": { "image": "https://via.placeholder.com/400x200/b45309/FFFFFF?text=AHILYANAGAR+AD+2", "link": "https://google.com", "sponsor": "अहिल्यानगर जाहिरात २" },
+    "AH-P4-B3": { "image": "https://via.placeholder.com/400x200/b45309/FFFFFF?text=AHILYANAGAR+AD+3", "link": "https://google.com", "sponsor": "अहिल्यानगर जाहिरात ३" },
+
+    "DH-P4-B1": { "image": "https://via.placeholder.com/400x200/7d9b3a/FFFFFF?text=DHULE+AD+1", "link": "https://google.com", "sponsor": "धुळे जाहिरात १" },
+    "DH-P4-B2": { "image": "https://via.placeholder.com/400x200/7d9b3a/FFFFFF?text=DHULE+AD+2", "link": "https://google.com", "sponsor": "धुळे जाहिरात २" },
+    "DH-P4-B3": { "image": "https://via.placeholder.com/400x200/7d9b3a/FFFFFF?text=DHULE+AD+3", "link": "https://google.com", "sponsor": "धुळे जाहिरात ३" },
+
+    "ML-P4-B1": { "image": "https://via.placeholder.com/400x200/5b8c3a/FFFFFF?text=MALEGAON+AD+1", "link": "https://google.com", "sponsor": "मालेगाव जाहिरात १" },
+    "ML-P4-B2": { "image": "https://via.placeholder.com/400x200/5b8c3a/FFFFFF?text=MALEGAON+AD+2", "link": "https://google.com", "sponsor": "मालेगाव जाहिरात २" },
+    "ML-P4-B3": { "image": "https://via.placeholder.com/400x200/5b8c3a/FFFFFF?text=MALEGAON+AD+3", "link": "https://google.com", "sponsor": "मालेगाव जाहिरात ३" },
+
+    "CH-P4-B1": { "image": "https://via.placeholder.com/400x200/0e5a6c/FFFFFF?text=CHANDRAPUR+AD+1", "link": "https://google.com", "sponsor": "चंद्रपूर जाहिरात १" },
+    "CH-P4-B2": { "image": "https://via.placeholder.com/400x200/0e5a6c/FFFFFF?text=CHANDRAPUR+AD+2", "link": "https://google.com", "sponsor": "चंद्रपूर जाहिरात २" },
+    "CH-P4-B3": { "image": "https://via.placeholder.com/400x200/0e5a6c/FFFFFF?text=CHANDRAPUR+AD+3", "link": "https://google.com", "sponsor": "चंद्रपूर जाहिरात ३" },
+
+    "PB-P4-B1": { "image": "https://via.placeholder.com/400x200/b03a1f/FFFFFF?text=PARBHANI+AD+1", "link": "https://google.com", "sponsor": "परभणी जाहिरात १" },
+    "PB-P4-B2": { "image": "https://via.placeholder.com/400x200/b03a1f/FFFFFF?text=PARBHANI+AD+2", "link": "https://google.com", "sponsor": "परभणी जाहिरात २" },
+    "PB-P4-B3": { "image": "https://via.placeholder.com/400x200/b03a1f/FFFFFF?text=PARBHANI+AD+3", "link": "https://google.com", "sponsor": "परभणी जाहिरात ३" },
+
+    "JN-P4-B1": { "image": "https://via.placeholder.com/400x200/f39c12/000000?text=JALNA+AD+1", "link": "https://google.com", "sponsor": "जालना जाहिरात १" },
+    "JN-P4-B2": { "image": "https://via.placeholder.com/400x200/f39c12/000000?text=JALNA+AD+2", "link": "https://google.com", "sponsor": "जालना जाहिरात २" },
+    "JN-P4-B3": { "image": "https://via.placeholder.com/400x200/f39c12/000000?text=JALNA+AD+3", "link": "https://google.com", "sponsor": "जालना जाहिरात ३" },
+
+    "BW-P4-B1": { "image": "https://via.placeholder.com/400x200/b87333/FFFFFF?text=BHIWANDI+AD+1", "link": "https://google.com", "sponsor": "भिवंडी जाहिरात १" },
+    "BW-P4-B2": { "image": "https://via.placeholder.com/400x200/b87333/FFFFFF?text=BHIWANDI+AD+2", "link": "https://google.com", "sponsor": "भिवंडी जाहिरात २" },
+    "BW-P4-B3": { "image": "https://via.placeholder.com/400x200/b87333/FFFFFF?text=BHIWANDI+AD+3", "link": "https://google.com", "sponsor": "भिवंडी जाहिरात ३" },
+
+    "PV-P4-B1": { "image": "https://via.placeholder.com/400x200/4682b4/FFFFFF?text=PANVEL+AD+1", "link": "https://google.com", "sponsor": "पनवेल जाहिरात १" },
+    "PV-P4-B2": { "image": "https://via.placeholder.com/400x200/4682b4/FFFFFF?text=PANVEL+AD+2", "link": "https://google.com", "sponsor": "पनवेल जाहिरात २" },
+    "PV-P4-B3": { "image": "https://via.placeholder.com/400x200/4682b4/FFFFFF?text=PANVEL+AD+3", "link": "https://google.com", "sponsor": "पनवेल जाहिरात ३" },
+
+    "BD-P4-B1": { "image": "https://via.placeholder.com/400x200/c9674f/FFFFFF?text=BEED+AD+1", "link": "https://google.com", "sponsor": "बीड जाहिरात १" },
+    "BD-P4-B2": { "image": "https://via.placeholder.com/400x200/c9674f/FFFFFF?text=BEED+AD+2", "link": "https://google.com", "sponsor": "बीड जाहिरात २" },
+    "BD-P4-B3": { "image": "https://via.placeholder.com/400x200/c9674f/FFFFFF?text=BEED+AD+3", "link": "https://google.com", "sponsor": "बीड जाहिरात ३" },
+
+    "YT-P4-B1": { "image": "https://via.placeholder.com/400x200/c4a032/FFFFFF?text=YAVATMAL+AD+1", "link": "https://google.com", "sponsor": "यवतमाळ जाहिरात १" },
+    "YT-P4-B2": { "image": "https://via.placeholder.com/400x200/c4a032/FFFFFF?text=YAVATMAL+AD+2", "link": "https://google.com", "sponsor": "यवतमाळ जाहिरात २" },
+    "YT-P4-B3": { "image": "https://via.placeholder.com/400x200/c4a032/FFFFFF?text=YAVATMAL+AD+3", "link": "https://google.com", "sponsor": "यवतमाळ जाहिरात ३" },
+
+    "NM-P4-B1": { "image": "https://via.placeholder.com/400x200/0f5132/FFFFFF?text=NAVI+MUMBAI+AD+1", "link": "https://google.com", "sponsor": "नवी मुंबई जाहिरात १" },
+    "NM-P4-B2": { "image": "https://via.placeholder.com/400x200/0f5132/FFFFFF?text=NAVI+MUMBAI+AD+2", "link": "https://google.com", "sponsor": "नवी मुंबई जाहिरात २" },
+    "NM-P4-B3": { "image": "https://via.placeholder.com/400x200/0f5132/FFFFFF?text=NAVI+MUMBAI+AD+3", "link": "https://google.com", "sponsor": "नवी मुंबई जाहिरात ३" },
+
+    "PC-P4-B1": { "image": "https://via.placeholder.com/400x200/556b2f/FFFFFF?text=PCMC+AD+1", "link": "https://google.com", "sponsor": "पिंपरी-चिंचवड जाहिरात १" },
+    "PC-P4-B2": { "image": "https://via.placeholder.com/400x200/556b2f/FFFFFF?text=PCMC+AD+2", "link": "https://google.com", "sponsor": "पिंपरी-चिंचवड जाहिरात २" },
+    "PC-P4-B3": { "image": "https://via.placeholder.com/400x200/556b2f/FFFFFF?text=PCMC+AD+3", "link": "https://google.com", "sponsor": "पिंपरी-चिंचवड जाहिरात ३" },
+
+    "VV-P4-B1": { "image": "https://via.placeholder.com/400x200/1b4332/FFFFFF?text=VASAI+AD+1", "link": "https://google.com", "sponsor": "वसई-विरार जाहिरात १" },
+    "VV-P4-B2": { "image": "https://via.placeholder.com/400x200/1b4332/FFFFFF?text=VASAI+AD+2", "link": "https://google.com", "sponsor": "वसई-विरार जाहिरात २" },
+    "VV-P4-B3": { "image": "https://via.placeholder.com/400x200/1b4332/FFFFFF?text=VASAI+AD+3", "link": "https://google.com", "sponsor": "वसई-विरार जाहिरात ३" },
+
+    "M2-P4-B1": { "image": "https://via.placeholder.com/400x200/f5a623/FFFFFF?text=MOSHI+AD+1", "link": "https://google.com", "sponsor": "मोशी जाहिरात १" },
+    "M2-P4-B2": { "image": "https://via.placeholder.com/400x200/f5a623/FFFFFF?text=MOSHI+AD+2", "link": "https://google.com", "sponsor": "मोशी जाहिरात २" },
+    "M2-P4-B3": { "image": "https://via.placeholder.com/400x200/f5a623/FFFFFF?text=MOSHI+AD+3", "link": "https://google.com", "sponsor": "मोशी जाहिरात ३" },
+
+    "N1-P4-B1": { "image": "https://via.placeholder.com/400x200/4caf87/FFFFFF?text=NIGDI+AD+1", "link": "https://google.com", "sponsor": "निगडी जाहिरात १" },
+    "N1-P4-B2": { "image": "https://via.placeholder.com/400x200/4caf87/FFFFFF?text=NIGDI+AD+2", "link": "https://google.com", "sponsor": "निगडी जाहिरात २" },
+    "N1-P4-B3": { "image": "https://via.placeholder.com/400x200/4caf87/FFFFFF?text=NIGDI+AD+3", "link": "https://google.com", "sponsor": "निगडी जाहिरात ३" },
+
+    "PH1-P4-B1": { "image": "https://via.placeholder.com/400x200/e08b4a/FFFFFF?text=PHALTAN+AD+1", "link": "https://google.com", "sponsor": "फलटण जाहिरात १" },
+    "PH1-P4-B2": { "image": "https://via.placeholder.com/400x200/e08b4a/FFFFFF?text=PHALTAN+AD+2", "link": "https://google.com", "sponsor": "फलटण जाहिरात २" },
+    "PH1-P4-B3": { "image": "https://via.placeholder.com/400x200/e08b4a/FFFFFF?text=PHALTAN+AD+3", "link": "https://google.com", "sponsor": "फलटण जाहिरात ३" },
+
+    "S1-P4-B1": { "image": "https://via.placeholder.com/400x200/8e44ad/FFFFFF?text=SATARA+AD+1", "link": "https://google.com", "sponsor": "सातारा जाहिरात १" },
+    "S1-P4-B2": { "image": "https://via.placeholder.com/400x200/8e44ad/FFFFFF?text=SATARA+AD+2", "link": "https://google.com", "sponsor": "सातारा जाहिरात २" },
+    "S1-P4-B3": { "image": "https://via.placeholder.com/400x200/8e44ad/FFFFFF?text=SATARA+AD+3", "link": "https://google.com", "sponsor": "सातारा जाहिरात ३" }
   }
 }
