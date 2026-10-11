@@ -215,7 +215,6 @@ function renderAdBlock(ads, pageKey) {
     ${items.map(renderAd).join('')}
   </div>`;
 }
-
 /* ═══════════════════════════════════════════════════════
    PAGE 1 — DYNAMIC HTML/CSS COVER (nature-inspired, no image)
    ═══════════════════════════════════════════════════════ */
@@ -239,14 +238,17 @@ function renderCover(edition, totalPages) {
     <div class="cv-bg" aria-hidden="true">
       <div class="cv-sky"></div>
       <div class="cv-stars"></div>
-      <div class="cv-sun"></div>
-      <div class="cv-horizon"></div>
       <div class="cv-hills cv-hills-far"></div>
       <div class="cv-hills cv-hills-mid"></div>
       <div class="cv-hills cv-hills-near"></div>
+      <div class="cv-sun"></div>
       <div class="cv-trees"></div>
       <div class="cv-fireflies"></div>
       <div class="cv-vignette"></div>
+      <div class="cv-corner cv-corner-tl"></div>
+      <div class="cv-corner cv-corner-tr"></div>
+      <div class="cv-corner cv-corner-bl"></div>
+      <div class="cv-corner cv-corner-br"></div>
     </div>
 
     <div class="cv-content">
@@ -310,7 +312,6 @@ function renderCover(edition, totalPages) {
 
   </article>`;
 }
-
 /* ═══════════════════════════════════════════════════════
    PAGE 2 — EDITION INFO
    ═══════════════════════════════════════════════════════ */
