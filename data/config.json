@@ -7,9 +7,7 @@
   },
 
   "newsletter": {
-    "totalPages": 12,
-    "wordsPerPage": 450,
-    "theme": "classic"
+    "wordsPerPage": 450
   },
 
   "cover": {
@@ -21,17 +19,29 @@
     { "page": 1,  "type": "cover" },
     { "page": 2,  "type": "edition-info" },
     { "page": 3,  "type": "contents" },
-    { "page": 4,  "type": "article", "category": "featured" },
-    { "page": 5,  "type": "article", "category": "sanskruti" },
-    { "page": 6,  "type": "article", "category": "bhatkanti" },
-    { "page": 7,  "type": "article", "category": "arogya" },
-    { "page": 8,  "type": "article", "category": "shiksha" },
-    { "page": 9,  "type": "article", "category": "vyavsay" },
-    { "page": 10, "type": "article", "category": "sahitya" },
-    { "page": 11, "type": "article", "category": "katha" },
-    { "page": 12, "type": "article", "category": "manoranjan" },
+    { "page": 4,  "type": "article", "slot": 1 },
+    { "page": 5,  "type": "article", "slot": 2 },
+    { "page": 6,  "type": "article", "slot": 3 },
+    { "page": 7,  "type": "article", "slot": 4 },
+    { "page": 8,  "type": "article", "slot": 5 },
+    { "page": 9,  "type": "article", "slot": 6 },
+    { "page": 10, "type": "article", "slot": 7 },
+    { "page": 11, "type": "article", "slot": 8 },
+    { "page": 12, "type": "article", "slot": 9 },
     { "page": 13, "type": "back-cover" }
   ],
+
+  "slotLabels": {
+    "1": "संपादकीय",
+    "2": "संस्कृती",
+    "3": "भटकंती",
+    "4": "आरोग्य",
+    "5": "शिक्षण",
+    "6": "उद्योजकता",
+    "7": "साहित्य",
+    "8": "कथा",
+    "9": "मनोरंजन"
+  },
 
   "footer": {
     "columns": [
