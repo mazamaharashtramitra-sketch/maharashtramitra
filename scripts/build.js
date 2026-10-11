@@ -2,23 +2,30 @@
 const fs = require('fs');
 const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
-const read = p => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
 
-const config = read('data/config.json');
-const editions = fs.readdirSync(path.join(ROOT, 'data/editions'))
-  .filter(f => f.endsWith('.json'))
-  .map(f => JSON.parse(fs.readFileSync(path.join(ROOT, 'data/editions', f), 'utf8')));
+/* ═══════════════════════════════════════════════════════
+   LOAD CONFIG
+   ═══════════════════════════════════════════════════════ */
+const readJSON = (p, fallback = null) => {
+  const full = path.join(ROOT, p);
+  if (!fs.existsSync(full)) return fallback;
+  return JSON.parse(fs.readFileSync(full, 'utf8'));
+};
+
+const config = readJSON('data/config.json', {});
+const citiesData = readJSON('data/cities.json', {});
+const adsData = (readJSON('data/ads.json', { ads: {} }) || {}).ads || {};
 
 const OUT = path.join(ROOT, 'public');
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 
-const esc = (s='') => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+/* ═══════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════ */
+const esc = (s='') => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'[+d]);
 
-/* ═══════════════════════════════════════════════════════
-   WEEKLY DATE HELPERS
-   ═══════════════════════════════════════════════════════ */
 function getWeekStart(d) {
   const date = new Date(d);
   date.setHours(0, 0, 0, 0);
@@ -45,7 +52,6 @@ function toIsoDate(d) {
 }
 
 const MONTHS_MR = ['जानेवारी','फेब्रुवारी','मार्च','एप्रिल','मे','जून','जुलै','ऑगस्ट','सप्टेंबर','ऑक्टोबर','नोव्हेंबर','डिसेंबर'];
-
 const toMrDate = (iso) => {
   const [y, m, d] = iso.split('-');
   if (!y || !m || !d) return iso;
@@ -56,87 +62,91 @@ const toMrWeekRange = (startIso, endIso) => {
   const [sy, sm, sd] = startIso.split('-');
   const [ey, em, ed] = endIso.split('-');
   if (!sy || !sm || !sd || !ey || !em || !ed) return startIso;
-  if (sm === em) {
-    return `${toMr(+sd)} ते ${toMr(+ed)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)}`;
-  }
-  if (sy === ey) {
-    return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(sy)}`;
-  }
+  if (sm === em) return `${toMr(+sd)} ते ${toMr(+ed)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)}`;
+  if (sy === ey) return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(sy)}`;
   return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(ey)}`;
 };
 
 const now = new Date();
-const weekStart = getWeekStart(now);
-const weekEnd = getWeekEnd(now);
-const WEEK_START_ISO = toIsoDate(weekStart);
-const WEEK_END_ISO = toIsoDate(weekEnd);
+const WEEK_START_ISO = toIsoDate(getWeekStart(now));
+const WEEK_END_ISO = toIsoDate(getWeekEnd(now));
 const WEEK_RANGE_MR = toMrWeekRange(WEEK_START_ISO, WEEK_END_ISO);
-
+const TODAY_ISO = toIsoDate(now);
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
-/* ─── Load articles ─── */
-function loadArticles(cat, editionSlug) {
-  if (editionSlug) {
-    const localDir = path.join(ROOT, 'data/articles', editionSlug, cat);
-    if (fs.existsSync(localDir)) {
-      const files = fs.readdirSync(localDir).filter(f => f.endsWith('.json'));
-      if (files.length) return files.map(f => JSON.parse(fs.readFileSync(path.join(localDir, f), 'utf8')));
+/* ═══════════════════════════════════════════════════════
+   LOAD ARTICLES
+   - नवीन: data/articles/*.json (flat)
+   - जुने: data/articles/<category>/*.json (subfolder)
+   ═══════════════════════════════════════════════════════ */
+function loadAllArticles() {
+  const dir = path.join(ROOT, 'data/articles');
+  if (!fs.existsSync(dir)) return [];
+  const articles = [];
+
+  function walk(currentDir, relativePath = '') {
+    const items = fs.readdirSync(currentDir);
+    for (const item of items) {
+      if (item === '_template.json' || item.startsWith('_')) continue;
+      const fullPath = path.join(currentDir, item);
+      const stat = fs.statSync(fullPath);
+
+      if (stat.isDirectory()) {
+        walk(fullPath, relativePath ? `${relativePath}/${item}` : item);
+      } else if (item.endsWith('.json')) {
+        try {
+          const a = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+          // Infer category from folder if missing
+          if (!a.category && relativePath) {
+            a.category = relativePath.split('/').pop();
+          }
+          articles.push(a);
+        } catch (e) {
+          console.warn(`⚠ Skipping invalid article: ${relativePath}/${item}`);
+        }
+      }
     }
   }
-  const dir = path.join(ROOT, 'data/articles', cat);
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter(f => f.endsWith('.json'))
-    .map(f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));
+  walk(dir);
+  return articles;
 }
 
-/* ─── Load overrides ─── */
-function loadOverrides(date, editionSlug) {
-  const tryLoad = (p) => {
-    if (!fs.existsSync(p)) return null;
-    try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; }
-  };
-  if (editionSlug) {
-    const local = tryLoad(path.join(ROOT, 'data/overrides', editionSlug, `${date}.json`));
-    if (local) return local;
+const ALL_ARTICLES = loadAllArticles();
+console.log(`📚 Loaded ${ALL_ARTICLES.length} articles`);
+
+/* ═══════════════════════════════════════════════════════
+   ARTICLE PICKING LOGIC
+   ═══════════════════════════════════════════════════════ */
+function pickArticle(category, citySlug, weekStart, weekEnd) {
+  let pool = ALL_ARTICLES.filter(a => a.category === category);
+
+  pool = pool.filter(a => {
+    if (!a.city) return true;
+    if (a.city === 'all') return true;
+    return a.city === citySlug;
+  });
+
+  if (!pool.length) return null;
+
+  // Priority: special articles with dateRange overlapping this week
+  const specials = pool.filter(a => {
+    if (!a.dateRange) return false;
+    const { from, to } = a.dateRange;
+    if (!from || !to) return false;
+    return from <= weekEnd && to >= weekStart;
+  });
+
+  if (specials.length) {
+    return specials[specials.length - 1];
   }
-  return tryLoad(path.join(ROOT, 'data/overrides', `${date}.json`))
-      || tryLoad(path.join(ROOT, 'data/overrides', '_global', `${date}.json`))
-      || {};
+
+  const [a] = seededPick(pool, weekStart + '-' + category + '-' + citySlug, 1);
+  return a || null;
 }
 
-/* ─── Pick one article ─── */
-function pickArticle(category, editionSlug, date, overrides) {
-  const pool = loadArticles(category, editionSlug);
-  const overrideSlug = overrides[category];
-  if (overrideSlug) {
-    const found = pool.find(a => a.slug === overrideSlug);
-    if (found) return found;
-  }
-  const [a] = seededPick(pool, date + category, 1);
-  return a || { title: 'शीघ्र', category, body: '', image: '', quote: '' };
-}
-
-/* ─── Load ads ─── */
-function loadAds(edition) {
-  const files = [
-    'data/ads/default.json',
-    'data/ads/state/maharashtra.json',
-    edition.city ? `data/ads/city/${edition.city.toLowerCase().replace(/\s+/g,'-')}.json` : null,
-    `data/ads/city/${edition.slug}.json`,
-    `data/ads/neighborhood/${edition.slug}.json`
-  ].filter(Boolean);
-
-  const merged = { slots: {} };
-  for (const f of files) {
-    const full = path.join(ROOT, f);
-    if (!fs.existsSync(full)) continue;
-    const data = JSON.parse(fs.readFileSync(full, 'utf8'));
-    for (const [slot, ad] of Object.entries(data.slots || {})) merged.slots[slot] = ad;
-  }
-  return merged;
-}
-
-/* ─── Deterministic shuffle ─── */
+/* ═══════════════════════════════════════════════════════
+   SEEDED PICK
+   ═══════════════════════════════════════════════════════ */
 function seededPick(arr, seed, count) {
   if (!arr.length) return [];
   const a = [...arr];
@@ -153,7 +163,9 @@ function seededPick(arr, seed, count) {
   return out.slice(0, count);
 }
 
-/* ─── Split long article ─── */
+/* ═══════════════════════════════════════════════════════
+   SPLIT ARTICLE
+   ═══════════════════════════════════════════════════════ */
 function splitArticle(body) {
   const paras = String(body || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   if (!paras.length) return [''];
@@ -175,6 +187,9 @@ function splitArticle(body) {
   return pages.length ? pages : [body];
 }
 
+/* ═══════════════════════════════════════════════════════
+   FOOTER COLUMNS
+   ═══════════════════════════════════════════════════════ */
 function footerColumns() {
   return (config.footer.columns || []).map(c => `
     <div class="footer-col"><h4>${esc(c.title)}</h4>
@@ -182,55 +197,74 @@ function footerColumns() {
     </div>`).join('');
 }
 
-/* ─── Render ad ─── */
-function renderAd(ad) {
+/* ═══════════════════════════════════════════════════════
+   AD RENDERING (code-based)
+   ═══════════════════════════════════════════════════════ */
+function renderAdImage(ad) {
   if (!ad) return '';
-  const tier = ad.tier || 'galli';
-  const accent = tier === 'premium' ? '#e5a33b' : tier === 'shahar' ? '#315e50' : '#e5a33b';
+  if (ad.startDate && ad.startDate > TODAY_ISO) return '';
+  if (ad.endDate && ad.endDate < TODAY_ISO) return '';
 
-  if (ad.image) {
-    return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" class="ad-card ad-image">
-      <img src="${esc(ad.image)}" alt="${esc(ad.sponsor || ad.title)}" loading="lazy">
-      <span class="ad-badge">प्रायोजित · ${esc(ad.sponsor)}</span>
-    </a>`;
-  }
-
-  return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" class="ad-card ad-text" style="border-left-color:${accent}">
-    <span class="ad-label">प्रायोजित · ${esc(ad.sponsor)}</span>
-    <span class="ad-icon">${esc(ad.icon || '★')}</span>
-    <strong class="ad-title">${esc(ad.title)}</strong>
-    <span class="ad-desc">${esc(ad.description)}</span>
-    <span class="ad-cta">${esc(ad.cta)} →</span>
+  return `<a href="${esc(ad.link)}" rel="nofollow sponsored" target="_blank" style="display:block;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fffefa;text-decoration:none;position:relative">
+    <img src="${esc(ad.image)}" alt="${esc(ad.sponsor || 'Advertisement')}" loading="lazy" style="display:block;width:100%;height:auto">
+    <span style="position:absolute;top:8px;left:10px;padding:3px 8px;background:rgba(23,43,42,.78);color:#fff;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;border-radius:99px">प्रायोजित · ${esc(ad.sponsor || 'Ad')}</span>
   </a>`;
 }
 
-function renderAdBlock(ads, pageKey) {
-  const slots = (config.ads && config.ads.slots && config.ads.slots[pageKey])
-             || (pageKey.startsWith('page') ? ['galli'] : []);
-  if (!slots.length) return '';
-  const items = slots.map(k => ads.slots && ads.slots[k]).filter(Boolean);
-  if (!items.length) return '';
-  const cols = items.length === 1 ? '1fr' : items.length === 2 ? '1fr 1fr' : 'repeat(3,1fr)';
-  return `<div class="ad-grid" style="grid-template-columns:${cols}">
-    ${items.map(renderAd).join('')}
-  </div>`;
-}
-/* ═══════════════════════════════════════════════════════
-   PAGE 1 — DYNAMIC HTML/CSS COVER (nature-inspired, no image)
-   ═══════════════════════════════════════════════════════ */
-function renderCover(edition, totalPages) {
-  const c = config.cover;
-  const highlights = (c.highlights || [])
-    .map(h => `<span class="cv-pill">${esc(h)}</span>`)
-    .join('');
+function renderPageAds(cityCode, pageNum) {
+  const key = `${cityCode}-P${pageNum}`;
 
-  const accent = edition.accent || '#e5a33b';
-  const accentSoft = edition.accentSoft || '#f5c66b';
-  const skyTop = edition.skyTop || '#1a1410';
-  const skyMid = edition.skyMid || '#2a1d18';
-  const skyLow = edition.skyLow || '#3d2818';
-  const city = edition.city || 'महाराष्ट्र';
-  const region = edition.region || 'महाराष्ट्र, भारत';
+  const fp  = adsData[`${key}-FP`];
+  const hp1 = adsData[`${key}-HP1`];
+  const hp2 = adsData[`${key}-HP2`];
+  const hp3 = adsData[`${key}-HP3`];
+
+  const bs = [];
+  for (let i = 1; i <= 9; i++) {
+    const b = adsData[`${key}-B${i}`];
+    if (b) bs.push(b);
+  }
+
+  const activeFP = fp ? renderAdImage(fp) : '';
+  const activeHPs = [hp1, hp2, hp3]
+    .filter(Boolean)
+    .map(h => renderAdImage(h))
+    .filter(Boolean)
+    .map(h => `<div style="margin:20px 0">${h}</div>`)
+    .join('');
+  const activeBs = bs.map(renderAdImage).filter(Boolean);
+
+  if (!activeFP && !activeHPs && !activeBs.length) return '';
+
+  let html = '';
+  if (activeFP) html += `<div style="margin:24px 0">${activeFP}</div>`;
+  if (activeHPs) html += activeHPs;
+  if (activeBs.length) {
+    const cols = activeBs.length === 1 ? '1fr'
+               : activeBs.length === 2 ? '1fr 1fr'
+               : activeBs.length === 3 ? 'repeat(3,1fr)'
+               : activeBs.length === 4 ? 'repeat(4,1fr)'
+               : activeBs.length === 5 ? 'repeat(5,1fr)'
+               : 'repeat(3,1fr)';
+    html += `<div style="display:grid;grid-template-columns:${cols};gap:12px;margin:28px 0">${activeBs.join('')}</div>`;
+  }
+  return html;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RENDER COVER
+   ═══════════════════════════════════════════════════════ */
+function renderCover(city, totalPages) {
+  const c = config.cover || {};
+  const highlights = (c.highlights || []).map(h => `<span class="cv-pill">${esc(h)}</span>`).join('');
+  const accent = city.accent || '#e5a33b';
+  const accentSoft = city.accentSoft || '#f5c66b';
+  const skyTop = city.skyTop || '#1a1410';
+  const skyMid = city.skyMid || '#2a1d18';
+  const skyLow = city.skyLow || '#3d2818';
+  const cityName = city.city || 'महाराष्ट्र';
+  const region = city.region || 'महाराष्ट्र, भारत';
+  const tagline = city.tagline || config.site.tagline;
 
   return `<article class="news-page cover-page" id="page-1" aria-label="पृष्ठ १ — मुखपृष्ठ"
     style="--cv-accent:${esc(accent)};--cv-accent-soft:${esc(accentSoft)};--cv-sky-top:${esc(skyTop)};--cv-sky-mid:${esc(skyMid)};--cv-sky-low:${esc(skyLow)}">
@@ -257,32 +291,29 @@ function renderCover(edition, totalPages) {
     </div>
 
     <div class="cv-content">
-
       <header class="cv-masthead">
         <div class="cv-emblem">
           <span class="cv-emblem-letter">म</span>
           <span class="cv-emblem-ring"></span>
         </div>
         <div class="cv-brand">
-          <div class="cv-name">${esc(edition.name)}</div>
-          <div class="cv-tagline">${esc(edition.tagline || config.site.tagline)}</div>
+          <div class="cv-name">${esc(city.name)}</div>
+          <div class="cv-tagline">${esc(tagline)}</div>
         </div>
       </header>
 
       <div class="cv-badge">
         <span class="cv-badge-dot"></span>
-        <span>${esc(c.label)}</span>
+        <span>${esc(c.label || 'आजचा विशेष अंक')}</span>
       </div>
 
       <div class="cv-hero">
         <div class="cv-hero-kicker">साप्ताहिक अंक</div>
         <h1 class="cv-title">
-          <span class="cv-title-line">${esc(edition.name)}</span>
+          <span class="cv-title-line">${esc(city.name)}</span>
         </h1>
-        <p class="cv-subtitle">${esc(edition.tagline || config.site.tagline)}</p>
-        <div class="cv-underline">
-          <span></span><i>◆</i><span></span>
-        </div>
+        <p class="cv-subtitle">${esc(tagline)}</p>
+        <div class="cv-underline"><span></span><i>◆</i><span></span></div>
       </div>
 
       <div class="cv-meta">
@@ -293,7 +324,7 @@ function renderCover(edition, totalPages) {
         <div class="cv-meta-divider"></div>
         <div class="cv-meta-item">
           <span class="cv-meta-label">स्थान</span>
-          <strong class="cv-meta-value">${esc(city)}</strong>
+          <strong class="cv-meta-value">${esc(cityName)}</strong>
           <span class="cv-meta-sub">${esc(region)}</span>
         </div>
         <div class="cv-meta-divider"></div>
@@ -303,25 +334,22 @@ function renderCover(edition, totalPages) {
         </div>
       </div>
 
-      <div class="cv-highlights">
-        ${highlights}
-      </div>
+      <div class="cv-highlights">${highlights}</div>
 
       <footer class="cv-footer">
         <span class="cv-footer-line"></span>
         <span class="cv-footer-text">मराठी वाचूया. मराठीत जोडलेले राहूया.</span>
         <span class="cv-footer-line"></span>
       </footer>
-
     </div>
-
   </article>`;
 }
+
 /* ═══════════════════════════════════════════════════════
-   PAGE 2 — EDITION INFO
+   RENDER EDITION INFO (Page 2)
    ═══════════════════════════════════════════════════════ */
-function renderEditionInfo(edition, totalPages, articles) {
-  const c = config.cover;
+function renderEditionInfo(city, totalPages, articles) {
+  const c = config.cover || {};
   const tags = (c.highlights || []).map(h => `<span>${esc(h)}</span>`).join('');
   const previewList = articles.slice(0, 6).map((a, i) => `
     <li>
@@ -329,31 +357,30 @@ function renderEditionInfo(edition, totalPages, articles) {
       <span class="ed-title">${esc(a.title)}</span>
       <span class="ed-cat">${esc(a.category)}</span>
     </li>`).join('');
+  const tagline = city.tagline || config.site.tagline;
 
   return `<article class="news-page edition-info-page" id="page-2" aria-label="पृष्ठ २ — अंक परिचय">
   <header class="ed-masthead">
     <div class="ed-logo">
       <div class="ed-emblem">म</div>
       <div>
-        <div class="ed-name">${esc(edition.name)}</div>
-        <div class="ed-kicker">${esc(edition.tagline || config.site.tagline)}</div>
+        <div class="ed-name">${esc(city.name)}</div>
+        <div class="ed-kicker">${esc(tagline)}</div>
       </div>
     </div>
     <div class="ed-issue-stamp">साप्ताहिक अंक<strong>${esc(WEEK_RANGE_MR)}</strong></div>
   </header>
-
   <div class="ed-hero">
-    <span class="ed-label">${esc(c.label)}</span>
+    <span class="ed-label">${esc(c.label || 'आजचा विशेष अंक')}</span>
     <h1 class="ed-title-main">या आठवड्याचं वाचन,<br><span>मनापासून.</span></h1>
-    <p class="ed-desc">${esc(edition.tagline || config.site.tagline)}</p>
+    <p class="ed-desc">${esc(tagline)}</p>
     <div class="ed-tags">${tags}</div>
   </div>
-
   <div class="ed-meta">
     <div class="meta-block">
       <span class="meta-label">स्थान</span>
-      <strong>${esc(edition.city || 'महाराष्ट्र')}</strong>
-      <small>${esc(edition.region || 'महाराष्ट्र, भारत')}</small>
+      <strong>${esc(city.city || 'महाराष्ट्र')}</strong>
+      <small>${esc(city.region || 'महाराष्ट्र, भारत')}</small>
     </div>
     <div class="meta-block">
       <span class="meta-label">आठवडा</span>
@@ -366,23 +393,20 @@ function renderEditionInfo(edition, totalPages, articles) {
       <small>वाचनासाठी सज्ज</small>
     </div>
   </div>
-
   <div class="ed-preview">
     <div class="ed-rule">या आठवड्याच्या अंकात</div>
     <ol class="ed-list">${previewList}</ol>
   </div>
-
   <div class="ed-note">
     <span class="ed-note-label">संपादकाचं मनोगत</span>
     <p>प्रिय वाचकहो, हा साप्ताहिक अंक तुमच्या आठवड्यातला छोटा विराम घेऊन आला आहे. प्रत्येक पानावर एक नवा विषय, एक नवा दृष्टिकोन आणि थोडं थांबून विचार करण्याची संधी. वाचत राहा, जोडलेले राहा.</p>
   </div>
-
-  <footer class="page-footer"><strong>${esc(edition.name)}</strong><span class="folio">०२ / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(city.name)}</strong><span class="folio">०२ / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
 /* ═══════════════════════════════════════════════════════
-   PAGE 3 — CONTENTS
+   RENDER CONTENTS (Page 3)
    ═══════════════════════════════════════════════════════ */
 function renderContents(articles, totalPages) {
   const list = articles.map(a => `
@@ -403,11 +427,11 @@ function renderContents(articles, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   ARTICLE PAGES
+   RENDER ARTICLE
    ═══════════════════════════════════════════════════════ */
-function renderArticle(a, n, part, totalParts, totalPages, ads) {
+function renderArticle(a, n, part, totalParts, totalPages, cityCode) {
   const isFirst = part === 1;
-  const adBlock = renderAdBlock(ads, `page${n}`);
+  const adBlock = renderPageAds(cityCode, n);
 
   let videoBlock = '';
   if (isFirst && a.youtube && a.youtube.id) {
@@ -441,35 +465,35 @@ function renderArticle(a, n, part, totalParts, totalPages, ads) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   BACK COVER
+   RENDER BACK COVER
    ═══════════════════════════════════════════════════════ */
-function renderBack(edition, totalPages) {
+function renderBack(city, totalPages) {
+  const tagline = city.tagline || config.site.tagline;
   return `<article class="news-page closing-page" id="page-${totalPages}">
   <div class="page-topline"><span>समारोप</span><span>पुढील आठवड्याकडे</span></div>
   <div class="eyebrow">धन्यवाद</div>
   <h2 class="page-title">वाचत राहा,<br><span style="color:#f3c66e">जोडलेले राहा.</span></h2>
-  <p class="page-subtitle">${esc(edition.name)} — ${esc(config.site.tagline)}</p>
+  <p class="page-subtitle">${esc(city.name)} — ${esc(tagline)}</p>
   <div class="closing-signature"><div class="big-mark">म</div><p>मराठी वाचूया. मराठीत जोडलेले राहूया.</p></div>
-  <footer class="page-footer"><strong>${esc(edition.name)} · ${esc(WEEK_RANGE_MR)}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(city.name)} · ${esc(WEEK_RANGE_MR)}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
 /* ═══════════════════════════════════════════════════════
-   NEWSLETTER BUILDER
+   BUILD NEWSLETTER
    ═══════════════════════════════════════════════════════ */
-function buildNewsletter(edition) {
-  const ads = loadAds(edition);
-  const overrides = loadOverrides(WEEK_START_ISO, edition.slug);
+function buildNewsletter(citySlug, city) {
   const articlePages = config.pages.filter(p => p.type === 'article');
 
   const articles = articlePages.map(p => {
-    const art = pickArticle(p.category, edition.slug, WEEK_START_ISO, overrides);
+    const art = pickArticle(p.category, citySlug, WEEK_START_ISO, WEEK_END_ISO)
+      || { title: 'शीघ्र', category: p.category, body: 'या आठवड्यातील लेख लवकरच येत आहे.', image: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1200&q=85', quote: '' };
     return {
       title: art.title,
       category: art.category,
       body: art.body,
-      image: art.image,
-      quote: art.quote,
+      image: art.image || 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1200&q=85',
+      quote: art.quote || '',
       youtube: art.youtube || null,
       parts: splitArticle(art.body),
       totalParts: 1,
@@ -488,27 +512,27 @@ function buildNewsletter(edition) {
   const totalPages = cursor;
 
   const pages = [
-    renderCover(edition, totalPages),
-    renderEditionInfo(edition, totalPages, articles),
+    renderCover(city, totalPages),
+    renderEditionInfo(city, totalPages, articles),
     renderContents(articles, totalPages)
   ];
 
   for (const a of articles) {
     for (let p = 1; p <= a.totalParts; p++) {
       const n = a.startPage + p - 1;
-      pages.push(renderArticle(a, n, p, a.totalParts, totalPages, ads));
+      pages.push(renderArticle(a, n, p, a.totalParts, totalPages, city.code));
     }
   }
 
-  pages.push(renderBack(edition, totalPages));
+  pages.push(renderBack(city, totalPages));
 
   const tpl = fs.readFileSync(path.join(ROOT, 'src/templates/newsletter.html'), 'utf8');
 
   return tpl
-    .replace(/{{EDITION_NAME}}/g, esc(edition.name))
-    .replace(/{{TAGLINE}}/g, esc(edition.tagline))
-    .replace(/{{PAGE_TITLE}}/g, esc(edition.name + ' · ' + config.site.tagline))
-    .replace(/{{META_DESCRIPTION}}/g, esc(edition.tagline))
+    .replace(/{{EDITION_NAME}}/g, esc(city.name))
+    .replace(/{{TAGLINE}}/g, esc(city.tagline || config.site.tagline))
+    .replace(/{{PAGE_TITLE}}/g, esc(city.name + ' · ' + config.site.tagline))
+    .replace(/{{META_DESCRIPTION}}/g, esc(city.tagline || config.site.tagline))
     .replace(/{{YEAR}}/g, esc(new Date().getFullYear()))
     .replace(/{{ISSUE_DATE}}/g, esc(WEEK_RANGE_MR))
     .replace(/{{PAGES_HTML}}/g, pages.join('\n'))
@@ -577,7 +601,7 @@ function renderLegalSections(sections) {
           <input type="hidden" name="_subject" value="${esc(f.subject || 'New Enquiry — माझा मित्र')}">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_next" value="https://maharashtramitra.pages.dev/thank-you/">
+          <input type="hidden" name="_next" value="https://mazamitra.in/thank-you/">
           <div class="form-grid">${fields}</div>
           <button type="submit" class="form-submit">${esc(f.submitText || '📩 पाठवा')}</button>
           <p class="form-note">${esc(f.note || 'आम्ही २४ तासांत तुम्हाला उत्तर देऊ.')}</p>
@@ -596,16 +620,13 @@ function renderLegalSections(sections) {
   }).join('');
 }
 
-/* ═══════════════════════════════════════════════════════
-   LEGAL PAGE
-   ═══════════════════════════════════════════════════════ */
 function buildLegalPage(page) {
   const tpl = fs.readFileSync(path.join(ROOT, 'src/templates/legal.html'), 'utf8');
-  const defaultEdition = editions.find(e => e.slug === 'maharashtra') || editions[0];
+  const defaultCity = citiesData.maharashtra || Object.values(citiesData)[0] || {};
   const sections = renderLegalSections(page.sections);
   return tpl
-    .replace(/{{EDITION_NAME}}/g, esc(defaultEdition.name))
-    .replace(/{{TAGLINE}}/g, esc(defaultEdition.tagline))
+    .replace(/{{EDITION_NAME}}/g, esc(defaultCity.name || 'माझा मित्र'))
+    .replace(/{{TAGLINE}}/g, esc(defaultCity.tagline || config.site.tagline))
     .replace(/{{PAGE_TITLE}}/g, esc(page.title))
     .replace(/{{PAGE_SUBTITLE}}/g, esc(page.subtitle || ''))
     .replace(/{{CATEGORY}}/g, esc(page.title))
@@ -619,9 +640,9 @@ function buildLegalPage(page) {
    MAIN BUILD
    ═══════════════════════════════════════════════════════ */
 let n = 0;
-for (const ed of editions) {
-  const html = buildNewsletter(ed);
-  const dir = ed.slug === 'maharashtra' ? OUT : path.join(OUT, ed.slug);
+for (const [slug, city] of Object.entries(citiesData)) {
+  const html = buildNewsletter(slug, city);
+  const dir = slug === 'maharashtra' ? OUT : path.join(OUT, slug);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), html);
   n++;
@@ -645,3 +666,6 @@ fs.copyFileSync(path.join(ROOT, 'src/style.css'), path.join(OUT, '_assets/style.
 fs.copyFileSync(path.join(ROOT, 'src/script.js'), path.join(OUT, '_assets/script.js'));
 
 console.log(`✅ Built ${n} editions + ${legalCount} legal pages — Week: ${WEEK_RANGE_MR}`);
+console.log(`📅 Week start: ${WEEK_START_ISO} (seed)`);
+console.log(`🏙️  Cities: ${Object.keys(citiesData).join(', ')}`);
+console.log(`📚 Articles loaded: ${ALL_ARTICLES.length}`);
