@@ -9,12 +9,14 @@ const ROOT = path.resolve(__dirname, '..');
 const readJSON = (p, fallback = null) => {
   const full = path.join(ROOT, p);
   if (!fs.existsSync(full)) return fallback;
-  return JSON.parse(fs.readFileSync(full, 'utf8'));
+  try { return JSON.parse(fs.readFileSync(full, 'utf8')); }
+  catch (e) { console.warn(`⚠ Invalid JSON: ${p}`); return fallback; }
 };
 
 const config = readJSON('data/config.json', {});
 const citiesData = readJSON('data/cities.json', {});
 const adsData = (readJSON('data/ads.json', { ads: {} }) || {}).ads || {};
+const SLOT_LABELS = config.slotLabels || {};
 
 const OUT = path.join(ROOT, 'public');
 fs.rmSync(OUT, { recursive: true, force: true });
@@ -29,42 +31,33 @@ const toMr = n => String(n).replace(/\d/g, d => '०१२३४५६७८९'
 function getWeekStart(d) {
   const date = new Date(d);
   date.setHours(0, 0, 0, 0);
-  const day = date.getDay();
-  const diff = date.getDate() - day;
+  const diff = date.getDate() - date.getDay();
   const sunday = new Date(date);
   sunday.setDate(diff);
   return sunday;
 }
-
 function getWeekEnd(d) {
-  const start = getWeekStart(d);
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  return end;
+  const s = getWeekStart(d);
+  const e = new Date(s);
+  e.setDate(s.getDate() + 6);
+  return e;
 }
-
 function toIsoDate(d) {
   const date = new Date(d);
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 }
 
 const MONTHS_MR = ['जानेवारी','फेब्रुवारी','मार्च','एप्रिल','मे','जून','जुलै','ऑगस्ट','सप्टेंबर','ऑक्टोबर','नोव्हेंबर','डिसेंबर'];
-const toMrDate = (iso) => {
-  const [y, m, d] = iso.split('-');
-  if (!y || !m || !d) return iso;
-  return `${toMr(+d)} ${MONTHS_MR[+m - 1]} ${toMr(y)}`;
+const toMrDate = iso => {
+  const [y,m,d] = iso.split('-');
+  return y && m && d ? `${toMr(+d)} ${MONTHS_MR[+m-1]} ${toMr(y)}` : iso;
 };
-
-const toMrWeekRange = (startIso, endIso) => {
-  const [sy, sm, sd] = startIso.split('-');
-  const [ey, em, ed] = endIso.split('-');
-  if (!sy || !sm || !sd || !ey || !em || !ed) return startIso;
-  if (sm === em) return `${toMr(+sd)} ते ${toMr(+ed)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)}`;
-  if (sy === ey) return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(sy)}`;
-  return `${toMr(+sd)} ${MONTHS_MR[+sm - 1]} ${toMr(sy)} ते ${toMr(+ed)} ${MONTHS_MR[+em - 1]} ${toMr(ey)}`;
+const toMrWeekRange = (s, e) => {
+  const [sy,sm,sd] = s.split('-');
+  const [ey,em,ed] = e.split('-');
+  if (!sy || !sm || !sd || !ey || !em || !ed) return s;
+  if (sm === em) return `${toMr(+sd)} ते ${toMr(+ed)} ${MONTHS_MR[+sm-1]} ${toMr(sy)}`;
+  return `${toMr(+sd)} ${MONTHS_MR[+sm-1]} ते ${toMr(+ed)} ${MONTHS_MR[+em-1]} ${toMr(sy)}`;
 };
 
 const now = new Date();
@@ -76,78 +69,41 @@ const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 
 
 /* ═══════════════════════════════════════════════════════
    LOAD ARTICLES
-   - नवीन: data/articles/*.json (flat)
-   - जुने: data/articles/<category>/*.json (subfolder)
    ═══════════════════════════════════════════════════════ */
-function loadAllArticles() {
-  const dir = path.join(ROOT, 'data/articles');
-  if (!fs.existsSync(dir)) return [];
-  const articles = [];
-
-  function walk(currentDir, relativePath = '') {
-    const items = fs.readdirSync(currentDir);
-    for (const item of items) {
-      if (item === '_template.json' || item.startsWith('_')) continue;
-      const fullPath = path.join(currentDir, item);
-      const stat = fs.statSync(fullPath);
-
-      if (stat.isDirectory()) {
-        walk(fullPath, relativePath ? `${relativePath}/${item}` : item);
-      } else if (item.endsWith('.json')) {
+function loadFromDir(dir, kind) {
+  const full = path.join(ROOT, dir);
+  if (!fs.existsSync(full)) return [];
+  const out = [];
+  function walk(d) {
+    for (const item of fs.readdirSync(d)) {
+      if (item.startsWith('_') || item.startsWith('.')) continue;
+      const fp = path.join(d, item);
+      const stat = fs.statSync(fp);
+      if (stat.isDirectory()) walk(fp);
+      else if (item.endsWith('.json')) {
         try {
-          const a = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
-          // Infer category from folder if missing
-          if (!a.category && relativePath) {
-            a.category = relativePath.split('/').pop();
-          }
-          articles.push(a);
+          const a = JSON.parse(fs.readFileSync(fp, 'utf8'));
+          if (!a.city) a.city = 'all';
+          a._kind = kind;
+          out.push(a);
         } catch (e) {
-          console.warn(`⚠ Skipping invalid article: ${relativePath}/${item}`);
+          console.warn(`⚠ Invalid: ${fp}`);
         }
       }
     }
   }
-  walk(dir);
-  return articles;
+  walk(full);
+  return out;
 }
 
-const ALL_ARTICLES = loadAllArticles();
-console.log(`📚 Loaded ${ALL_ARTICLES.length} articles`);
-
-/* ═══════════════════════════════════════════════════════
-   ARTICLE PICKING LOGIC
-   ═══════════════════════════════════════════════════════ */
-function pickArticle(category, citySlug, weekStart, weekEnd) {
-  let pool = ALL_ARTICLES.filter(a => a.category === category);
-
-  pool = pool.filter(a => {
-    if (!a.city) return true;
-    if (a.city === 'all') return true;
-    return a.city === citySlug;
-  });
-
-  if (!pool.length) return null;
-
-  // Priority: special articles with dateRange overlapping this week
-  const specials = pool.filter(a => {
-    if (!a.dateRange) return false;
-    const { from, to } = a.dateRange;
-    if (!from || !to) return false;
-    return from <= weekEnd && to >= weekStart;
-  });
-
-  if (specials.length) {
-    return specials[specials.length - 1];
-  }
-
-  const [a] = seededPick(pool, weekStart + '-' + category + '-' + citySlug, 1);
-  return a || null;
-}
+const ALL_ARTICLES = loadFromDir('data/articles', 'regular');
+const ALL_SPECIALS = loadFromDir('data/special', 'special');
+console.log(`📚 Loaded ${ALL_ARTICLES.length} regular + ${ALL_SPECIALS.length} special articles`);
 
 /* ═══════════════════════════════════════════════════════
    SEEDED PICK
    ═══════════════════════════════════════════════════════ */
-function seededPick(arr, seed, count) {
+function seededPick(arr, seed, count = 1) {
   if (!arr.length) return [];
   const a = [...arr];
   let s = 0;
@@ -164,23 +120,51 @@ function seededPick(arr, seed, count) {
 }
 
 /* ═══════════════════════════════════════════════════════
+   PICK ARTICLE FOR SLOT
+   Priority:
+     1. Special article matching slot + city + week
+     2. Regular article from pool (city-matched, unused)
+   ═══════════════════════════════════════════════════════ */
+function pickArticleForSlot(slot, citySlug, weekStart, weekEnd, usedSlugs) {
+  // 1. Special
+  const special = ALL_SPECIALS.find(s => {
+    if (String(s.slot) !== String(slot)) return false;
+    if (s.city !== 'all' && s.city !== citySlug) return false;
+    if (!s.dateRange || !s.dateRange.from || !s.dateRange.to) return false;
+    if (s.dateRange.from > weekEnd) return false;
+    if (s.dateRange.to < weekStart) return false;
+    if (usedSlugs.has(s.slug)) return false;
+    return true;
+  });
+  if (special) return special;
+
+  // 2. Regular
+  const pool = ALL_ARTICLES.filter(a => {
+    if (a.city !== 'all' && a.city !== citySlug) return false;
+    if (usedSlugs.has(a.slug)) return false;
+    return true;
+  });
+  if (!pool.length) return null;
+
+  const [picked] = seededPick(pool, weekStart + '-' + slot + '-' + citySlug, 1);
+  return picked;
+}
+
+/* ═══════════════════════════════════════════════════════
    SPLIT ARTICLE
    ═══════════════════════════════════════════════════════ */
 function splitArticle(body) {
   const paras = String(body || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
-  if (!paras.length) return [''];
+  if (!paras.length) return ['या आठवड्यातील लेख लवकरच येत आहे.'];
   const pages = [];
-  let current = [];
-  let count = 0;
+  let current = [], count = 0;
   for (const p of paras) {
     const w = p.split(/\s+/).length;
     if (count + w > WORDS_PER_PAGE && current.length > 0) {
       pages.push(current.join('\n\n'));
-      current = [p];
-      count = w;
+      current = [p]; count = w;
     } else {
-      current.push(p);
-      count += w;
+      current.push(p); count += w;
     }
   }
   if (current.length) pages.push(current.join('\n\n'));
@@ -198,7 +182,7 @@ function footerColumns() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   AD RENDERING (code-based)
+   AD RENDERING
    ═══════════════════════════════════════════════════════ */
 function renderAdImage(ad) {
   if (!ad) return '';
@@ -213,7 +197,6 @@ function renderAdImage(ad) {
 
 function renderPageAds(cityCode, pageNum) {
   const key = `${cityCode}-P${pageNum}`;
-
   const fp  = adsData[`${key}-FP`];
   const hp1 = adsData[`${key}-HP1`];
   const hp2 = adsData[`${key}-HP2`];
@@ -226,12 +209,8 @@ function renderPageAds(cityCode, pageNum) {
   }
 
   const activeFP = fp ? renderAdImage(fp) : '';
-  const activeHPs = [hp1, hp2, hp3]
-    .filter(Boolean)
-    .map(h => renderAdImage(h))
-    .filter(Boolean)
-    .map(h => `<div style="margin:20px 0">${h}</div>`)
-    .join('');
+  const activeHPs = [hp1, hp2, hp3].filter(Boolean).map(renderAdImage).filter(Boolean)
+    .map(h => `<div style="margin:20px 0">${h}</div>`).join('');
   const activeBs = bs.map(renderAdImage).filter(Boolean);
 
   if (!activeFP && !activeHPs && !activeBs.length) return '';
@@ -252,7 +231,7 @@ function renderPageAds(cityCode, pageNum) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER COVER
+   RENDER COVER (dynamic HTML/CSS)
    ═══════════════════════════════════════════════════════ */
 function renderCover(city, totalPages) {
   const c = config.cover || {};
@@ -268,74 +247,39 @@ function renderCover(city, totalPages) {
 
   return `<article class="news-page cover-page" id="page-1" aria-label="पृष्ठ १ — मुखपृष्ठ"
     style="--cv-accent:${esc(accent)};--cv-accent-soft:${esc(accentSoft)};--cv-sky-top:${esc(skyTop)};--cv-sky-mid:${esc(skyMid)};--cv-sky-low:${esc(skyLow)}">
-
     <div class="cv-bg" aria-hidden="true">
-      <div class="cv-sky"></div>
-      <div class="cv-aurora"></div>
-      <div class="cv-rays"></div>
+      <div class="cv-sky"></div><div class="cv-aurora"></div><div class="cv-rays"></div>
       <div class="cv-stars"></div>
-      <div class="cv-hills cv-hills-far"></div>
-      <div class="cv-hills cv-hills-mid"></div>
-      <div class="cv-hills cv-hills-near"></div>
-      <div class="cv-sun"></div>
-      <div class="cv-trees"></div>
-      <div class="cv-fireflies"></div>
-      <div class="cv-vignette"></div>
+      <div class="cv-hills cv-hills-far"></div><div class="cv-hills cv-hills-mid"></div><div class="cv-hills cv-hills-near"></div>
+      <div class="cv-sun"></div><div class="cv-trees"></div><div class="cv-fireflies"></div><div class="cv-vignette"></div>
     </div>
-
     <div class="cv-corners" aria-hidden="true">
-      <span class="cv-corner cv-corner-tl"></span>
-      <span class="cv-corner cv-corner-tr"></span>
-      <span class="cv-corner cv-corner-bl"></span>
-      <span class="cv-corner cv-corner-br"></span>
+      <span class="cv-corner cv-corner-tl"></span><span class="cv-corner cv-corner-tr"></span>
+      <span class="cv-corner cv-corner-bl"></span><span class="cv-corner cv-corner-br"></span>
     </div>
-
     <div class="cv-content">
       <header class="cv-masthead">
-        <div class="cv-emblem">
-          <span class="cv-emblem-letter">म</span>
-          <span class="cv-emblem-ring"></span>
-        </div>
+        <div class="cv-emblem"><span class="cv-emblem-letter">म</span><span class="cv-emblem-ring"></span></div>
         <div class="cv-brand">
           <div class="cv-name">${esc(city.name)}</div>
           <div class="cv-tagline">${esc(tagline)}</div>
         </div>
       </header>
-
-      <div class="cv-badge">
-        <span class="cv-badge-dot"></span>
-        <span>${esc(c.label || 'आजचा विशेष अंक')}</span>
-      </div>
-
+      <div class="cv-badge"><span class="cv-badge-dot"></span><span>${esc(c.label || 'आजचा विशेष अंक')}</span></div>
       <div class="cv-hero">
         <div class="cv-hero-kicker">साप्ताहिक अंक</div>
-        <h1 class="cv-title">
-          <span class="cv-title-line">${esc(city.name)}</span>
-        </h1>
+        <h1 class="cv-title"><span class="cv-title-line">${esc(city.name)}</span></h1>
         <p class="cv-subtitle">${esc(tagline)}</p>
         <div class="cv-underline"><span></span><i>◆</i><span></span></div>
       </div>
-
       <div class="cv-meta">
-        <div class="cv-meta-item">
-          <span class="cv-meta-label">आठवडा</span>
-          <strong class="cv-meta-value">${esc(WEEK_RANGE_MR)}</strong>
-        </div>
+        <div class="cv-meta-item"><span class="cv-meta-label">आठवडा</span><strong class="cv-meta-value">${esc(WEEK_RANGE_MR)}</strong></div>
         <div class="cv-meta-divider"></div>
-        <div class="cv-meta-item">
-          <span class="cv-meta-label">स्थान</span>
-          <strong class="cv-meta-value">${esc(cityName)}</strong>
-          <span class="cv-meta-sub">${esc(region)}</span>
-        </div>
+        <div class="cv-meta-item"><span class="cv-meta-label">स्थान</span><strong class="cv-meta-value">${esc(cityName)}</strong><span class="cv-meta-sub">${esc(region)}</span></div>
         <div class="cv-meta-divider"></div>
-        <div class="cv-meta-item">
-          <span class="cv-meta-label">एकूण पृष्ठे</span>
-          <strong class="cv-meta-value">${toMr(totalPages)}</strong>
-        </div>
+        <div class="cv-meta-item"><span class="cv-meta-label">एकूण पृष्ठे</span><strong class="cv-meta-value">${toMr(totalPages)}</strong></div>
       </div>
-
       <div class="cv-highlights">${highlights}</div>
-
       <footer class="cv-footer">
         <span class="cv-footer-line"></span>
         <span class="cv-footer-text">मराठी वाचूया. मराठीत जोडलेले राहूया.</span>
@@ -346,7 +290,7 @@ function renderCover(city, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER EDITION INFO (Page 2)
+   RENDER EDITION INFO
    ═══════════════════════════════════════════════════════ */
 function renderEditionInfo(city, totalPages, articles) {
   const c = config.cover || {};
@@ -355,18 +299,14 @@ function renderEditionInfo(city, totalPages, articles) {
     <li>
       <span class="ed-num">${toMr(i + 1).padStart(2, '०')}</span>
       <span class="ed-title">${esc(a.title)}</span>
-      <span class="ed-cat">${esc(a.category)}</span>
+      <span class="ed-cat">${esc(a.label)}</span>
     </li>`).join('');
   const tagline = city.tagline || config.site.tagline;
 
   return `<article class="news-page edition-info-page" id="page-2" aria-label="पृष्ठ २ — अंक परिचय">
   <header class="ed-masthead">
-    <div class="ed-logo">
-      <div class="ed-emblem">म</div>
-      <div>
-        <div class="ed-name">${esc(city.name)}</div>
-        <div class="ed-kicker">${esc(tagline)}</div>
-      </div>
+    <div class="ed-logo"><div class="ed-emblem">म</div>
+      <div><div class="ed-name">${esc(city.name)}</div><div class="ed-kicker">${esc(tagline)}</div></div>
     </div>
     <div class="ed-issue-stamp">साप्ताहिक अंक<strong>${esc(WEEK_RANGE_MR)}</strong></div>
   </header>
@@ -377,21 +317,9 @@ function renderEditionInfo(city, totalPages, articles) {
     <div class="ed-tags">${tags}</div>
   </div>
   <div class="ed-meta">
-    <div class="meta-block">
-      <span class="meta-label">स्थान</span>
-      <strong>${esc(city.city || 'महाराष्ट्र')}</strong>
-      <small>${esc(city.region || 'महाराष्ट्र, भारत')}</small>
-    </div>
-    <div class="meta-block">
-      <span class="meta-label">आठवडा</span>
-      <strong>${esc(WEEK_RANGE_MR)}</strong>
-      <small>साप्ताहिक अंक</small>
-    </div>
-    <div class="meta-block">
-      <span class="meta-label">एकूण पृष्ठे</span>
-      <strong>${toMr(totalPages)}</strong>
-      <small>वाचनासाठी सज्ज</small>
-    </div>
+    <div class="meta-block"><span class="meta-label">स्थान</span><strong>${esc(city.city || 'महाराष्ट्र')}</strong><small>${esc(city.region || 'महाराष्ट्र, भारत')}</small></div>
+    <div class="meta-block"><span class="meta-label">आठवडा</span><strong>${esc(WEEK_RANGE_MR)}</strong><small>साप्ताहिक अंक</small></div>
+    <div class="meta-block"><span class="meta-label">एकूण पृष्ठे</span><strong>${toMr(totalPages)}</strong><small>वाचनासाठी सज्ज</small></div>
   </div>
   <div class="ed-preview">
     <div class="ed-rule">या आठवड्याच्या अंकात</div>
@@ -406,13 +334,13 @@ function renderEditionInfo(city, totalPages, articles) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER CONTENTS (Page 3)
+   RENDER CONTENTS
    ═══════════════════════════════════════════════════════ */
 function renderContents(articles, totalPages) {
   const list = articles.map(a => `
     <li><a href="#page-${a.startPage}">
       <span class="contents-number">${toMr(a.startPage).padStart(2, '०')}</span>
-      <span class="contents-name">${esc(a.title)}<span class="contents-hint">${esc(a.category)}${a.totalParts > 1 ? ` · ${toMr(a.totalParts)} पृष्ठे` : ''}</span></span>
+      <span class="contents-name">${esc(a.title)}<span class="contents-hint">${esc(a.label)}${a.totalParts > 1 ? ` · ${toMr(a.totalParts)} पृष्ठे` : ''}</span></span>
       <span class="contents-page-no">${toMr(a.startPage).padStart(2, '०')}</span>
     </a></li>`).join('');
 
@@ -447,13 +375,13 @@ function renderArticle(a, n, part, totalParts, totalPages, cityCode) {
 
   return `<article class="news-page" id="page-${n}">
   <div class="page-topline">
-    <span>${esc(a.category)}${!isFirst ? ' · क्रमशः' : ''}</span>
+    <span>${esc(a.label)}${!isFirst ? ' · क्रमशः' : ''}</span>
     <span>पृष्ठ ${toMr(n).padStart(2, '०')}</span>
   </div>
-  <div class="eyebrow">${esc(a.category)}</div>
+  <div class="eyebrow">${esc(a.label)}</div>
   ${isFirst
     ? `<h2 class="page-title">${esc(a.title)}</h2>
-       <div class="lead-photo"><img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy"></div>
+       ${a.image ? `<div class="lead-photo"><img src="${esc(a.image)}" alt="${esc(a.title)}" loading="lazy"></div>` : ''}
        ${videoBlock}
        <div class="page-copy" style="margin-top:20px"><p class="dropcap">${esc(a.parts[part-1])}</p></div>`
     : `<h2 class="page-title" style="font-size:26px">${esc(a.title)}<span style="font-size:14px;color:#747b72;font-weight:400"> · भाग ${toMr(part)} / ${toMr(totalParts)}</span></h2>
@@ -483,23 +411,44 @@ function renderBack(city, totalPages) {
    BUILD NEWSLETTER
    ═══════════════════════════════════════════════════════ */
 function buildNewsletter(citySlug, city) {
-  const articlePages = config.pages.filter(p => p.type === 'article');
+  const usedSlugs = new Set();
+  const articleSlots = config.pages.filter(p => p.type === 'article');
 
-  const articles = articlePages.map(p => {
-    const art = pickArticle(p.category, citySlug, WEEK_START_ISO, WEEK_END_ISO)
-      || { title: 'शीघ्र', category: p.category, body: 'या आठवड्यातील लेख लवकरच येत आहे.', image: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1200&q=85', quote: '' };
-    return {
+  const articles = [];
+  for (const slotDef of articleSlots) {
+    const slot = slotDef.slot;
+    const art = pickArticleForSlot(slot, citySlug, WEEK_START_ISO, WEEK_END_ISO, usedSlugs);
+
+    if (!art) {
+      // Placeholder for empty slot
+      articles.push({
+        title: 'लवकरच येत आहे',
+        label: SLOT_LABELS[slot] || 'वाचन',
+        body: 'या आठवड्यातील लेख लवकरच येत आहे.',
+        image: '',
+        quote: '',
+        youtube: null,
+        parts: ['या आठवड्यातील लेख लवकरच येत आहे.'],
+        totalParts: 1,
+        startPage: 0,
+        _placeholder: true
+      });
+      continue;
+    }
+
+    usedSlugs.add(art.slug);
+    articles.push({
       title: art.title,
-      category: art.category,
+      label: art.label || SLOT_LABELS[slot] || 'वाचन',
       body: art.body,
-      image: art.image || 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1200&q=85',
+      image: art.image || '',
       quote: art.quote || '',
       youtube: art.youtube || null,
       parts: splitArticle(art.body),
       totalParts: 1,
       startPage: 0
-    };
-  });
+    });
+  }
 
   articles.forEach(a => a.totalParts = a.parts.length);
 
@@ -540,7 +489,7 @@ function buildNewsletter(citySlug, city) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   LEGAL PAGE SECTIONS
+   LEGAL PAGES
    ═══════════════════════════════════════════════════════ */
 function renderLegalSections(sections) {
   return (sections || []).map(s => {
@@ -550,17 +499,11 @@ function renderLegalSections(sections) {
           ${c.featured ? '<span class="pricing-badge">सर्वात लोकप्रिय</span>' : ''}
           <div class="pricing-icon">${esc(c.icon || '★')}</div>
           <h3 class="pricing-name">${esc(c.name)}</h3>
-          <div class="pricing-price">
-            <span class="price-amount">${esc(c.price)}</span>
-            ${c.period ? `<span class="price-period">${esc(c.period)}</span>` : ''}
-          </div>
+          <div class="pricing-price"><span class="price-amount">${esc(c.price)}</span>${c.period ? `<span class="price-period">${esc(c.period)}</span>` : ''}</div>
           ${c.description ? `<p class="pricing-desc">${esc(c.description)}</p>` : ''}
-          <ul class="pricing-features">
-            ${(c.features || []).map(f => `<li>${esc(f)}</li>`).join('')}
-          </ul>
+          <ul class="pricing-features">${(c.features || []).map(f => `<li>${esc(f)}</li>`).join('')}</ul>
           <a href="${esc(c.ctaLink || '#contact-form')}" class="pricing-cta">${esc(c.cta || 'निवडा')}</a>
-        </div>
-      `).join('');
+        </div>`).join('');
       const cols = Math.min((s.cards || []).length, 4);
       return `<section class="legal-section legal-section-pricing">
         ${s.heading ? `<h2 class="legal-heading">${esc(s.heading)}</h2>` : ''}
@@ -583,9 +526,7 @@ function renderLegalSections(sections) {
         if (fld.type === 'select') {
           return `<label class="form-field">
             <span class="form-label">${esc(fld.label)}${fld.required ? ' *' : ''}</span>
-            <select name="${esc(fld.name)}" ${req}>
-              ${(fld.options || []).map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('')}
-            </select>
+            <select name="${esc(fld.name)}" ${req}>${(fld.options || []).map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('')}</select>
           </label>`;
         }
         return `<label class="form-field">
@@ -609,9 +550,7 @@ function renderLegalSections(sections) {
       </section>`;
     }
 
-    if (s.type === 'html') {
-      return `<section class="legal-section">${s.html || ''}</section>`;
-    }
+    if (s.type === 'html') return `<section class="legal-section">${s.html || ''}</section>`;
 
     return `<section class="legal-section">
       ${s.heading ? `<h2 class="legal-heading">${esc(s.heading)}</h2>` : ''}
@@ -666,6 +605,6 @@ fs.copyFileSync(path.join(ROOT, 'src/style.css'), path.join(OUT, '_assets/style.
 fs.copyFileSync(path.join(ROOT, 'src/script.js'), path.join(OUT, '_assets/script.js'));
 
 console.log(`✅ Built ${n} editions + ${legalCount} legal pages — Week: ${WEEK_RANGE_MR}`);
-console.log(`📅 Week start: ${WEEK_START_ISO} (seed)`);
+console.log(`📅 Week: ${WEEK_START_ISO} to ${WEEK_END_ISO}`);
 console.log(`🏙️  Cities: ${Object.keys(citiesData).join(', ')}`);
-console.log(`📚 Articles loaded: ${ALL_ARTICLES.length}`);
+console.log(`📚 Regular: ${ALL_ARTICLES.length} | Special: ${ALL_SPECIALS.length}`);
