@@ -1,0 +1,62 @@
+{
+  "maharashtra": {
+    "code": "M1",
+    "name": "माझा महाराष्ट्र मित्र",
+    "tagline": "तुमच्या दिवसातला छोटा विराम",
+    "city": "महाराष्ट्र",
+    "region": "भारत",
+    "accent": "#e5a33b",
+    "accentSoft": "#f5c66b",
+    "skyTop": "#0d1f1c",
+    "skyMid": "#172b2a",
+    "skyLow": "#1e3a35"
+  },
+  "moshi": {
+    "code": "M2",
+    "name": "माझा मोशी मित्र",
+    "tagline": "तुमच्या दिवसातला छोटा विराम",
+    "city": "मोशी",
+    "region": "पुणे, महाराष्ट्र",
+    "accent": "#f5a623",
+    "accentSoft": "#ffd98a",
+    "skyTop": "#1a1208",
+    "skyMid": "#2a1f10",
+    "skyLow": "#3d2a12"
+  },
+  "nigdi": {
+    "code": "N1",
+    "name": "माझा निगडी मित्र",
+    "tagline": "तुमच्या दिवसातला छोटा विराम",
+    "city": "निगडी",
+    "region": "पिंपरी-चिंचवड, महाराष्ट्र",
+    "accent": "#4caf87",
+    "accentSoft": "#a9e5c5",
+    "skyTop": "#0a1a14",
+    "skyMid": "#0f2a20",
+    "skyLow": "#143828"
+  },
+  "phaltan": {
+    "code": "PH1",
+    "name": "माझा फलटण मित्र",
+    "tagline": "तुमच्या दिवसातला छोटा विराम",
+    "city": "फलटण",
+    "region": "सातारा, महाराष्ट्र",
+    "accent": "#e08b4a",
+    "accentSoft": "#ffc999",
+    "skyTop": "#1a0f08",
+    "skyMid": "#2a1810",
+    "skyLow": "#3d2416"
+  },
+  "satara": {
+    "code": "S1",
+    "name": "माझा सातारा मित्र",
+    "tagline": "तुमच्या दिवसातला छोटा विराम",
+    "city": "सातारा",
+    "region": "सातारा जिल्हा, महाराष्ट्र",
+    "accent": "#8e44ad",
+    "accentSoft": "#d5b8e8",
+    "skyTop": "#15091a",
+    "skyMid": "#24112e",
+    "skyLow": "#331842"
+  }
+}
