@@ -3,17 +3,14 @@
     "M1-P4-B1": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+AD+1", "link": "https://google.com", "sponsor": "महाराष्ट्र जाहिरात १" },
     "M1-P4-B2": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+AD+2", "link": "https://google.com", "sponsor": "महाराष्ट्र जाहिरात २" },
     "M1-P4-B3": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+AD+3", "link": "https://google.com", "sponsor": "महाराष्ट्र जाहिरात ३" },
-    "M1-P5-B1": { "image": "https://via.placeholder.com/400x200/e5a33b/FFFFFF?text=MH+P5+AD", "link": "https://google.com", "sponsor": "महाराष्ट्र P5" },
 
-    "MB-P6-B1": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+1", "link": "https://google.com", "sponsor": "मुंबई जाहिरात १" },
-    "MB-P4-B1": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+2", "link": "https://google.com", "sponsor": "मुंबई जाहिरात २" },
+    "MB-P4-B1": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+1", "link": "https://google.com", "sponsor": "मुंबई जाहिरात १" },
+    "MB-P4-B2": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+2", "link": "https://google.com", "sponsor": "मुंबई जाहिरात २" },
     "MB-P4-B3": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+AD+3", "link": "https://google.com", "sponsor": "मुंबई जाहिरात ३" },
-    "MB-P5-B1": { "image": "https://via.placeholder.com/400x200/2980b9/FFFFFF?text=MUMBAI+P5", "link": "https://google.com", "sponsor": "मुंबई P5" },
 
     "PU1-P4-B1": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+AD+1", "link": "https://google.com", "sponsor": "पुणे जाहिरात १" },
     "PU1-P4-B2": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+AD+2", "link": "https://google.com", "sponsor": "पुणे जाहिरात २" },
     "PU1-P4-B3": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+AD+3", "link": "https://google.com", "sponsor": "पुणे जाहिरात ३" },
-    "PU1-P5-B1": { "image": "https://via.placeholder.com/400x200/e85d3a/FFFFFF?text=PUNE+P5", "link": "https://google.com", "sponsor": "पुणे P5" },
 
     "NG-P4-B1": { "image": "https://via.placeholder.com/400x200/d35400/FFFFFF?text=NAGPUR+AD+1", "link": "https://google.com", "sponsor": "नागपूर जाहिरात १" },
     "NG-P4-B2": { "image": "https://via.placeholder.com/400x200/d35400/FFFFFF?text=NAGPUR+AD+2", "link": "https://google.com", "sponsor": "नागपूर जाहिरात २" },
@@ -142,8 +139,11 @@
     "PH1-P4-B1": { "image": "https://via.placeholder.com/400x200/e08b4a/FFFFFF?text=PHALTAN+AD+1", "link": "https://google.com", "sponsor": "फलटण जाहिरात १" },
     "PH1-P4-B2": { "image": "https://via.placeholder.com/400x200/e08b4a/FFFFFF?text=PHALTAN+AD+2", "link": "https://google.com", "sponsor": "फलटण जाहिरात २" },
     "PH1-P4-B3": { "image": "https://via.placeholder.com/400x200/e08b4a/FFFFFF?text=PHALTAN+AD+3", "link": "https://google.com", "sponsor": "फलटण जाहिरात ३" },
-    "S1-P4-B1": { "image": "https://via.placeholder.com/400x200/8e44ad/FFFFFF?text=SATARA+AD+1", "link": "https://google.com", "sponsor": "सातारा जाहिरात १" },
-    "S1-P4-B2": { "image": "https://via.placeholder.com/400x200/8e44ad/FFFFFF?text=SATARA+AD+2", "link": "https://google.com", "sponsor": "सातारा जाहिरात २" },
-    "S1-P4-B3": { "image": "https://via.placeholder.com/400x200/8e44ad/FFFFFF?text=SATARA+AD+3", "link": "https://google.com", "sponsor": "सातारा जाहिरात ३" }
+
+    "S1-P4-HP1": {
+      "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfYjgelDJd9qIp7aadskTpjN3pb3cdshTujTOybeyrW7wgvMAqoc4ic9s3FarYzluABn1jx22ydkHKTYDCOUBKqql3_KixN3KlvRQr3kGZyMxfOlYtTq4UYZbdIKl2TzugTbXWRu3aV_XAKabnFajy3KCnOZwSoMRcsqaOHc9F_RfPs-gW-jEQQoK2/s1600/image.png",
+      "link": "https://equimediasolutions.com",
+      "sponsor": "Equimedia Solutions — सातारा"
+    }
   }
 }
