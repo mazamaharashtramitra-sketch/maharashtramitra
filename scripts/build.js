@@ -67,6 +67,18 @@ const WEEK_RANGE_MR = toMrWeekRange(WEEK_START_ISO, WEEK_END_ISO);
 const TODAY_ISO = toIsoDate(now);
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
+/* ⭐ Daily display helpers (v5.2) — STEP 1 मध्ये जोडलेले */
+const TODAY_MR = toMrDate(TODAY_ISO);
+const WEEKDAYS_MR = ['रविवार','सोमवार','मंगळवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
+const TODAY_WEEKDAY_MR = WEEKDAYS_MR[new Date(TODAY_ISO + 'T00:00:00+05:30').getDay()];
+const TODAY_DISPLAY_MR = `${TODAY_WEEKDAY_MR}, ${TODAY_MR}`;
+
+/* ⭐ Daily issue number (1 Jan 2026 पासून) */
+const EPOCH_ISO = '2026-01-01';
+const DAY_NUM = Math.floor(
+  (new Date(TODAY_ISO + 'T00:00:00+05:30') - new Date(EPOCH_ISO + 'T00:00:00+05:30')) / 86400000
+) + 1;
+
 /* ═══════════════════════════════════════════════════════
    LOAD ARTICLES
    ═══════════════════════════════════════════════════════ */
