@@ -64,13 +64,15 @@ const now = new Date();
 const WEEK_START_ISO = toIsoDate(getWeekStart(now));
 const WEEK_END_ISO = toIsoDate(getWeekEnd(now));
 const WEEK_RANGE_MR = toMrWeekRange(WEEK_START_ISO, WEEK_END_ISO);
-const TODAY_ISO = toIsoDate(now);
+
+// ⭐ Timezone-safe (IST) तारीख आणि वार
+const TODAY_ISO = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
 /* ⭐ Daily display helpers (v5.2) */
 const TODAY_MR = toMrDate(TODAY_ISO);
 const WEEKDAYS_MR = ['रविवार','सोमवार','मंगळवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
-const TODAY_WEEKDAY_MR = WEEKDAYS_MR[new Date(TODAY_ISO + 'T00:00:00+05:30').getDay()];
+const TODAY_WEEKDAY_MR = WEEKDAYS_MR[new Date(TODAY_ISO + 'T12:00:00Z').getUTCDay()];
 const TODAY_DISPLAY_MR = `${TODAY_WEEKDAY_MR}, ${TODAY_MR}`;
 
 /* ⭐ Daily issue number (1 Jan 2026 पासून) */
@@ -647,7 +649,7 @@ fs.mkdirSync(path.join(OUT, '_assets'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'src/style.css'), path.join(OUT, '_assets/style.css'));
 fs.copyFileSync(path.join(ROOT, 'src/script.js'), path.join(OUT, '_assets/script.js'));
 
-/* ⭐ STEP 4 — नवीन log format */
+/* ⭐ नवीन log format */
 console.log(`✅ Built ${n} editions + ${legalCount} legal pages — Issue #${DAY_NUM} · ${TODAY_DISPLAY_MR}`);
 console.log(`📅 Today: ${TODAY_ISO} (${TODAY_WEEKDAY_MR})`);
 console.log(`🏙️  Cities: ${Object.keys(citiesData).join(', ')}`);
