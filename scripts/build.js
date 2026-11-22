@@ -67,7 +67,7 @@ const WEEK_RANGE_MR = toMrWeekRange(WEEK_START_ISO, WEEK_END_ISO);
 const TODAY_ISO = toIsoDate(now);
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
-/* ⭐ Daily display helpers (v5.2) — STEP 1 मध्ये जोडलेले */
+/* ⭐ Daily display helpers (v5.2) — STEP 1 */
 const TODAY_MR = toMrDate(TODAY_ISO);
 const WEEKDAYS_MR = ['रविवार','सोमवार','मंगळवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
 const TODAY_WEEKDAY_MR = WEEKDAYS_MR[new Date(TODAY_ISO + 'T00:00:00+05:30').getDay()];
@@ -132,22 +132,22 @@ function seededPick(arr, seed, count = 1) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PICK ARTICLE FOR SLOT
+   PICK ARTICLE FOR SLOT — STEP 2 (daily rotation)
    ═══════════════════════════════════════════════════════ */
-function pickArticleForSlot(slot, citySlug, weekStart, weekEnd, usedSlugs) {
-  // 1. Special
+function pickArticleForSlot(slot, citySlug, todayIso, usedSlugs) {
+  // 1. Special — फक्त त्याच्या exact दिवशी
   const special = ALL_SPECIALS.find(s => {
     if (String(s.slot) !== String(slot)) return false;
     if (s.city !== 'all' && s.city !== citySlug) return false;
     if (!s.dateRange || !s.dateRange.from || !s.dateRange.to) return false;
-    if (s.dateRange.from > weekEnd) return false;
-    if (s.dateRange.to < weekStart) return false;
+    if (s.dateRange.from > todayIso) return false;
+    if (s.dateRange.to < todayIso) return false;
     if (usedSlugs.has(s.slug)) return false;
     return true;
   });
   if (special) return special;
 
-  // 2. Regular
+  // 2. Regular — दररोज वेगळा seed
   const pool = ALL_ARTICLES.filter(a => {
     if (a.city !== 'all' && a.city !== citySlug) return false;
     if (usedSlugs.has(a.slug)) return false;
@@ -155,7 +155,7 @@ function pickArticleForSlot(slot, citySlug, weekStart, weekEnd, usedSlugs) {
   });
   if (!pool.length) return null;
 
-  const [picked] = seededPick(pool, weekStart + '-' + slot + '-' + citySlug, 1);
+  const [picked] = seededPick(pool, todayIso + '-' + slot + '-' + citySlug, 1);
   return picked;
 }
 
@@ -182,46 +182,34 @@ function splitArticle(body) {
 
 /* ═══════════════════════════════════════════════════════
    ⭐ RENDER PARAGRAPHS
-   Supports:
-     ◆ Heading text
-     ━━━ Heading text ━━━
-     ━━━ Heading text
-     🌸 Greeting emoji (first paragraph)
-     Regular paragraphs
    ═══════════════════════════════════════════════════════ */
 function renderParagraphs(text, dropcap = false) {
   const paras = String(text || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   if (!paras.length) return '<p>—</p>';
 
   return paras.map((p, i) => {
-    // 1. Pure divider lines (━ or ─ or ◆)
     if (/^[━─◆]+$/.test(p)) return '';
 
-    // 2. ⭐ Diamond Heading (◆ Text)
     const diamondMatch = p.match(/^◆\s*(.+)$/);
     if (diamondMatch) {
       return `<h3 class="section-head">${esc(diamondMatch[1])}</h3>`;
     }
 
-    // 3. Full Heading (━━━ Text ━━━)
     const headingMatch = p.match(/^[━─]+\s*(.+?)\s*[━─]+$/);
     if (headingMatch) {
       return `<h3 class="section-head">${esc(headingMatch[1])}</h3>`;
     }
 
-    // 4. Partial Heading (━━━ Text)
     const partialHeading = p.match(/^[━─]+\s*(.+)$/);
     if (partialHeading && partialHeading[1].length < 80) {
       return `<h3 class="section-head">${esc(partialHeading[1])}</h3>`;
     }
 
-    // 5. Greeting paragraph (first paragraph with emoji)
     const isGreeting = (i === 0) && /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(p);
     if (isGreeting) {
       return `<p class="greeting-line">${esc(p)}</p>`;
     }
 
-    // 6. Regular paragraph
     const cls = (i === 0 && dropcap && !/^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(p)) ? ' class="dropcap"' : '';
     return `<p${cls}>${esc(p)}</p>`;
   }).filter(Boolean).join('');
@@ -473,7 +461,8 @@ function buildNewsletter(citySlug, city) {
   const articles = [];
   for (const slotDef of articleSlots) {
     const slot = slotDef.slot;
-    const art = pickArticleForSlot(slot, citySlug, WEEK_START_ISO, WEEK_END_ISO, usedSlugs);
+    /* ⭐ STEP 2 — TODAY_ISO वापरतोय (weekly नाही) */
+    const art = pickArticleForSlot(slot, citySlug, TODAY_ISO, usedSlugs);
 
     if (!art) {
       articles.push({
