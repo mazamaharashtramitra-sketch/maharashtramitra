@@ -67,7 +67,7 @@ const WEEK_RANGE_MR = toMrWeekRange(WEEK_START_ISO, WEEK_END_ISO);
 const TODAY_ISO = toIsoDate(now);
 const WORDS_PER_PAGE = (config.newsletter && config.newsletter.wordsPerPage) || 450;
 
-/* ⭐ Daily display helpers (v5.2) — STEP 1 */
+/* ⭐ Daily display helpers (v5.2) */
 const TODAY_MR = toMrDate(TODAY_ISO);
 const WEEKDAYS_MR = ['रविवार','सोमवार','मंगळवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
 const TODAY_WEEKDAY_MR = WEEKDAYS_MR[new Date(TODAY_ISO + 'T00:00:00+05:30').getDay()];
@@ -132,7 +132,7 @@ function seededPick(arr, seed, count = 1) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PICK ARTICLE FOR SLOT — STEP 2 (daily rotation)
+   PICK ARTICLE FOR SLOT — daily rotation
    ═══════════════════════════════════════════════════════ */
 function pickArticleForSlot(slot, citySlug, todayIso, usedSlugs) {
   // 1. Special — फक्त त्याच्या exact दिवशी
@@ -275,7 +275,7 @@ function renderPageAds(cityCode, pageNum) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER COVER
+   RENDER COVER — आजचा दिनांक
    ═══════════════════════════════════════════════════════ */
 function renderCover(city, totalPages) {
   const c = config.cover || {};
@@ -317,7 +317,7 @@ function renderCover(city, totalPages) {
         <div class="cv-underline"><span></span><i>◆</i><span></span></div>
       </div>
       <div class="cv-meta">
-        <div class="cv-meta-item"><span class="cv-meta-label">आठवडा</span><strong class="cv-meta-value">${esc(WEEK_RANGE_MR)}</strong></div>
+        <div class="cv-meta-item"><span class="cv-meta-label">आजचा दिनांक</span><strong class="cv-meta-value">${esc(TODAY_DISPLAY_MR)}</strong></div>
         <div class="cv-meta-divider"></div>
         <div class="cv-meta-item"><span class="cv-meta-label">स्थान</span><strong class="cv-meta-value">${esc(cityName)}</strong><span class="cv-meta-sub">${esc(region)}</span></div>
         <div class="cv-meta-divider"></div>
@@ -334,7 +334,7 @@ function renderCover(city, totalPages) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER EDITION INFO
+   RENDER EDITION INFO — आजचा दिनांक
    ═══════════════════════════════════════════════════════ */
 function renderEditionInfo(city, totalPages, articles) {
   const c = config.cover || {};
@@ -352,7 +352,7 @@ function renderEditionInfo(city, totalPages, articles) {
     <div class="ed-logo"><div class="ed-emblem">म</div>
       <div><div class="ed-name">${esc(city.name)}</div><div class="ed-kicker">${esc(tagline)}</div></div>
     </div>
-    <div class="ed-issue-stamp">साप्ताहिक अंक<strong>${esc(WEEK_RANGE_MR)}</strong></div>
+    <div class="ed-issue-stamp">साप्ताहिक अंक<strong>${esc(TODAY_MR)}</strong></div>
   </header>
   <div class="ed-hero">
     <span class="ed-label">${esc(c.label || 'आजचा विशेष अंक')}</span>
@@ -362,7 +362,7 @@ function renderEditionInfo(city, totalPages, articles) {
   </div>
   <div class="ed-meta">
     <div class="meta-block"><span class="meta-label">स्थान</span><strong>${esc(city.city || 'महाराष्ट्र')}</strong><small>${esc(city.region || 'महाराष्ट्र, भारत')}</small></div>
-    <div class="meta-block"><span class="meta-label">आठवडा</span><strong>${esc(WEEK_RANGE_MR)}</strong><small>साप्ताहिक अंक</small></div>
+    <div class="meta-block"><span class="meta-label">आजचा दिनांक</span><strong>${esc(TODAY_MR)}</strong><small>${esc(TODAY_WEEKDAY_MR)}</small></div>
     <div class="meta-block"><span class="meta-label">एकूण पृष्ठे</span><strong>${toMr(totalPages)}</strong><small>वाचनासाठी सज्ज</small></div>
   </div>
   <div class="ed-preview">
@@ -378,7 +378,7 @@ function renderEditionInfo(city, totalPages, articles) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER CONTENTS
+   RENDER CONTENTS — आजचा दिनांक
    ═══════════════════════════════════════════════════════ */
 function renderContents(articles, totalPages) {
   const list = articles.map(a => `
@@ -394,7 +394,7 @@ function renderContents(articles, totalPages) {
   <h2 class="page-title">विचारांची एक सुंदर<br><span class="accent">वाचनयात्रा.</span></h2>
   <p class="page-subtitle">${esc(config.site.tagline)}</p>
   <ol class="contents-list">${list}</ol>
-  <footer class="page-footer"><strong>${esc(WEEK_RANGE_MR)}</strong><span class="folio">०३ / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(TODAY_DISPLAY_MR)}</strong><span class="folio">०३ / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
@@ -437,7 +437,7 @@ function renderArticle(a, n, part, totalParts, totalPages, cityCode) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   RENDER BACK COVER
+   RENDER BACK COVER — आजचा दिनांक
    ═══════════════════════════════════════════════════════ */
 function renderBack(city, totalPages) {
   const tagline = city.tagline || config.site.tagline;
@@ -447,7 +447,7 @@ function renderBack(city, totalPages) {
   <h2 class="page-title">वाचत राहा,<br><span style="color:#f3c66e">जोडलेले राहा.</span></h2>
   <p class="page-subtitle">${esc(city.name)} — ${esc(tagline)}</p>
   <div class="closing-signature"><div class="big-mark">म</div><p>मराठी वाचूया. मराठीत जोडलेले राहूया.</p></div>
-  <footer class="page-footer"><strong>${esc(city.name)} · ${esc(WEEK_RANGE_MR)}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
+  <footer class="page-footer"><strong>${esc(city.name)} · ${esc(TODAY_DISPLAY_MR)}</strong><span class="folio">${toMr(totalPages)} / ${toMr(totalPages)}</span></footer>
 </article>`;
 }
 
@@ -461,7 +461,6 @@ function buildNewsletter(citySlug, city) {
   const articles = [];
   for (const slotDef of articleSlots) {
     const slot = slotDef.slot;
-    /* ⭐ STEP 2 — TODAY_ISO वापरतोय (weekly नाही) */
     const art = pickArticleForSlot(slot, citySlug, TODAY_ISO, usedSlugs);
 
     if (!art) {
@@ -527,7 +526,7 @@ function buildNewsletter(citySlug, city) {
     .replace(/{{PAGE_TITLE}}/g, esc(city.name + ' · ' + config.site.tagline))
     .replace(/{{META_DESCRIPTION}}/g, esc(city.tagline || config.site.tagline))
     .replace(/{{YEAR}}/g, esc(new Date().getFullYear()))
-    .replace(/{{ISSUE_DATE}}/g, esc(WEEK_RANGE_MR))
+    .replace(/{{ISSUE_DATE}}/g, esc(TODAY_DISPLAY_MR))
     .replace(/{{PAGES_HTML}}/g, pages.join('\n'))
     .replace(/{{FOOTER_COLUMNS}}/g, footerColumns());
 }
@@ -648,7 +647,8 @@ fs.mkdirSync(path.join(OUT, '_assets'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'src/style.css'), path.join(OUT, '_assets/style.css'));
 fs.copyFileSync(path.join(ROOT, 'src/script.js'), path.join(OUT, '_assets/script.js'));
 
-console.log(`✅ Built ${n} editions + ${legalCount} legal pages — Week: ${WEEK_RANGE_MR}`);
-console.log(`📅 Week: ${WEEK_START_ISO} to ${WEEK_END_ISO}`);
+/* ⭐ STEP 4 — नवीन log format */
+console.log(`✅ Built ${n} editions + ${legalCount} legal pages — Issue #${DAY_NUM} · ${TODAY_DISPLAY_MR}`);
+console.log(`📅 Today: ${TODAY_ISO} (${TODAY_WEEKDAY_MR})`);
 console.log(`🏙️  Cities: ${Object.keys(citiesData).join(', ')}`);
 console.log(`📚 Regular: ${ALL_ARTICLES.length} | Special: ${ALL_SPECIALS.length}`);
